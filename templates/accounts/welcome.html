@@ -1,0 +1,663 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}CourseCart - Learn Vocational Skills Online{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ============================================
+       COURSECART LANDING PAGE - FULLY RESPONSIVE
+       Mobile-First Design System
+       ============================================ */
+    
+    /* ---------- HERO SECTION ---------- */
+    .hero {
+        padding: 2rem 0;
+        background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #0F766E 100%);
+        position: relative;
+        overflow: hidden;
+        min-height: auto;
+        display: flex;
+        align-items: center;
+    }
+    @media (min-width: 480px) { .hero { padding: 2.5rem 0; } }
+    @media (min-width: 768px) { .hero { padding: 3.5rem 0; min-height: 500px; } }
+    @media (min-width: 1024px) { .hero { padding: 5rem 0; min-height: 600px; } }
+    
+    .hero::before {
+        content: '';
+        position: absolute;
+        top: -30%;
+        right: -15%;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(20,184,166,0.12), transparent 70%);
+        border-radius: 50%;
+        z-index: 0;
+    }
+    @media (min-width: 768px) { .hero::before { width: 500px; height: 500px; } }
+    @media (min-width: 1024px) { .hero::before { width: 600px; height: 600px; } }
+    
+    .hero .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        padding: 0 1rem;
+    }
+    @media (min-width: 480px) { .hero .container { gap: 2rem; padding: 0 1.25rem; } }
+    @media (min-width: 768px) {
+        .hero .container {
+            flex-direction: row;
+            justify-content: space-between;
+            text-align: left;
+            gap: 3rem;
+        }
+    }
+    
+    /* Hero Text */
+    .hero-text {
+        flex: 1;
+        max-width: 100%;
+    }
+    @media (min-width: 768px) { .hero-text { max-width: 540px; } }
+    @media (max-width: 767px) { .hero-text { text-align: center; } }
+    
+    .hero-badge {
+        display: inline-block;
+        padding: 5px 14px;
+        background: rgba(20,184,166,0.15);
+        border: 1px solid rgba(20,184,166,0.3);
+        border-radius: 50px;
+        font-size: 0.6875rem;
+        font-weight: 600;
+        color: #5EEAD4;
+        letter-spacing: 0.05em;
+        margin-bottom: 1rem;
+    }
+    @media (min-width: 480px) { .hero-badge { font-size: 0.75rem; padding: 6px 16px; } }
+    
+    .hero-text h1 {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: white;
+        line-height: 1.15;
+        margin-bottom: 0.75rem;
+    }
+    @media (min-width: 400px) { .hero-text h1 { font-size: 1.75rem; } }
+    @media (min-width: 480px) { .hero-text h1 { font-size: 2rem; } }
+    @media (min-width: 768px) { .hero-text h1 { font-size: 2.5rem; } }
+    @media (min-width: 1024px) { .hero-text h1 { font-size: 3.25rem; } }
+    
+    .hero-highlight {
+        background: linear-gradient(135deg, #14B8A6, #F59E0B);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .hero-text p {
+        font-size: 0.8125rem;
+        color: rgba(255,255,255,0.65);
+        line-height: 1.6;
+        margin-bottom: 1.25rem;
+    }
+    @media (min-width: 480px) { .hero-text p { font-size: 0.9375rem; } }
+    @media (min-width: 768px) { .hero-text p { font-size: 1.0625rem; } }
+    
+    .hero-btns {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    @media (min-width: 480px) { .hero-btns { gap: 0.75rem; } }
+    @media (min-width: 768px) { .hero-btns { justify-content: flex-start; } }
+    @media (max-width: 400px) {
+        .hero-btns { flex-direction: column; }
+        .hero-btns .btn { width: 100%; justify-content: center; }
+    }
+    
+    .btn-ghost {
+        background: transparent;
+        color: white;
+        border: 2px solid rgba(255,255,255,0.25);
+        padding: 0.625rem 1.25rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.8125rem;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    @media (min-width: 480px) { .btn-ghost { padding: 0.75rem 1.5rem; font-size: 0.9375rem; } }
+    .btn-ghost:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.5); }
+    
+    /* Slideshow Container */
+    .hero-slideshow {
+        flex: 1;
+        max-width: 100%;
+        width: 100%;
+        position: relative;
+    }
+    @media (min-width: 480px) { .hero-slideshow { max-width: 380px; } }
+    @media (min-width: 768px) { .hero-slideshow { max-width: 500px; } }
+    @media (max-width: 767px) { .hero-slideshow { max-width: 340px; margin: 0 auto; } }
+    @media (max-width: 400px) { .hero-slideshow { max-width: 100%; } }
+    
+    .slideshow-wrapper {
+        position: relative;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        aspect-ratio: 4/3;
+        background: #1a1a2e;
+        border: 2px solid rgba(255,255,255,0.1);
+    }
+    @media (min-width: 480px) { .slideshow-wrapper { border-radius: 20px; } }
+    
+    .slideshow-wrapper img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0;
+        transition: opacity 0.8s ease;
+    }
+    
+    .slideshow-wrapper img.active { opacity: 1; }
+    
+    /* Slide Dots */
+    .slide-dots {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+        margin-top: 0.75rem;
+    }
+    @media (min-width: 480px) { .slide-dots { gap: 8px; margin-top: 1rem; } }
+    
+    .slide-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.3);
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s;
+        padding: 0;
+    }
+    @media (min-width: 480px) { .slide-dot { width: 10px; height: 10px; } }
+    .slide-dot.active { background: #14B8A6; width: 24px; border-radius: 5px; }
+    @media (min-width: 480px) { .slide-dot.active { width: 28px; } }
+    
+    /* Slide Caption */
+    .slide-caption {
+        text-align: center;
+        color: rgba(255,255,255,0.7);
+        font-size: 0.6875rem;
+        margin-top: 0.5rem;
+        transition: all 0.3s;
+    }
+    @media (min-width: 480px) { .slide-caption { font-size: 0.8125rem; margin-top: 0.75rem; } }
+    
+    /* ---------- STATS BAR ---------- */
+    .stats-bar {
+        background: var(--white);
+        border-bottom: 1px solid var(--gray-200);
+        padding: 0.75rem 0;
+    }
+    @media (min-width: 480px) { .stats-bar { padding: 1rem 0; } }
+    @media (min-width: 768px) { .stats-bar { padding: var(--spacing-lg) 0; } }
+    
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.5rem;
+        text-align: center;
+    }
+    @media (min-width: 480px) { .stats-row { gap: var(--spacing-md); } }
+    
+    .stat-item .stat-number {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--teal-600);
+        display: block;
+    }
+    @media (min-width: 480px) { .stat-item .stat-number { font-size: 1.5rem; } }
+    @media (min-width: 768px) { .stat-item .stat-number { font-size: 2rem; } }
+    
+    .stat-item .stat-label {
+        font-size: 0.625rem;
+        color: var(--gray-500);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    @media (min-width: 480px) { .stat-item .stat-label { font-size: 0.6875rem; } }
+    @media (min-width: 768px) { .stat-item .stat-label { font-size: 0.75rem; } }
+    
+    /* ---------- SECTIONS ---------- */
+    .section { padding: 1.5rem 0; }
+    @media (min-width: 480px) { .section { padding: 2rem 0; } }
+    @media (min-width: 768px) { .section { padding: var(--spacing-3xl) 0; } }
+    
+    .section-header { text-align: center; margin-bottom: 1.5rem; }
+    @media (min-width: 480px) { .section-header { margin-bottom: 2rem; } }
+    @media (min-width: 768px) { .section-header { margin-bottom: var(--spacing-2xl); } }
+    
+    .section-title { font-size: 1.25rem; margin-bottom: 0.25rem; }
+    @media (min-width: 480px) { .section-title { font-size: 1.5rem; } }
+    @media (min-width: 768px) { .section-title { font-size: 2rem; } }
+    
+    .section-subtitle {
+        color: var(--gray-500);
+        font-size: 0.8125rem;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    @media (min-width: 480px) { .section-subtitle { font-size: 0.9375rem; } }
+    
+    /* ---------- FEATURES ---------- */
+    .features-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+    }
+    @media (min-width: 480px) { .features-grid { gap: 1rem; } }
+    @media (min-width: 768px) { .features-grid { grid-template-columns: repeat(3, 1fr); gap: var(--spacing-lg); } }
+    
+    .feature-card {
+        background: var(--white);
+        padding: 1rem;
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--gray-200);
+        text-align: center;
+        transition: all 0.2s;
+    }
+    @media (min-width: 480px) { .feature-card { padding: 1.25rem; } }
+    @media (min-width: 768px) { .feature-card { padding: var(--spacing-xl); border-radius: var(--radius-xl); } }
+    .feature-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    
+    .feature-icon { font-size: 1.75rem; display: block; margin-bottom: 0.5rem; }
+    @media (min-width: 480px) { .feature-icon { font-size: 2rem; } }
+    @media (min-width: 768px) { .feature-icon { font-size: 2.5rem; margin-bottom: var(--spacing-md); } }
+    
+    .feature-title { font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.25rem; }
+    @media (min-width: 480px) { .feature-title { font-size: 0.9375rem; } }
+    @media (min-width: 768px) { .feature-title { font-size: 1.125rem; margin-bottom: var(--spacing-sm); } }
+    
+    .feature-desc { font-size: 0.6875rem; color: var(--gray-500); display: none; }
+    @media (min-width: 480px) { .feature-desc { font-size: 0.8125rem; display: block; } }
+    @media (min-width: 768px) { .feature-desc { font-size: 0.875rem; } }
+    
+    /* ---------- COURSES GRID ---------- */
+    .courses-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    @media (min-width: 400px) { .courses-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 768px) { .courses-grid { grid-template-columns: repeat(3, 1fr); gap: var(--spacing-lg); } }
+    @media (min-width: 1024px) { .courses-grid { grid-template-columns: repeat(4, 1fr); } }
+    
+    .course-card {
+        background: var(--white);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        border: 1px solid var(--gray-200);
+        transition: all 0.25s;
+        display: flex;
+        flex-direction: column;
+    }
+    @media (min-width: 768px) { .course-card { border-radius: var(--radius-xl); } }
+    .course-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-xl); }
+    
+    .course-card-img {
+        height: 110px;
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, var(--teal-500), var(--teal-700));
+    }
+    @media (min-width: 480px) { .course-card-img { height: 130px; } }
+    @media (min-width: 768px) { .course-card-img { height: 140px; } }
+    
+    .course-card-img img { width: 100%; height: 100%; object-fit: cover; }
+    
+    .course-card-img .placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        font-size: 2rem;
+        opacity: 0.7;
+    }
+    @media (min-width: 768px) { .course-card-img .placeholder { font-size: 2.5rem; } }
+    
+    .course-card-img .level-badge { position: absolute; top: 6px; left: 6px; z-index: 2; }
+    @media (min-width: 480px) { .course-card-img .level-badge { top: 8px; left: 8px; } }
+    
+    .course-card-img .price-badge {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        z-index: 2;
+        background: var(--white);
+        padding: 2px 8px;
+        border-radius: 50px;
+        font-size: 0.625rem;
+        font-weight: 700;
+        color: var(--teal-700);
+    }
+    @media (min-width: 480px) { .course-card-img .price-badge { top: 8px; right: 8px; padding: 3px 10px; font-size: 0.75rem; } }
+    .course-card-img .price-badge.free { background: var(--success); color: white; }
+    
+    .course-card-body { padding: 0.625rem; }
+    @media (min-width: 480px) { .course-card-body { padding: 0.75rem; } }
+    @media (min-width: 768px) { .course-card-body { padding: var(--spacing-lg); } }
+    
+    .course-card-cat {
+        font-size: 0.5625rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--teal-600);
+        font-weight: 600;
+        margin-bottom: 2px;
+    }
+    @media (min-width: 480px) { .course-card-cat { font-size: 0.625rem; } }
+    @media (min-width: 768px) { .course-card-cat { font-size: 0.6875rem; } }
+    
+    .course-card-title { font-size: 0.8125rem; font-weight: 600; margin-bottom: 2px; }
+    @media (min-width: 768px) { .course-card-title { font-size: 0.9375rem; } }
+    .course-card-title a { color: var(--gray-900); text-decoration: none; }
+    
+    .course-card-instructor { font-size: 0.625rem; color: var(--gray-500); margin-bottom: 0.5rem; }
+    @media (min-width: 480px) { .course-card-instructor { font-size: 0.6875rem; } }
+    @media (min-width: 768px) { .course-card-instructor { font-size: 0.75rem; } }
+    
+    .course-card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 0.5rem;
+        border-top: 1px solid var(--gray-100);
+        font-size: 0.625rem;
+        color: var(--gray-500);
+        margin-top: auto;
+    }
+    @media (min-width: 480px) { .course-card-footer { font-size: 0.6875rem; } }
+    @media (min-width: 768px) { .course-card-footer { font-size: 0.75rem; } }
+    
+    /* ---------- TESTIMONIALS ---------- */
+    .testimonials-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    @media (min-width: 480px) { .testimonials-grid { grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 768px) { .testimonials-grid { grid-template-columns: repeat(3, 1fr); gap: var(--spacing-lg); } }
+    
+    .testimonial-card {
+        background: var(--white);
+        padding: 1rem;
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--gray-200);
+    }
+    @media (min-width: 480px) { .testimonial-card { padding: 1.25rem; } }
+    @media (min-width: 768px) { .testimonial-card { padding: var(--spacing-xl); } }
+    
+    .testimonial-text {
+        font-style: italic;
+        color: var(--gray-600);
+        font-size: 0.75rem;
+        line-height: 1.5;
+        margin-bottom: 0.75rem;
+    }
+    @media (min-width: 480px) { .testimonial-text { font-size: 0.8125rem; } }
+    @media (min-width: 768px) { .testimonial-text { font-size: 0.875rem; } }
+    
+    .testimonial-author { display: flex; align-items: center; gap: 0.5rem; }
+    @media (min-width: 480px) { .testimonial-author { gap: var(--spacing-sm); } }
+    
+    .testimonial-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--amber-400), var(--amber-600));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 0.75rem;
+        flex-shrink: 0;
+    }
+    @media (min-width: 480px) { .testimonial-avatar { width: 36px; height: 36px; font-size: 0.8125rem; } }
+    @media (min-width: 768px) { .testimonial-avatar { width: 40px; height: 40px; font-size: 0.875rem; } }
+    
+    .testimonial-name { font-weight: 600; font-size: 0.75rem; }
+    @media (min-width: 480px) { .testimonial-name { font-size: 0.8125rem; } }
+    @media (min-width: 768px) { .testimonial-name { font-size: 0.875rem; } }
+    
+    .testimonial-role { font-size: 0.625rem; color: var(--gray-500); }
+    @media (min-width: 480px) { .testimonial-role { font-size: 0.6875rem; } }
+    @media (min-width: 768px) { .testimonial-role { font-size: 0.75rem; } }
+    
+    /* ---------- CTA ---------- */
+    .cta-section {
+        padding: 1.5rem 0;
+        background: linear-gradient(135deg, var(--teal-600), var(--teal-800));
+        color: white;
+        text-align: center;
+    }
+    @media (min-width: 480px) { .cta-section { padding: 2rem 0; } }
+    @media (min-width: 768px) { .cta-section { padding: var(--spacing-3xl) 0; } }
+    
+    .cta-section h2 { color: white; font-size: 1.25rem; margin-bottom: 0.5rem; }
+    @media (min-width: 480px) { .cta-section h2 { font-size: 1.5rem; } }
+    @media (min-width: 768px) { .cta-section h2 { font-size: 2rem; } }
+    
+    .cta-section p { opacity: 0.9; margin-bottom: 1rem; font-size: 0.8125rem; }
+    @media (min-width: 480px) { .cta-section p { font-size: 0.9375rem; } }
+    
+    .cta-buttons { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; }
+    @media (min-width: 480px) { .cta-buttons { gap: var(--spacing-md); } }
+    
+    .view-all { text-align: center; margin-top: 1rem; }
+    @media (min-width: 480px) { .view-all { margin-top: var(--spacing-xl); } }
+    
+    /* ---------- CONTAINER ---------- */
+    .container {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 0.75rem;
+    }
+    @media (min-width: 480px) { .container { padding: 0 1rem; } }
+    @media (min-width: 768px) { .container { padding: 0 1.5rem; } }
+    @media (min-width: 1024px) { .container { padding: 0 2rem; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- ========== HERO WITH SLIDESHOW ========== -->
+<section class="hero">
+    <div class="container">
+        <!-- Hero Text -->
+        <div class="hero-text">
+            <span class="hero-badge">📚 Tanzania's #1 Vocational Learning Platform</span>
+            <h1>Learn <span class="hero-highlight">Vocational Skills</span><br>Build Your Future</h1>
+            <p>Affordable, certified online courses in plumbing, electrical, tailoring & more. Learn from expert Tanzanian instructors — anytime, anywhere.</p>
+            <div class="hero-btns">
+                <a href="{% url 'accounts:register_student' %}" class="btn btn-primary btn-lg">🎓 Start Learning Free</a>
+                <a href="{% url 'accounts:register_instructor' %}" class="btn-ghost btn-lg">👨‍🏫 Become Instructor</a>
+            </div>
+        </div>
+        
+        <!-- Slideshow -->
+        <div class="hero-slideshow">
+            <div class="slideshow-wrapper">
+                <img src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=600&h=450&fit=crop" alt="Plumbing Training" class="active" loading="eager">
+                <img src="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=600&h=450&fit=crop" alt="Electrical Work" loading="lazy">
+                <img src="https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=600&h=450&fit=crop" alt="Tailoring Skills" loading="lazy">
+                <img src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=600&h=450&fit=crop" alt="Construction Training" loading="lazy">
+                <img src="https://images.unsplash.com/photo-1576267423445-b2e0074d68a4?w=600&h=450&fit=crop" alt="Welding Workshop" loading="lazy">
+            </div>
+            <div class="slide-dots" id="slideDots">
+                <button class="slide-dot active" data-index="0" aria-label="Slide 1"></button>
+                <button class="slide-dot" data-index="1" aria-label="Slide 2"></button>
+                <button class="slide-dot" data-index="2" aria-label="Slide 3"></button>
+                <button class="slide-dot" data-index="3" aria-label="Slide 4"></button>
+                <button class="slide-dot" data-index="4" aria-label="Slide 5"></button>
+            </div>
+            <div class="slide-caption" id="slideCaption">Hands-on Plumbing Training</div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Bar -->
+<div class="stats-bar">
+    <div class="container">
+        <div class="stats-row">
+            <div class="stat-item"><span class="stat-number">{{ total_students|default:'500' }}+</span><span class="stat-label">Active Students</span></div>
+            <div class="stat-item"><span class="stat-number">{{ total_instructors|default:'25' }}+</span><span class="stat-label">Expert Instructors</span></div>
+            <div class="stat-item"><span class="stat-number">{{ total_courses|default:'50' }}+</span><span class="stat-label">Practical Courses</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<section class="section" style="background: var(--off-white);">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Why Choose CourseCart?</h2>
+            <p class="section-subtitle">Everything you need to master a trade and start earning</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card"><span class="feature-icon">🎓</span><h3 class="feature-title">Certified Courses</h3><p class="feature-desc">Earn recognized certificates to boost your employability</p></div>
+            <div class="feature-card"><span class="feature-icon">💰</span><h3 class="feature-title">Affordable Pricing</h3><p class="feature-desc">Quality training at a fraction of traditional costs</p></div>
+            <div class="feature-card"><span class="feature-icon">📱</span><h3 class="feature-title">Learn Anywhere</h3><p class="feature-desc">Access on any device — mobile, tablet, or computer</p></div>
+            <div class="feature-card"><span class="feature-icon">👨‍🏫</span><h3 class="feature-title">Expert Instructors</h3><p class="feature-desc">Learn from experienced professionals</p></div>
+            <div class="feature-card"><span class="feature-icon">⏰</span><h3 class="feature-title">Self-Paced</h3><p class="feature-desc">Study at your own pace with lifetime access</p></div>
+            <div class="feature-card"><span class="feature-icon">🤝</span><h3 class="feature-title">Support</h3><p class="feature-desc">Connect with instructors and fellow learners</p></div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Courses -->
+{% if featured_courses %}
+<section class="section">
+    <div class="container">
+        <div class="section-header"><h2 class="section-title">📚 Featured Courses</h2><p class="section-subtitle">Start with these in-demand skills</p></div>
+        <div class="courses-grid">
+            {% for course in featured_courses %}
+            <div class="course-card">
+                <div class="course-card-img">
+                    {% if course.thumbnail %}<img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" loading="lazy">
+                    {% else %}<span class="placeholder">{{ course.category.icon|default:'📚' }}</span>{% endif %}
+                    <span class="level-badge"><span class="badge badge-teal">{{ course.get_level_display }}</span></span>
+                    <span class="price-badge {% if course.price == 0 %}free{% endif %}">{% if course.price == 0 %}Free{% else %}TZS {{ course.price|floatformat:0 }}{% endif %}</span>
+                </div>
+                <div class="course-card-body">
+                    {% if course.category %}<div class="course-card-cat">{{ course.category.name }}</div>{% endif %}
+                    <h3 class="course-card-title"><a href="{{ course.get_absolute_url }}">{{ course.title }}</a></h3>
+                    <p class="course-card-instructor">👨‍🏫 {{ course.instructor.full_name }}</p>
+                    <div class="course-card-footer"><span>⏱️ {{ course.duration_weeks }}w</span><span>📖 {{ course.total_lessons }} lessons</span></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="view-all"><a href="{% url 'courses:course_list' %}" class="btn btn-outline btn-lg">📋 View All Courses →</a></div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Testimonials -->
+<section class="section" style="background: var(--off-white);">
+    <div class="container">
+        <div class="section-header"><h2 class="section-title">⭐ Success Stories</h2><p class="section-subtitle">From our graduates across Tanzania</p></div>
+        <div class="testimonials-grid">
+            <div class="testimonial-card"><p class="testimonial-text">"CourseCart helped me become a certified plumber in 6 weeks. I now run my own business!"</p><div class="testimonial-author"><div class="testimonial-avatar">J</div><div><div class="testimonial-name">Juma M.</div><div class="testimonial-role">Plumbing Graduate</div></div></div></div>
+            <div class="testimonial-card"><p class="testimonial-text">"The electrical course was practical. I got certified and found work immediately."</p><div class="testimonial-author"><div class="testimonial-avatar">F</div><div><div class="testimonial-name">Fatma A.</div><div class="testimonial-role">Electrical Graduate</div></div></div></div>
+            <div class="testimonial-card"><p class="testimonial-text">"Zero skills to owning my shop with 2 employees. This changed my life!"</p><div class="testimonial-author"><div class="testimonial-avatar">D</div><div><div class="testimonial-name">David K.</div><div class="testimonial-role">Tailoring Graduate</div></div></div></div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="register-section">
+    <div class="container">
+        <h2>Ready to Start Your Journey?</h2>
+        <p>Join thousands mastering vocational skills on CourseCart.</p>
+        <div class="cta-buttons">
+            <a href="{% url 'accounts:register_student' %}" class="btn btn-lg" style="background:var(--amber-500);color:white;border-color:var(--amber-500);box-shadow:0 4px 15px rgba(245,158,11,0.3);">🎓 Register as Student</a>
+            <a href="{% url 'accounts:register_instructor' %}" class="btn btn-lg" style="background:white;color:var(--teal-700);border-color:white;">👨‍🏫 Become an Instructor</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function() {
+    var slides = document.querySelectorAll('.slideshow-wrapper img');
+    var dots = document.querySelectorAll('.slide-dot');
+    var caption = document.getElementById('slideCaption');
+    var currentSlide = 0;
+    var totalSlides = slides.length;
+    var interval;
+    
+    var captions = [
+        'Hands-on Plumbing Training',
+        'Professional Electrical Installation',
+        'Tailoring & Fashion Design',
+        'Construction & Masonry Skills',
+        'Welding & Metal Fabrication'
+    ];
+    
+    function showSlide(index) {
+        slides.forEach(function(s) { s.classList.remove('active'); });
+        dots.forEach(function(d) { d.classList.remove('active'); });
+        slides[index].classList.add('active');
+        dots[index].classList.add('active');
+        if (caption) caption.textContent = captions[index];
+        currentSlide = index;
+    }
+    
+    function nextSlide() {
+        var next = (currentSlide + 1) % totalSlides;
+        showSlide(next);
+    }
+    
+    dots.forEach(function(dot) {
+        dot.addEventListener('click', function() {
+            var index = parseInt(this.getAttribute('data-index'));
+            showSlide(index);
+            resetInterval();
+        });
+    });
+    
+    function resetInterval() {
+        clearInterval(interval);
+        interval = setInterval(nextSlide, 4000);
+    }
+    
+    if (totalSlides > 1) {
+        interval = setInterval(nextSlide, 4000);
+    }
+    
+    var wrapper = document.querySelector('.slideshow-wrapper');
+    if (wrapper) {
+        wrapper.addEventListener('mouseenter', function() { clearInterval(interval); });
+        wrapper.addEventListener('mouseleave', function() { interval = setInterval(nextSlide, 4000); });
+    }
+})();
+</script>
+{% endblock %}

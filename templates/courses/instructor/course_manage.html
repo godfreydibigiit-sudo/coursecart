@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Manage: {{ course.title }} - CourseCart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard-saas.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dash-layout">
+    <div class="dash-overlay" id="dashOverlay" onclick="closeSidebar()"></div>
+    {% include 'includes/dash_sidebar_instructor.html' %}
+    
+    <div class="dash-main">
+        <header class="dash-header">
+            <div class="dash-header-left">
+                <button class="btn-hamburger" onclick="toggleSidebar()">☰</button>
+                <div class="dash-breadcrumb"><a href="{% url 'courses:instructor_course_list' %}" style="color:var(--gray-400);text-decoration:none;">My Courses</a> › <span>{{ course.title|truncatechars:25 }}</span></div>
+            </div>
+            <div class="dash-header-right">
+                <div class="dash-user-avatar warm">{{ user.full_name|slice:":1"|upper }}</div>
+            </div>
+        </header>
+        
+        <div class="dash-content">
+            <div class="page-header">
+                <div>
+                    <h1>📋 {{ course.title }}</h1>
+                    <p><span class="badge-status {% if course.status == 'published' %}paid{% else %}pending{% endif %}">{{ course.get_status_display }}</span> • {{ course.total_enrollments }} students • {{ course.total_lessons }} lessons</p>
+                </div>
+                <div class="page-actions">
+                    <a href="{% url 'courses:lesson_create' course.slug %}" class="btn btn-primary">➕ Add Lesson</a>
+                    <a href="{% url 'courses:course_edit' course.slug %}" class="btn btn-outline">✏️ Edit</a>
+                </div>
+            </div>
+            
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-6);">
+                <!-- Lessons -->
+                <div class="section-card">
+                    <div class="section-card-header"><h2>📖 Lessons ({{ lessons.count }})</h2></div>
+                    <div class="section-card-body">
+                        {% if lessons %}
+                        <div class="enrollment-list">
+                            {% for lesson in lessons %}
+                            <div class="enrollment-item">
+                                <span style="width:32px;height:32px;border-radius:50%;background:var(--gray-200);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;">{{ lesson.order }}</span>
+                                <div class="enroll-info">
+                                    <div class="enroll-title">{{ lesson.icon }} {{ lesson.title }}</div>
+                                    <div class="enroll-meta">{{ lesson.get_lesson_type_display }} • {{ lesson.duration_minutes }} min {% if lesson.is_free_preview %}<span class="badge-status" style="background:var(--amber-100);color:var(--amber-700);">Preview</span>{% endif %}</div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="empty-state">
+                            <span class="empty-icon">📝</span>
+                            <h3>No Lessons Yet</h3>
+                            <p>Add your first lesson</p>
+                            <a href="{% url 'courses:lesson_create' course.slug %}" class="btn btn-primary btn-sm">Add Lesson</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Students -->
+                <div class="section-card">
+                    <div class="section-card-header"><h2>👥 Students ({{ enrollments.count }})</h2></div>
+                    <div class="section-card-body">
+                        {% if enrollments %}
+                        <div class="enrollment-list">
+                            {% for enrollment in enrollments %}
+                            <div class="enrollment-item">
+                                <div class="dash-user-avatar" style="width:36px;height:36px;font-size:14px;">{{ enrollment.student.full_name|slice:":1"|upper }}</div>
+                                <div class="enroll-info">
+                                    <div class="enroll-title">{{ enrollment.student.full_name }}</div>
+                                    <div class="enroll-meta">
+                                        <span>{{ enrollment.progress_percentage }}% complete</span>
+                                        {% if enrollment.is_completed %}<span class="badge-status paid">Completed</span>{% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <p style="color:var(--gray-400);text-align:center;padding:var(--space-6);">No students enrolled yet.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleSidebar(){var s=document.getElementById('dashSidebar');var o=document.getElementById('dashOverlay');if(s&&o){s.classList.toggle('open');o.classList.toggle('show');}}
+function closeSidebar(){var s=document.getElementById('dashSidebar');var o=document.getElementById('dashOverlay');if(s&&o){s.classList.remove('open');o.classList.remove('show');}}
+</script>
+{% endblock %}

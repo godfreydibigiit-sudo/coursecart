@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Profile - CourseCart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard-saas.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dash-layout">
+    <div class="dash-overlay" id="dashOverlay" onclick="closeSidebar()"></div>
+    {% include 'includes/dash_sidebar_student.html' %}
+    
+    <div class="dash-main">
+        <header class="dash-header">
+            <div class="dash-header-left">
+                <button class="btn-hamburger" onclick="toggleSidebar()">☰</button>
+                <div class="dash-breadcrumb">Settings</div>
+            </div>
+            <div class="dash-header-right">
+                <div class="dash-user-avatar">{{ user.full_name|slice:":1"|upper }}</div>
+            </div>
+        </header>
+        
+        <div class="dash-content">
+            <div class="page-header">
+                <div>
+                    <h1>⚙️ Edit Profile</h1>
+                    <p>Manage your personal information</p>
+                </div>
+            </div>
+            
+            <div class="section-card" style="max-width:700px;">
+                <div class="section-card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div style="display:flex;align-items:center;gap:var(--space-4);margin-bottom:var(--space-6);">
+                            <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--teal-400),var(--teal-600));display:flex;align-items:center;justify-content:center;color:white;font-size:28px;font-weight:700;overflow:hidden;flex-shrink:0;" id="avatarPreview">
+                                {% if form.instance.avatar %}
+                                <img src="{{ form.instance.avatar.url }}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;">
+                                {% else %}
+                                {{ user.full_name|slice:":1"|upper }}
+                                {% endif %}
+                            </div>
+                            <div>
+                                <label class="btn btn-outline btn-sm" style="cursor:pointer;">📷 Change Photo
+                                    {{ form.avatar }}
+                                </label>
+                                <p style="font-size:11px;color:var(--gray-400);margin-top:4px;">JPG, PNG. Max 2MB</p>
+                            </div>
+                        </div>
+                        
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-bottom:var(--space-4);">
+                            <div>
+                                <label style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:4px;">Full Name</label>
+                                <input type="text" value="{{ user.full_name }}" disabled style="width:100%;padding:10px 14px;border:1px solid var(--gray-200);border-radius:var(--radius-md);background:var(--gray-50);font-size:14px;">
+                            </div>
+                            <div>
+                                <label style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:4px;">Email</label>
+                                <input type="email" value="{{ user.email }}" disabled style="width:100%;padding:10px 14px;border:1px solid var(--gray-200);border-radius:var(--radius-md);background:var(--gray-50);font-size:14px;">
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom:var(--space-4);">
+                            <label for="{{ form.bio.id_for_label }}" style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:4px;">Bio</label>
+                            {{ form.bio }}
+                        </div>
+                        
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-bottom:var(--space-6);">
+                            <div>
+                                <label for="{{ form.location.id_for_label }}" style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:4px;">📍 Location</label>
+                                {{ form.location }}
+                            </div>
+                            <div>
+                                <label for="{{ form.date_of_birth.id_for_label }}" style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:4px;">🎂 Date of Birth</label>
+                                {{ form.date_of_birth }}
+                            </div>
+                        </div>
+                        
+                        <div style="display:flex;gap:var(--space-3);padding-top:var(--space-4);border-top:1px solid var(--gray-100);">
+                            <button type="submit" class="btn btn-primary btn-lg">💾 Save Changes</button>
+                            <a href="{% url 'profiles:student_dashboard' %}" class="btn btn-outline btn-lg">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleSidebar(){var s=document.getElementById('dashSidebar');var o=document.getElementById('dashOverlay');if(s&&o){s.classList.toggle('open');o.classList.toggle('show');}}
+function closeSidebar(){var s=document.getElementById('dashSidebar');var o=document.getElementById('dashOverlay');if(s&&o){s.classList.remove('open');o.classList.remove('show');}}
+// Avatar preview
+document.getElementById('{{ form.avatar.id_for_label }}').addEventListener('change',function(e){if(this.files&&this.files[0]){var r=new FileReader();r.onload=function(e){document.getElementById('avatarPreview').innerHTML='<img src="'+e.target.result+'" style="width:100%;height:100%;object-fit:cover;">'};r.readAsDataURL(this.files[0])}});
+</script>
+{% endblock %}

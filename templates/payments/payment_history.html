@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payment History - CourseCart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard-saas.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dash-layout">
+    <div class="dash-overlay" id="dashOverlay" onclick="closeSidebar()"></div>
+    {% include 'includes/dash_sidebar_student.html' %}
+    
+    <div class="dash-main">
+        <header class="dash-header">
+            <div class="dash-header-left">
+                <button class="btn-hamburger" onclick="toggleSidebar()">☰</button>
+                <div class="dash-breadcrumb">Payment History</div>
+            </div>
+            <div class="dash-header-right">
+                <a href="{% url 'notifications:notification_list' %}" class="btn-header" style="position:relative;">
+                    🔔{% if has_unread_notifications %}<span class="badge-dot"></span>{% endif %}
+                </a>
+                <div class="dash-user-avatar">{{ user.full_name|slice:":1"|upper }}</div>
+            </div>
+        </header>
+        
+        <div class="dash-content">
+            <div class="page-header">
+                <div>
+                    <h1>💳 Payment History</h1>
+                    <p>Track all your course payments</p>
+                </div>
+            </div>
+            
+            <!-- KPI Row -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-header"><div class="kpi-icon teal">💳</div></div>
+                    <div class="kpi-value">{{ stats.total_payments|default:0 }}</div>
+                    <div class="kpi-label">Total Payments</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-header"><div class="kpi-icon green">✅</div></div>
+                    <div class="kpi-value" style="color:var(--success);">{{ stats.completed_payments|default:0 }}</div>
+                    <div class="kpi-label">Completed</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-header"><div class="kpi-icon amber">⏳</div></div>
+                    <div class="kpi-value" style="color:var(--amber-500);">{{ stats.pending_payments|default:0 }}</div>
+                    <div class="kpi-label">Pending</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-header"><div class="kpi-icon blue">💰</div></div>
+                    <div class="kpi-value">TZS {{ stats.total_spent|floatformat:0|default:'0' }}</div>
+                    <div class="kpi-label">Total Spent</div>
+                </div>
+            </div>
+            
+            <!-- Payment List -->
+            <div class="section-card">
+                <div class="section-card-header">
+                    <h2>All Transactions</h2>
+                    <span style="font-size:12px;color:var(--gray-400);">{{ payments.count|default:0 }} records</span>
+                </div>
+                <div class="section-card-body">
+                    {% if payments %}
+                    <div class="enrollment-list">
+                        {% for payment in payments %}
+                        <a href="{% url 'payments:payment_detail' payment.id %}" class="enrollment-item" style="text-decoration:none;color:inherit;">
+                            <div style="width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;
+                                {% if payment.is_completed %}background:var(--success-light);
+                                {% elif payment.is_pending %}background:var(--warning-light);
+                                {% elif payment.is_failed %}background:var(--error-light);
+                                {% else %}background:var(--gray-100);{% endif %}">
+                                {% if payment.is_completed %}✅
+                                {% elif payment.is_pending %}⏳
+                                {% elif payment.is_failed %}❌
+                                {% else %}💳{% endif %}
+                            </div>
+                            <div class="enroll-info">
+                                <div class="enroll-title">{{ payment.course.title }}</div>
+                                <div class="enroll-meta">
+                                    <span>{{ payment.get_payment_method_display }}</span>
+                                    <span>📅 {{ payment.initiated_at|date:"M d, Y" }}</span>
+                                    <span style="font-family:monospace;font-size:11px;color:var(--gray-400);">{{ payment.transaction_id }}</span>
+                                </div>
+                            </div>
+                            <div style="text-align:right;flex-shrink:0;">
+                                <div style="font-weight:700;font-size:16px;color:var(--gray-900);">TZS {{ payment.amount|floatformat:0 }}</div>
+                                <span class="badge-status {% if payment.is_completed %}paid{% elif payment.is_pending %}pending{% else %}" style="background:#FEF3F2;color:#B42318;{% endif %}">
+                                    {{ payment.get_status_display }}
+                                </span>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% include 'includes/pagination.html' %}
+                    {% else %}
+                    <div class="empty-state">
+                        <span class="empty-icon">💳</span>
+                        <h3>No Payment History</h3>
+                        <p>You haven't made any payments yet</p>
+                        <a href="{% url 'courses:course_list' %}" class="btn btn-primary">Browse Courses</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleSidebar(){var s=document.getElementById('dashSidebar');var o=document.getElementById('dashOverlay');if(s&&o){s.classList.toggle('open');o.classList.toggle('show');}}
+function closeSidebar(){var s=document.getElementById('dashSidebar');var o=document.getElementById('dashOverlay');if(s&&o){s.classList.remove('open');o.classList.remove('show');}}
+</script>
+{% endblock %}

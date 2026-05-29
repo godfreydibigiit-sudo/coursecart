@@ -1,0 +1,35 @@
+<div class="course-card">
+    <div class="course-card-image">
+        {% if course.thumbnail %}
+            <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+        {% else %}
+            <span>{{ course.category.icon|default:'📚' }}</span>
+        {% endif %}
+        {% if course.level %}
+            <span class="badge badge-teal course-level">{{ course.get_level_display }}</span>
+        {% endif %}
+    </div>
+    <div class="course-card-body">
+        {% if course.category %}
+            <div class="course-card-category">{{ course.category.name }}</div>
+        {% endif %}
+        <h3 class="course-card-title">
+            <a href="{{ course.get_absolute_url }}">{{ course.title }}</a>
+        </h3>
+        <p class="course-card-instructor">
+            👨‍🏫 {{ course.instructor.full_name }}
+        </p>
+        <div class="course-card-meta">
+            <span class="course-price {% if course.price == 0 %}free{% endif %}">
+                {% if course.price == 0 %}
+                    Free
+                {% else %}
+                    TZS {{ course.price|floatformat:0 }}
+                {% endif %}
+            </span>
+            <span class="course-duration">
+                ⏱️ {{ course.duration_weeks }} weeks
+            </span>
+        </div>
+    </div>
+</div>

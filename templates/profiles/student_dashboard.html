@@ -1,0 +1,405 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - CourseCart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard-saas.css' %}">
+<style>
+    /* ============================================
+       STUDENT DASHBOARD - RESPONSIVE ENHANCEMENTS
+       ============================================ */
+    
+    /* KPI Grid - Responsive */
+    .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-2);
+        margin-bottom: var(--space-4);
+    }
+    @media (min-width: 480px) { .kpi-grid { gap: var(--space-3); } }
+    @media (min-width: 768px) { .kpi-grid { grid-template-columns: repeat(4, 1fr); gap: var(--space-4); margin-bottom: var(--space-6); } }
+    
+    .kpi-card {
+        padding: var(--space-3);
+    }
+    @media (min-width: 480px) { .kpi-card { padding: var(--space-4); } }
+    @media (min-width: 768px) { .kpi-card { padding: var(--space-5); } }
+    
+    .kpi-card .kpi-icon {
+        width: 32px; height: 32px; border-radius: var(--radius-md); font-size: 16px;
+    }
+    @media (min-width: 480px) { .kpi-card .kpi-icon { width: 36px; height: 36px; font-size: 18px; } }
+    @media (min-width: 768px) { .kpi-card .kpi-icon { width: 40px; height: 40px; border-radius: var(--radius-lg); font-size: 20px; } }
+    
+    .kpi-card .kpi-value {
+        font-size: 22px; font-weight: 800;
+    }
+    @media (min-width: 480px) { .kpi-card .kpi-value { font-size: 24px; } }
+    @media (min-width: 768px) { .kpi-card .kpi-value { font-size: 28px; } }
+    
+    .kpi-card .kpi-label {
+        font-size: 10px;
+    }
+    @media (min-width: 480px) { .kpi-card .kpi-label { font-size: 11px; } }
+    @media (min-width: 768px) { .kpi-card .kpi-label { font-size: 12px; } }
+    
+    .kpi-card .kpi-trend {
+        font-size: 10px; padding: 1px 6px;
+    }
+    @media (min-width: 480px) { .kpi-card .kpi-trend { font-size: 11px; padding: 2px 8px; } }
+    
+    /* Page Header - Responsive */
+    .page-header {
+        flex-direction: column;
+        gap: var(--space-3);
+    }
+    @media (min-width: 480px) { .page-header { flex-direction: row; align-items: flex-start; } }
+    
+    .page-header h1 {
+        font-size: 20px;
+    }
+    @media (min-width: 480px) { .page-header h1 { font-size: 22px; } }
+    @media (min-width: 768px) { .page-header h1 { font-size: 24px; } }
+    
+    .page-header p {
+        font-size: 12px;
+    }
+    @media (min-width: 480px) { .page-header p { font-size: 13px; } }
+    @media (min-width: 768px) { .page-header p { font-size: 14px; } }
+    
+    .page-actions {
+        width: 100%;
+    }
+    @media (min-width: 480px) { .page-actions { width: auto; } }
+    .page-actions .btn {
+        width: 100%; justify-content: center;
+    }
+    @media (min-width: 480px) { .page-actions .btn { width: auto; } }
+    
+    /* Section Card - Responsive */
+    .section-card-header {
+        flex-wrap: wrap;
+        gap: var(--space-2);
+        padding: var(--space-3) var(--space-4);
+    }
+    @media (min-width: 480px) { .section-card-header { padding: var(--space-4) var(--space-5); } }
+    @media (min-width: 768px) { .section-card-header { padding: var(--space-5) var(--space-6); } }
+    
+    .section-card-header h2 {
+        font-size: 14px;
+    }
+    @media (min-width: 480px) { .section-card-header h2 { font-size: 15px; } }
+    @media (min-width: 768px) { .section-card-header h2 { font-size: 16px; } }
+    
+    .section-card-body {
+        padding: var(--space-3);
+    }
+    @media (min-width: 480px) { .section-card-body { padding: var(--space-4); } }
+    @media (min-width: 768px) { .section-card-body { padding: var(--space-6); } }
+    
+    /* Enrollment Item - Responsive */
+    .enrollment-item {
+        flex-wrap: wrap;
+        gap: var(--space-3);
+        padding: var(--space-3);
+    }
+    @media (min-width: 480px) { .enrollment-item { gap: var(--space-4); padding: var(--space-4); } }
+    @media (min-width: 768px) { .enrollment-item { flex-wrap: nowrap; } }
+    
+    .enroll-thumb {
+        width: 48px; height: 36px;
+    }
+    @media (min-width: 480px) { .enroll-thumb { width: 52px; height: 38px; } }
+    @media (min-width: 768px) { .enroll-thumb { width: 56px; height: 40px; } }
+    
+    .enroll-info {
+        flex: 1; min-width: 140px;
+    }
+    
+    .enroll-title {
+        font-size: 13px;
+    }
+    @media (min-width: 480px) { .enroll-title { font-size: 14px; } }
+    
+    .enroll-meta {
+        font-size: 11px; gap: var(--space-2);
+    }
+    @media (min-width: 480px) { .enroll-meta { font-size: 12px; gap: var(--space-3); } }
+    
+    .enroll-progress-mini {
+        width: 100%;
+    }
+    @media (min-width: 768px) { .enroll-progress-mini { width: 120px; } }
+    
+    .enroll-action {
+        width: 100%;
+    }
+    @media (min-width: 768px) { .enroll-action { width: auto; flex-shrink: 0; } }
+    
+    .enroll-action .btn {
+        width: 100%; justify-content: center;
+    }
+    @media (min-width: 768px) { .enroll-action .btn { width: auto; } }
+    
+    /* Badge Status */
+    .badge-status {
+        padding: 1px 6px; font-size: 10px;
+    }
+    @media (min-width: 480px) { .badge-status { padding: 1px 8px; font-size: 11px; } }
+    
+    /* Empty State */
+    .empty-state {
+        padding: var(--space-6) var(--space-3);
+    }
+    @media (min-width: 480px) { .empty-state { padding: var(--space-8) var(--space-4); } }
+    @media (min-width: 768px) { .empty-state { padding: var(--space-12) var(--space-6); } }
+    
+    .empty-state .empty-icon {
+        font-size: 36px; margin-bottom: var(--space-3);
+    }
+    @media (min-width: 480px) { .empty-state .empty-icon { font-size: 42px; } }
+    @media (min-width: 768px) { .empty-state .empty-icon { font-size: 48px; margin-bottom: var(--space-4); } }
+    
+    .empty-state h3 {
+        font-size: 14px;
+    }
+    @media (min-width: 480px) { .empty-state h3 { font-size: 15px; } }
+    @media (min-width: 768px) { .empty-state h3 { font-size: 16px; } }
+    
+    .empty-state p {
+        font-size: 12px;
+    }
+    @media (min-width: 480px) { .empty-state p { font-size: 13px; } }
+    @media (min-width: 768px) { .empty-state p { font-size: 14px; } }
+    
+    /* Dash Content Spacing */
+    .dash-content {
+        padding: var(--space-3);
+    }
+    @media (min-width: 480px) { .dash-content { padding: var(--space-4); } }
+    @media (min-width: 768px) { .dash-content { padding: var(--space-6); } }
+    
+    /* Progress bar */
+    .progress-bar-sm {
+        height: 3px;
+    }
+    @media (min-width: 480px) { .progress-bar-sm { height: 4px; } }
+    
+    .progress-label {
+        font-size: 10px;
+    }
+    @media (min-width: 480px) { .progress-label { font-size: 11px; } }
+    
+    /* Header */
+    .dash-header {
+        height: 52px; padding: 0 var(--space-3);
+    }
+    @media (min-width: 480px) { .dash-header { height: 56px; padding: 0 var(--space-4); } }
+    @media (min-width: 768px) { .dash-header { height: var(--header-height, 64px); padding: 0 var(--space-6); } }
+    
+    .dash-breadcrumb {
+        font-size: 12px;
+    }
+    @media (min-width: 480px) { .dash-breadcrumb { font-size: 13px; } }
+    @media (min-width: 768px) { .dash-breadcrumb { font-size: 14px; } }
+    
+    /* Buttons */
+    .btn-sm {
+        padding: 5px 10px; font-size: 12px;
+    }
+    @media (min-width: 480px) { .btn-sm { padding: 6px 12px; font-size: 13px; } }
+    
+    .btn-lg {
+        padding: 8px 16px; font-size: 14px;
+    }
+    @media (min-width: 480px) { .btn-lg { padding: 10px 20px; font-size: 15px; } }
+    
+    @media (max-width: 360px) {
+        .kpi-grid { grid-template-columns: 1fr 1fr; gap: var(--space-1); }
+        .kpi-card { padding: var(--space-2); }
+        .kpi-card .kpi-value { font-size: 18px; }
+        .kpi-card .kpi-label { font-size: 9px; }
+        .enrollment-item { padding: var(--space-2); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dash-layout">
+    <!-- OVERLAY -->
+    <div class="dash-overlay" id="dashOverlay" onclick="closeSidebar()"></div>
+    
+    <!-- SIDEBAR -->
+    {% include 'includes/dash_sidebar_student.html' %}
+    
+    <!-- MAIN -->
+    <div class="dash-main">
+        <!-- HEADER -->
+        <header class="dash-header">
+            <div class="dash-header-left">
+                <button class="btn-hamburger" onclick="toggleSidebar()" aria-label="Toggle menu">☰</button>
+                <div class="dash-breadcrumb">Dashboard</div>
+            </div>
+            <div class="dash-header-right">
+                <a href="{% url 'notifications:notification_list' %}" class="btn-header" style="position:relative;" aria-label="Notifications">
+                    🔔
+                    {% if has_unread_notifications %}<span class="badge-dot"></span>{% endif %}
+                </a>
+                <div class="dash-user-avatar">{{ user.full_name|slice:":1"|upper }}</div>
+            </div>
+        </header>
+        
+        <!-- CONTENT -->
+        <div class="dash-content">
+            <!-- PAGE HEADER -->
+            <div class="page-header">
+                <div>
+                    <h1>Welcome back, {{ user.full_name }} 👋</h1>
+                    <p>Track your learning progress</p>
+                </div>
+                <div class="page-actions">
+                    <a href="{% url 'courses:course_list' %}" class="btn btn-primary">🔍 Browse Courses</a>
+                </div>
+            </div>
+            
+            <!-- KPI ROW -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-icon teal">📚</div>
+                        <span class="kpi-trend up">Active</span>
+                    </div>
+                    <div class="kpi-value">{{ active_enrollments.count|default:0 }}</div>
+                    <div class="kpi-label">Active Courses</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-icon green">🏆</div>
+                    </div>
+                    <div class="kpi-value">{{ completed_enrollments.count|default:0 }}</div>
+                    <div class="kpi-label">Completed</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-icon amber">📊</div>
+                        <span class="kpi-trend up">Progress</span>
+                    </div>
+                    <div class="kpi-value">{{ profile.completion_rate|default:'0' }}%</div>
+                    <div class="kpi-label">Completion Rate</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-icon blue">📜</div>
+                    </div>
+                    <div class="kpi-value">{{ completed_enrollments.count|default:0 }}</div>
+                    <div class="kpi-label">Certificates Earned</div>
+                </div>
+            </div>
+            
+            <!-- ACTIVE COURSES -->
+            <div class="section-card">
+                <div class="section-card-header">
+                    <h2>📚 Active Courses</h2>
+                    <a href="{% url 'courses:course_list' %}" class="btn btn-outline btn-sm">Browse All</a>
+                </div>
+                <div class="section-card-body">
+                    {% if active_enrollments %}
+                    <div class="enrollment-list">
+                        {% for enrollment in active_enrollments %}
+                        <div class="enrollment-item">
+                            <div class="enroll-thumb">
+                                {% if enrollment.course.thumbnail %}
+                                <img src="{{ enrollment.course.thumbnail.url }}" alt="{{ enrollment.course.title }}" loading="lazy">
+                                {% else %}
+                                {{ enrollment.course.category.icon|default:'📖' }}
+                                {% endif %}
+                            </div>
+                            <div class="enroll-info">
+                                <div class="enroll-title">{{ enrollment.course.title }}</div>
+                                <div class="enroll-meta">
+                                    <span>👨‍🏫 {{ enrollment.course.instructor.full_name }}</span>
+                                    {% if enrollment.payment_status == 'completed' %}
+                                    <span class="badge-status paid">✅ Paid</span>
+                                    {% elif enrollment.payment_status == 'pending' %}
+                                    <span class="badge-status pending">⏳ Pending</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="enroll-progress-mini">
+                                {% if enrollment.payment_status == 'completed' %}
+                                <div class="progress-label">
+                                    <span>Progress</span><span>{{ enrollment.progress_percentage }}%</span>
+                                </div>
+                                <div class="progress-bar-sm">
+                                    <div class="progress-fill-sm" style="width:{{ enrollment.progress_percentage }}%"></div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="enroll-action">
+                                {% if enrollment.payment_status == 'completed' %}
+                                {% with first_lesson=enrollment.course.lessons.first %}
+                                {% if first_lesson %}
+                                <a href="{% url 'courses:lesson_view' course_slug=enrollment.course.slug lesson_pk=first_lesson.pk %}" class="btn btn-primary btn-sm">📚 Continue</a>
+                                {% endif %}
+                                {% endwith %}
+                                {% elif enrollment.payment_status == 'pending' %}
+                                <a href="{% url 'payments:checkout' enrollment.id %}" class="btn btn-warm btn-sm">💰 Pay TZS {{ enrollment.course.price|floatformat:0 }}</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="empty-state">
+                        <span class="empty-icon">📭</span>
+                        <h3>No Active Courses</h3>
+                        <p>Start your learning journey today</p>
+                        <a href="{% url 'courses:course_list' %}" class="btn btn-primary">Browse Courses</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function() {
+    'use strict';
+    var sidebar = document.getElementById('dashSidebar');
+    var overlay = document.getElementById('dashOverlay');
+    
+    window.toggleSidebar = function() {
+        if (!sidebar || !overlay) return;
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('show');
+        document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
+    };
+    
+    window.closeSidebar = function() {
+        if (!sidebar || !overlay) return;
+        sidebar.classList.remove('open');
+        overlay.classList.remove('show');
+        document.body.style.overflow = '';
+    };
+    
+    // Close on escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeSidebar();
+    });
+    
+    // Close on overlay click
+    if (overlay) {
+        overlay.addEventListener('click', closeSidebar);
+    }
+    
+    // Close sidebar on window resize to desktop
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) closeSidebar();
+    });
+})();
+</script>
+{% endblock %}

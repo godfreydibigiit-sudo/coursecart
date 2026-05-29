@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CourseCart - User Manual</title>
+    <style>
+        :root {
+            --teal: #0D9488;
+            --teal-light: #CCFBF1;
+            --amber: #F59E0B;
+            --white: #FFFFFF;
+            --gray-50: #F8FAFC;
+            --gray-100: #F1F5F9;
+            --gray-200: #E2E8F0;
+            --gray-600: #475569;
+            --gray-800: #1E293B;
+            --radius: 12px;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: var(--gray-800);
+            background: var(--gray-50);
+            line-height: 1.6;
+        }
+        
+        /* Header */
+        .manual-header {
+            background: linear-gradient(135deg, #0F172A, #0F766E);
+            color: white;
+            padding: 3rem 1rem;
+            text-align: center;
+        }
+        .manual-header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+        .manual-header p { opacity: 0.8; font-size: 1.1rem; }
+        
+        /* Container */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        
+        /* Table of Contents */
+        .toc {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin: -2rem auto 2rem;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            max-width: 900px;
+        }
+        .toc h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--teal);
+        }
+        .toc-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+        @media (max-width: 600px) { .toc-list { grid-template-columns: 1fr; } }
+        .toc-list a {
+            display: block;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            color: var(--gray-600);
+            text-decoration: none;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+        .toc-list a:hover {
+            background: var(--teal-light);
+            color: var(--teal);
+        }
+        
+        /* Section */
+        .section {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--gray-200);
+        }
+        .section h2 {
+            font-size: 1.35rem;
+            color: var(--teal);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--gray-100);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .section h3 {
+            font-size: 1.1rem;
+            margin: 1.25rem 0 0.5rem;
+            color: var(--gray-800);
+        }
+        .section p { margin-bottom: 0.75rem; color: var(--gray-600); }
+        
+        /* Steps */
+        .steps { list-style: none; counter-reset: step; }
+        .steps li {
+            counter-increment: step;
+            padding: 0.75rem 0.75rem 0.75rem 3rem;
+            position: relative;
+            margin-bottom: 0.5rem;
+            background: var(--gray-50);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: var(--gray-600);
+        }
+        .steps li::before {
+            content: counter(step);
+            position: absolute;
+            left: 0.75rem;
+            top: 0.75rem;
+            width: 28px; height: 28px;
+            background: var(--teal);
+            color: white;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.8rem;
+        }
+        
+        /* Role Cards */
+        .role-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        @media (max-width: 600px) { .role-cards { grid-template-columns: 1fr; } }
+        .role-card {
+            padding: 1.25rem;
+            border-radius: var(--radius);
+            border: 2px solid var(--gray-200);
+            text-align: center;
+        }
+        .role-card.student { border-color: var(--teal); background: var(--teal-light); }
+        .role-card.instructor { border-color: var(--amber); background: #FFFBEB; }
+        .role-card .icon { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
+        .role-card strong { display: block; font-size: 1rem; margin-bottom: 0.25rem; }
+        .role-card p { font-size: 0.85rem; color: var(--gray-600); }
+        
+        /* Tips */
+        .tip {
+            background: #FFFBEB;
+            border-left: 4px solid var(--amber);
+            padding: 0.75rem 1rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+            color: #92400E;
+        }
+        .tip strong { color: #B45309; }
+        
+        /* URLs */
+        .url-box {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: var(--teal);
+            word-break: break-all;
+            margin: 0.5rem 0;
+        }
+        
+        /* Back to Top */
+        .back-top {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            width: 44px; height: 44px;
+            background: var(--teal);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            opacity: 0;
+            visibility: hidden;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .back-top.visible { opacity: 1; visibility: visible; }
+        .back-top:hover { background: #0F766E; transform: translateY(-2px); }
+        
+        /* Print */
+        @media print {
+            .back-top { display: none; }
+            body { background: white; }
+            .section { break-inside: avoid; box-shadow: none; border: 1px solid #ddd; }
+            .manual-header { background: var(--teal) !important; }
+        }
+        
+        /* Footer */
+        .manual-footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray-600);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="manual-header">
+    <h1>📚 CourseCart User Manual</h1>
+    <p>Online Vocational Skills Training Platform</p>
+    <p style="margin-top:0.5rem;font-size:0.9rem;">Version 1.0 • May 2026</p>
+</header>
+
+<!-- Table of Contents -->
+<div class="container">
+    <div class="toc">
+        <h2>📑 Table of Contents</h2>
+        <ul class="toc-list">
+            <li><a href="#overview">1. Overview</a></li>
+            <li><a href="#getting-started">2. Getting Started</a></li>
+            <li><a href="#roles">3. User Roles</a></li>
+            <li><a href="#student-guide">4. Student Guide</a></li>
+            <li><a href="#instructor-guide">5. Instructor Guide</a></li>
+            <li><a href="#payments">6. Payments</a></li>
+            <li><a href="#notifications">7. Notifications</a></li>
+            <li><a href="#support">8. Support</a></li>
+        </ul>
+    </div>
+</div>
+
+<!-- Content -->
+<div class="container">
+
+    <!-- 1. Overview -->
+    <div class="section" id="overview">
+        <h2>📖 1. Overview</h2>
+        <p>CourseCart is an online platform that connects Tanzanian youth with affordable vocational skills training. Students can enroll in courses like <strong>Plumbing, Electrical Installation, Tailoring, Carpentry, Welding</strong>, and more.</p>
+        <p>Courses include video lessons, PDF documents, and certificates upon completion — all accessible from any device.</p>
+        <div class="url-box">🌐 Platform URL: http://127.0.0.1:8000/</div>
+    </div>
+
+    <!-- 2. Getting Started -->
+    <div class="section" id="getting-started">
+        <h2>🚀 2. Getting Started</h2>
+        <h3>Create an Account</h3>
+        <ol class="steps">
+            <li>Visit the CourseCart website</li>
+            <li>Click <strong>"Get Started"</strong> or <strong>"Register as Student"</strong></li>
+            <li>Fill in your full name, email, and password</li>
+            <li>Choose your role: <strong>Student</strong> or <strong>Instructor</strong></li>
+            <li>Click <strong>"Create Account"</strong></li>
+        </ol>
+        
+        <h3>Login</h3>
+        <ol class="steps">
+            <li>Click <strong>"Login"</strong> on the navigation bar</li>
+            <li>Enter your email and password</li>
+            <li>You'll be redirected to your dashboard</li>
+        </ol>
+    </div>
+
+    <!-- 3. User Roles -->
+    <div class="section" id="roles">
+        <h2>👥 3. User Roles</h2>
+        <div class="role-cards">
+            <div class="role-card student">
+                <span class="icon">🎓</span>
+                <strong>Student</strong>
+                <p>Browse courses, enroll, pay, learn, and earn certificates</p>
+            </div>
+            <div class="role-card instructor">
+                <span class="icon">👨‍🏫</span>
+                <strong>Instructor</strong>
+                <p>Create courses, add lessons, manage students, issue certificates</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Student Guide -->
+    <div class="section" id="student-guide">
+        <h2>🎓 4. Student Guide</h2>
+        
+        <h3>Browse Courses</h3>
+        <ol class="steps">
+            <li>Click <strong>"Browse Courses"</strong> in the navigation bar</li>
+            <li>Use the search bar or category filters to find courses</li>
+            <li>Click on a course card to view details</li>
+        </ol>
+        
+        <h3>Enroll in a Course</h3>
+        <ol class="steps">
+            <li>On the course detail page, click <strong>"Enroll Now"</strong></li>
+            <li>If the course is free, you'll be enrolled immediately</li>
+            <li>If paid, you'll be redirected to the payment page</li>
+        </ol>
+        
+        <h3>Complete Payment</h3>
+        <ol class="steps">
+            <li>Select your payment method (Mobile Money, Bank Card, or Cash)</li>
+            <li>Enter required details and click <strong>"Pay TZS [amount]"</strong></li>
+            <li>Wait for the simulated payment to process</li>
+            <li>On success, you'll have access to all lessons</li>
+        </ol>
+        
+        <h3>Access Lessons</h3>
+        <ol class="steps">
+            <li>Go to <strong>"My Courses"</strong> from your dashboard</li>
+            <li>Click <strong>"Continue"</strong> on the course</li>
+            <li>Watch videos, read PDFs, and study notes</li>
+            <li>Click <strong>"Mark Complete"</strong> after finishing each lesson</li>
+        </ol>
+        
+        <h3>Track Progress</h3>
+        <p>Your dashboard shows active courses with progress percentages. A completion bar fills as you finish lessons. When you reach <strong>100%</strong>, you've completed the course!</p>
+        
+        <div class="tip">
+            <strong>💡 Tip:</strong> Download PDF documents for offline study using the <strong>"Download PDF"</strong> button on lesson pages.
+        </div>
+    </div>
+
+    <!-- 5. Instructor Guide -->
+    <div class="section" id="instructor-guide">
+        <h2>👨‍🏫 5. Instructor Guide</h2>
+        
+        <h3>Create a Course</h3>
+        <ol class="steps">
+            <li>From your dashboard, click <strong>"Create New Course"</strong></li>
+            <li>Fill in the course title, category, description, and price</li>
+            <li>Upload a thumbnail image for your course</li>
+            <li>Set duration, level, and certificate availability</li>
+            <li>Click <strong>"Publish Course"</strong></li>
+        </ol>
+        
+        <h3>Add Lessons</h3>
+        <ol class="steps">
+            <li>Go to <strong>"My Courses"</strong> and click <strong>"Manage"</strong> on a course</li>
+            <li>Click <strong>"Add Lesson"</strong></li>
+            <li>Choose lesson type: <strong>YouTube Video, PDF Document, Upload Video, or Text/Notes</strong></li>
+            <li>Fill in the lesson title, content, and duration</li>
+            <li>Click <strong>"Add Lesson"</strong></li>
+        </ol>
+        
+        <h3>Manage Students</h3>
+        <ol class="steps">
+            <li>On the course management page, view enrolled students</li>
+            <li>Track their progress and completion status</li>
+            <li>Certificates are issued automatically upon completion</li>
+        </ol>
+        
+        <div class="tip">
+            <strong>💡 Tip:</strong> Use YouTube videos for easy hosting. Upload PDF notes for supplementary reading material. Set the first lesson as <strong>"Free Preview"</strong> to attract students.
+        </div>
+    </div>
+
+    <!-- 6. Payments -->
+    <div class="section" id="payments">
+        <h2>💰 6. Payments</h2>
+        <p>CourseCart supports three payment methods:</p>
+        <ul style="margin: 0.5rem 0 0.5rem 1.5rem; color: var(--gray-600);">
+            <li><strong>📱 Mobile Money</strong> — M-Pesa, Tigo Pesa, Airtel Money</li>
+            <li><strong>💳 Bank Card</strong> — Visa, Mastercard</li>
+            <li><strong>💵 Cash Payment</strong> — Pay at authorized agents</li>
+        </ul>
+        <p>All payments are <strong>simulated</strong> for testing. In production, real payment gateways will be integrated.</p>
+        <p>View your payment history from the sidebar under <strong>"Payment History"</strong>.</p>
+    </div>
+
+    <!-- 7. Notifications -->
+    <div class="section" id="notifications">
+        <h2>🔔 7. Notifications</h2>
+        <p>You'll receive notifications for:</p>
+        <ul style="margin: 0.5rem 0 0.5rem 1.5rem; color: var(--gray-600);">
+            <li>✅ Successful payments and enrollments</li>
+            <li>📚 New enrollments (for instructors)</li>
+            <li>📜 Certificate issuance</li>
+            <li>⚠️ Payment failures</li>
+        </ul>
+        <p>Click the <strong>🔔 bell icon</strong> in the navigation bar to view all notifications. Unread notifications are highlighted with a blue dot.</p>
+    </div>
+
+    <!-- 8. Support -->
+    <div class="section" id="support">
+        <h2>📞 8. Support</h2>
+        <p>If you encounter any issues or have questions:</p>
+        <ul style="margin: 0.5rem 0 0.5rem 1.5rem; color: var(--gray-600);">
+            <li>📧 Email: <strong>support@coursecart.co.tz</strong></li>
+            <li>📱 Phone: <strong>+255 777 67 5021</strong></li>
+            <li>📍 Location: Dar es Salaam, Tanzania</li>
+        </ul>
+        
+        <h3>Frequently Asked Questions</h3>
+        <p><strong>Q: How do I reset my password?</strong><br>
+        A: Currently, contact support for password resets. Self-service reset is coming soon.</p>
+        
+        <p><strong>Q: Can I get a refund?</strong><br>
+        A: Refund policies vary by course. Contact support for assistance.</p>
+        
+        <p><strong>Q: How long do I have access to a course?</strong><br>
+        A: You have <strong>lifetime access</strong> to all enrolled courses.</p>
+    </div>
+
+</div>
+
+<!-- Footer -->
+<div class="manual-footer">
+    <p>© 2026 CourseCart. All rights reserved. Made with ❤️ in Tanzania.</p>
+</div>
+
+<!-- Back to Top Button -->
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
+
+<script>
+    // Back to Top visibility
+    const backTop = document.getElementById('backTop');
+    
+    window.addEventListener('scroll', function() {
+        backTop.classList.toggle('visible', window.scrollY > 300);
+    });
+    
+    // Smooth scroll for TOC links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                // Highlight briefly
+                target.style.boxShadow = '0 0 0 3px var(--teal)';
+                setTimeout(() => target.style.boxShadow = '', 1500);
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

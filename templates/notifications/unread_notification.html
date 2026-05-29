@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Unread Notifications - CourseCart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    .notifications-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .notifications-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--spacing-xl);
+        flex-wrap: wrap;
+        gap: var(--spacing-md);
+    }
+    
+    .notification-item {
+        background-color: var(--white);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--gray-200);
+        border-left: 4px solid var(--teal-500);
+        padding: var(--spacing-lg);
+        display: flex;
+        gap: var(--spacing-md);
+        cursor: pointer;
+        transition: all var(--transition-base);
+        margin-bottom: var(--spacing-md);
+        text-decoration: none;
+        color: inherit;
+        background-color: var(--teal-50);
+    }
+    
+    .notification-item:hover {
+        box-shadow: var(--shadow-md);
+        border-color: var(--teal-300);
+        background-color: var(--white);
+        transform: translateX(4px);
+    }
+    
+    .notification-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+    
+    .notification-icon.info { background-color: var(--info-light); }
+    .notification-icon.success { background-color: var(--success-light); }
+    .notification-icon.warning { background-color: var(--warning-light); }
+    .notification-icon.error { background-color: var(--error-light); }
+    .notification-icon.payment { background-color: #E0E7FF; }
+    .notification-icon.enrollment { background-color: #FCE7F3; }
+    .notification-icon.certificate { background-color: #FEF3C7; }
+    .notification-icon.course_update { background-color: #D1FAE5; }
+    
+    .notification-content {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .notification-title {
+        font-weight: 600;
+        font-size: 0.9375rem;
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+    }
+    
+    .unread-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: var(--teal-500);
+        flex-shrink: 0;
+    }
+    
+    .notification-message {
+        font-size: 0.875rem;
+        color: var(--gray-500);
+        line-height: 1.5;
+    }
+    
+    .notification-time {
+        font-size: 0.75rem;
+        color: var(--gray-400);
+        margin-top: var(--spacing-sm);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <div class="dashboard-content" style="padding-top: var(--spacing-xl);">
+        <div class="container">
+            <div class="notifications-container">
+                <div class="notifications-header">
+                    <div>
+                        <h1>🔔 Unread Notifications</h1>
+                        <p style="color: var(--gray-500);">{{ notifications.count }} unread notification{{ notifications.count|pluralize }}</p>
+                    </div>
+                    <div style="display: flex; gap: var(--spacing-sm);">
+                        <form method="post" action="{% url 'notifications:mark_all_read' %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-primary">✅ Mark All Read</button>
+                        </form>
+                        <a href="{% url 'notifications:notification_list' %}" class="btn btn-sm btn-outline">View All</a>
+                    </div>
+                </div>
+                
+                {% if notifications %}
+                <div class="notification-list">
+                    {% for notification in notifications %}
+                    <a href="{% url 'notifications:navigate_notification' notification.id %}" 
+                       class="notification-item"
+                       onclick="event.preventDefault(); markAndNavigate(this, '{% url 'notifications:navigate_notification' notification.id %}')">
+                        <div class="notification-icon {{ notification.notification_type }}">
+                            {% if notification.notification_type == 'success' %}✅
+                            {% elif notification.notification_type == 'error' %}❌
+                            {% elif notification.notification_type == 'warning' %}⚠️
+                            {% elif notification.notification_type == 'payment' %}💳
+                            {% elif notification.notification_type == 'enrollment' %}📚
+                            {% elif notification.notification_type == 'certificate' %}📜
+                            {% elif notification.notification_type == 'course_update' %}📝
+                            {% else %}ℹ️{% endif %}
+                        </div>
+                        <div class="notification-content">
+                            <div class="notification-title">
+                                <span class="unread-dot"></span>
+                                {{ notification.title }}
+                            </div>
+                            <div class="notification-message">{{ notification.message|truncatechars:150 }}</div>
+                            <div class="notification-time">{{ notification.created_at|timesince }} ago</div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state" style="padding: var(--spacing-3xl);">
+                    <div class="empty-state-icon">🎉</div>
+                    <h3 class="empty-state-title">All Caught Up!</h3>
+                    <p class="empty-state-text">You have no unread notifications.</p>
+                    <a href="{% url 'notifications:notification_list' %}" class="btn btn-primary">View All Notifications</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function markAndNavigate(element, url) {
+    window.location.href = url;
+}
+</script>
+{% endblock %}

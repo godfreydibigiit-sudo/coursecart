@@ -1,0 +1,298 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ lesson.title }} - {{ lesson.course.title }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard-saas.css' %}">
+<style>
+    .lesson-container { max-width: 1100px; margin: 0 auto; }
+    
+    .lesson-layout {
+        display: grid; grid-template-columns: 1fr; gap: var(--space-6);
+    }
+    @media (min-width: 900px) { .lesson-layout { grid-template-columns: 1fr 340px; } }
+    
+    /* Video Player */
+    .video-player-card {
+        background: #000; border-radius: var(--radius-xl); overflow: hidden;
+        box-shadow: var(--shadow-xl); margin-bottom: var(--space-4);
+    }
+    
+    .video-wrapper {
+        position: relative; padding-bottom: 56.25%; height: 0; background: #0a0a0a;
+    }
+    
+    .video-wrapper iframe,
+    .video-wrapper video {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;
+    }
+    
+    /* Video overlay play button for uploaded videos */
+    .video-wrapper video {
+        cursor: pointer;
+    }
+    
+    .video-info-bar {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 10px 16px; background: #1a1a2e; color: rgba(255,255,255,0.8);
+        font-size: 12px; flex-wrap: wrap; gap: 8px;
+    }
+    @media (min-width: 480px) { .video-info-bar { padding: 12px 20px; font-size: 13px; } }
+    
+    /* PDF Hero */
+    .pdf-hero {
+        background: linear-gradient(135deg, #f8fafc, #fff, #fef3c7);
+        padding: 32px; text-align: center; border-radius: var(--radius-xl);
+        border: 1px solid var(--gray-200); margin-bottom: var(--space-4);
+    }
+    @media (min-width: 480px) { .pdf-hero { padding: 48px; } }
+    
+    .pdf-icon-wrap {
+        width: 80px; height: 100px; background: linear-gradient(135deg, #ef4444, #dc2626);
+        border-radius: 12px; display: flex; align-items: center;
+        justify-content: center; margin: 0 auto 16px;
+        box-shadow: 0 8px 24px rgba(239,68,68,0.3); position: relative;
+    }
+    .pdf-icon-wrap span { font-size: 36px; color: white; font-weight: 700; }
+    
+    /* Content Card */
+    .content-block {
+        background: var(--white); border-radius: var(--radius-xl);
+        border: 1px solid var(--gray-200); padding: 24px; margin-bottom: var(--space-4);
+    }
+    @media (min-width: 480px) { .content-block { padding: 32px; } }
+    
+    .content-block h1 { font-size: 20px; font-weight: 700; color: var(--gray-900); margin-bottom: 8px; }
+    @media (min-width: 480px) { .content-block h1 { font-size: 22px; } }
+    
+    .meta-row {
+        display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px;
+        color: var(--gray-400); margin-bottom: 16px; padding-bottom: 16px;
+        border-bottom: 1px solid var(--gray-100);
+    }
+    @media (min-width: 480px) { .meta-row { font-size: 13px; gap: 16px; } }
+    
+    .desc-callout {
+        background: var(--teal-50); padding: 12px 16px;
+        border-radius: 8px; border-left: 3px solid var(--teal-500);
+        margin-bottom: 16px; font-size: 13px; color: var(--teal-700);
+    }
+    @media (min-width: 480px) { .desc-callout { font-size: 14px; } }
+    
+    .notes-content { color: var(--gray-600); line-height: 1.8; font-size: 14px; }
+    @media (min-width: 480px) { .notes-content { font-size: 15px; } }
+    
+    /* Nav */
+    .nav-row {
+        display: flex; justify-content: space-between; align-items: center;
+        gap: 12px; flex-wrap: wrap; margin-bottom: var(--space-6);
+    }
+    
+    /* Playlist */
+    .playlist-item {
+        display: flex; align-items: center; gap: 12px;
+        padding: 10px 12px; border-radius: 8px;
+        text-decoration: none; color: inherit; transition: all 0.15s;
+        border: 1px solid transparent;
+    }
+    @media (min-width: 480px) { .playlist-item { padding: 12px 16px; } }
+    .playlist-item:hover { background: var(--gray-50); border-color: var(--gray-200); }
+    .playlist-item.active { background: var(--teal-50); border-color: var(--teal-300); }
+    
+    .pl-num {
+        width: 32px; height: 32px; border-radius: 50%; display: flex;
+        align-items: center; justify-content: center; font-weight: 700;
+        font-size: 12px; flex-shrink: 0;
+    }
+    .pl-num.default { background: var(--gray-200); color: var(--gray-600); }
+    .pl-num.active-num { background: var(--teal-600); color: white; }
+    .pl-info { flex: 1; min-width: 0; }
+    .pl-title { font-weight: 500; font-size: 13px; color: var(--gray-800); }
+    @media (min-width: 480px) { .pl-title { font-size: 14px; } }
+    .pl-meta { font-size: 11px; color: var(--gray-400); margin-top: 1px; }
+    
+    @media (max-width: 480px) {
+        .content-block { padding: 16px; }
+        .pdf-hero { padding: 24px; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dash-layout">
+    <div class="dash-overlay" id="dashOverlay" onclick="closeSidebar()"></div>
+    {% include 'includes/dash_sidebar_student.html' %}
+    
+    <div class="dash-main">
+        <header class="dash-header">
+            <div class="dash-header-left">
+                <button class="btn-hamburger" onclick="toggleSidebar()">☰</button>
+                <div class="dash-breadcrumb">
+                    <a href="{% url 'courses:my_enrollments' %}" style="color:var(--gray-400);text-decoration:none;">My Courses</a> › 
+                    <a href="{% url 'courses:course_detail' lesson.course.slug %}" style="color:var(--gray-400);text-decoration:none;">{{ lesson.course.title|truncatechars:20 }}</a> › 
+                    <span>Lesson {{ lesson.order }}</span>
+                </div>
+            </div>
+            <div class="dash-header-right">
+                <div class="dash-user-avatar">{{ user.full_name|slice:":1"|upper }}</div>
+            </div>
+        </header>
+        
+        <div class="dash-content">
+            <div class="lesson-container">
+                <div class="lesson-layout">
+                    
+                    <!-- MAIN CONTENT -->
+                    <div>
+                        
+                        <!-- ========== YOUTUBE VIDEO ========== -->
+                        {% if lesson.youtube_url %}
+                        <div class="video-player-card">
+                            <div class="video-wrapper">
+                                <iframe 
+                                    src="{{ lesson.get_youtube_embed_url }}"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                    allowfullscreen
+                                    referrerpolicy="strict-origin-when-cross-origin"
+                                    loading="lazy"
+                                    title="{{ lesson.title }}">
+                                </iframe>
+                            </div>
+                            <div class="video-info-bar">
+                                <span>▶️ {{ lesson.title }}</span>
+                                <span>⏱️ {{ lesson.duration_minutes }} min</span>
+                            </div>
+                        </div>
+                        
+                        <!-- ========== UPLOADED VIDEO ========== -->
+                        {% elif lesson.video_file %}
+                        <div class="video-player-card">
+                            <div class="video-wrapper">
+                                <video controls playsinline preload="metadata" style="width:100%;height:100%;object-fit:contain;">
+                                    <source src="{{ lesson.video_file.url }}" type="video/mp4">
+                                    <source src="{{ lesson.video_file.url }}" type="video/webm">
+                                    Your browser does not support the video tag.
+                                    <a href="{{ lesson.video_file.url }}" style="color:white;text-align:center;display:block;padding:20px;">
+                                        📥 Click here to download and watch the video
+                                    </a>
+                                </video>
+                            </div>
+                            <div class="video-info-bar">
+                                <span>🎬 {{ lesson.title }}</span>
+                                <span>⏱️ {{ lesson.duration_minutes }} min</span>
+                                <a href="{{ lesson.video_file.url }}" download style="color:var(--teal-400);text-decoration:none;font-weight:500;">📥 Download</a>
+                            </div>
+                        </div>
+                        
+                        <!-- ========== PDF DOCUMENT ========== -->
+                        {% elif lesson.pdf_file %}
+                        <div class="pdf-hero">
+                            <div class="pdf-icon-wrap"><span>PDF</span></div>
+                            <h2 style="font-size:18px;margin-bottom:8px;">{{ lesson.title }}.pdf</h2>
+                            <p style="color:var(--gray-500);margin-bottom:16px;">📄 Document/PDF • ⏱️ {{ lesson.duration_minutes }} min</p>
+                            <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+                                <a href="{{ lesson.pdf_file.url }}" target="_blank" rel="noopener" class="btn btn-primary">🔍 Open Document</a>
+                                <a href="{{ lesson.pdf_file.url }}" download class="btn btn-outline">📥 Download PDF</a>
+                            </div>
+                        </div>
+                        
+                        <!-- ========== TEXT ONLY ========== -->
+                        {% else %}
+                        <div style="background:linear-gradient(135deg,var(--gray-50),var(--white));padding:48px 24px;text-align:center;border-radius:var(--radius-xl);margin-bottom:var(--space-4);">
+                            <span style="font-size:48px;display:block;margin-bottom:8px;">📝</span>
+                            <p style="color:var(--gray-400);">Reading Lesson</p>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- ========== LESSON CONTENT ========== -->
+                        <div class="content-block">
+                            <h1>{{ lesson.title }}</h1>
+                            
+                            <div class="meta-row">
+                                <span>{{ lesson.icon }} {{ lesson.get_lesson_type_display }}</span>
+                                <span>⏱️ {{ lesson.duration_minutes }} min</span>
+                                <span>📅 {{ lesson.created_at|date:"M d, Y" }}</span>
+                                {% if lesson.pdf_file %}<span>📄 Has document</span>{% endif %}
+                            </div>
+                            
+                            {% if lesson.description %}
+                            <div class="desc-callout">{{ lesson.description }}</div>
+                            {% endif %}
+                            
+                            {% if lesson.notes %}
+                            <div class="notes-content">{{ lesson.notes|linebreaks }}</div>
+                            {% else %}
+                            <p style="color:var(--gray-400);font-style:italic;">No additional notes for this lesson.</p>
+                            {% endif %}
+                            
+                            {% if lesson.pdf_file %}
+                            <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--gray-100);display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                                <strong style="font-size:13px;">📄 Lesson Document:</strong>
+                                <a href="{{ lesson.pdf_file.url }}" target="_blank" rel="noopener" class="btn btn-primary btn-sm">Open</a>
+                                <a href="{{ lesson.pdf_file.url }}" download class="btn btn-outline btn-sm">Download PDF</a>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- ========== NAVIGATION ========== -->
+                        <div class="nav-row">
+                            <div>
+                                {% if prev_lesson %}
+                                <a href="{% url 'courses:lesson_view' course_slug=lesson.course.slug lesson_pk=prev_lesson.pk %}" class="btn btn-outline">← Previous</a>
+                                {% endif %}
+                            </div>
+                            <div style="display:flex;gap:8px;align-items:center;">
+                                {% if not is_completed %}
+                                <form method="post" action="{% url 'courses:mark_lesson_complete' course_slug=lesson.course.slug lesson_pk=lesson.pk %}" style="margin:0;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary">✅ Mark Complete</button>
+                                </form>
+                                {% else %}
+                                <span style="background:var(--success-light);color:#027A48;padding:8px 16px;border-radius:50px;font-size:13px;font-weight:600;">✅ Completed</span>
+                                {% endif %}
+                                {% if next_lesson %}
+                                <a href="{% url 'courses:lesson_view' course_slug=lesson.course.slug lesson_pk=next_lesson.pk %}" class="btn btn-primary">Next →</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- ========== SIDEBAR PLAYLIST ========== -->
+                    <div>
+                        <div class="section-card" style="position:sticky;top:80px;">
+                            <div class="section-card-header">
+                                <h2>📋 Course Lessons</h2>
+                                <span style="font-size:12px;color:var(--gray-400);">{{ all_lessons.count }} total</span>
+                            </div>
+                            <div class="section-card-body" style="padding:8px;">
+                                {% for l in all_lessons %}
+                                <a href="{% url 'courses:lesson_view' course_slug=lesson.course.slug lesson_pk=l.pk %}" 
+                                   class="playlist-item {% if l.pk == lesson.pk %}active{% endif %}">
+                                    <span class="pl-num {% if l.pk == lesson.pk %}active-num{% else %}default{% endif %}">{{ l.order }}</span>
+                                    <div class="pl-info">
+                                        <div class="pl-title">{{ l.icon }} {{ l.title }}</div>
+                                        <div class="pl-meta">{{ l.get_lesson_type_display }} • {{ l.duration_minutes }} min</div>
+                                    </div>
+                                    {% if l.pk == lesson.pk %}
+                                    <span style="background:var(--teal-100);color:var(--teal-700);padding:2px 8px;border-radius:50px;font-size:10px;font-weight:600;">Now</span>
+                                    {% endif %}
+                                </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleSidebar(){var s=document.getElementById('dashSidebar');var o=document.getElementById('dashOverlay');if(s&&o){s.classList.toggle('open');o.classList.toggle('show');}}
+function closeSidebar(){var s=document.getElementById('dashSidebar');var o=document.getElementById('dashOverlay');if(s&&o){s.classList.remove('open');o.classList.remove('show');}}
+</script>
+{% endblock %}

@@ -1,0 +1,358 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Processing Payment - CourseCart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    .simulator-container {
+        max-width: 600px;
+        margin: var(--spacing-3xl) auto;
+        text-align: center;
+    }
+    
+    .simulator-card {
+        background-color: var(--white);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-xl);
+        padding: var(--spacing-2xl);
+        border: 1px solid var(--gray-200);
+    }
+    
+    .payment-amount {
+        font-size: 3rem;
+        font-weight: 700;
+        color: var(--teal-600);
+        margin-bottom: var(--spacing-xs);
+    }
+    
+    .payment-course {
+        font-size: 1.125rem;
+        color: var(--gray-500);
+        margin-bottom: var(--spacing-xl);
+    }
+    
+    .simulation-progress {
+        margin: var(--spacing-xl) 0;
+    }
+    
+    .progress-ring {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        margin: 0 auto var(--spacing-xl);
+    }
+    
+    .progress-ring-circle {
+        transform: rotate(-90deg);
+        width: 150px;
+        height: 150px;
+    }
+    
+    .progress-ring-circle-bg {
+        fill: none;
+        stroke: var(--gray-200);
+        stroke-width: 8;
+    }
+    
+    .progress-ring-circle-fill {
+        fill: none;
+        stroke: var(--teal-500);
+        stroke-width: 8;
+        stroke-linecap: round;
+        transition: stroke-dashoffset 0.3s ease;
+    }
+    
+    .progress-ring-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--teal-600);
+    }
+    
+    .status-message {
+        font-size: 1.25rem;
+        font-weight: 500;
+        margin-bottom: var(--spacing-sm);
+        min-height: 30px;
+    }
+    
+    .status-submessage {
+        color: var(--gray-500);
+        font-size: 0.9375rem;
+        min-height: 24px;
+    }
+    
+    .result-icon {
+        font-size: 5rem;
+        margin-bottom: var(--spacing-lg);
+        animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    
+    @keyframes popIn {
+        0% { transform: scale(0); opacity: 0; }
+        80% { transform: scale(1.1); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+    
+    .processing-dots::after {
+        content: '';
+        animation: dots 1.5s steps(4, end) infinite;
+    }
+    
+    @keyframes dots {
+        0% { content: ''; }
+        25% { content: '.'; }
+        50% { content: '..'; }
+        75% { content: '...'; }
+        100% { content: ''; }
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: var(--spacing-md);
+        justify-content: center;
+        margin-top: var(--spacing-xl);
+    }
+    
+    .payment-details {
+        background-color: var(--gray-50);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-lg);
+        margin-top: var(--spacing-xl);
+        text-align: left;
+    }
+    
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: var(--spacing-xs) 0;
+        font-size: 0.9375rem;
+    }
+    
+    .detail-row .label {
+        color: var(--gray-500);
+    }
+    
+    .detail-row .value {
+        font-weight: 500;
+    }
+    
+    .transaction-id {
+        font-family: monospace;
+        background-color: var(--gray-200);
+        padding: 2px 8px;
+        border-radius: var(--radius-sm);
+        font-size: 0.8125rem;
+        letter-spacing: 0.5px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <div class="dashboard-content">
+        <div class="container">
+            <div class="simulator-container">
+                <div class="simulator-card">
+                    <!-- Initial State: Processing -->
+                    <div id="processing-state">
+                        <div class="payment-amount">TZS {{ payment.amount|floatformat:0 }}</div>
+                        <div class="payment-course">{{ payment.course.title }}</div>
+                        
+                        <div class="simulation-progress">
+                            <div class="progress-ring">
+                                <svg class="progress-ring-circle" viewBox="0 0 150 150">
+                                    <circle class="progress-ring-circle-bg" cx="75" cy="75" r="65"></circle>
+                                    <circle id="progress-circle" class="progress-ring-circle-fill" cx="75" cy="75" r="65" stroke-dasharray="408.4" stroke-dashoffset="408.4"></circle>
+                                </svg>
+                                <div class="progress-ring-text" id="progress-percent">0%</div>
+                            </div>
+                        </div>
+                        
+                        <div class="status-message" style="animation: pulse 1.5s ease infinite;">
+                            Processing Payment<span class="processing-dots"></span>
+                        </div>
+                        <div class="status-submessage">Please wait while we process your transaction</div>
+                        
+                        <div class="secure-badge" style="display: inline-flex; margin-top: var(--spacing-lg);">
+                            <span>🔒</span>
+                            <span>Secure simulated payment</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Success State (Hidden initially) -->
+                    <div id="success-state" style="display: none;">
+                        <div class="result-icon">✅</div>
+                        <div class="status-message" style="color: var(--success);">Payment Successful!</div>
+                        <div class="status-submessage">You now have access to this course</div>
+                        
+                        <div class="payment-details">
+                            <div class="detail-row">
+                                <span class="label">Amount Paid</span>
+                                <span class="value" style="color: var(--success);">TZS {{ payment.amount|floatformat:0 }}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="label">Transaction ID</span>
+                                <span class="value"><code class="transaction-id" id="success-txn-id">{{ payment.transaction_id }}</code></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="label">Date</span>
+                                <span class="value">{% now "F d, Y H:i" %}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <a href="{% url 'courses:my_enrollments' %}" class="btn btn-primary btn-lg">
+                                📚 Start Learning
+                            </a>
+                            <a href="{% url 'payments:payment_detail' payment.id %}" class="btn btn-outline btn-lg">
+                                🧾 View Receipt
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Failed State (Hidden initially) -->
+                    <div id="failed-state" style="display: none;">
+                        <div class="result-icon">❌</div>
+                        <div class="status-message" style="color: var(--error);">Payment Failed</div>
+                        <div class="status-submessage" id="failure-reason">Your transaction could not be completed</div>
+                        
+                        <div class="payment-details">
+                            <div class="detail-row">
+                                <span class="label">Amount</span>
+                                <span class="value">TZS {{ payment.amount|floatformat:0 }}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="label">Transaction ID</span>
+                                <span class="value"><code class="transaction-id">{{ payment.transaction_id }}</code></span>
+                            </div>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <button onclick="retryPayment()" class="btn btn-warm btn-lg" id="retry-btn">
+                                🔄 Try Again
+                            </button>
+                            <a href="{% url 'payments:checkout' payment.enrollment.id %}" class="btn btn-outline btn-lg">
+                                ← Back to Checkout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden form for retry -->
+<form id="retry-form" method="post" action="{% url 'payments:retry_payment' payment.id %}" style="display: none;">
+    {% csrf_token %}
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function() {
+    'use strict';
+    
+    const progressCircle = document.getElementById('progress-circle');
+    const progressPercent = document.getElementById('progress-percent');
+    const processingState = document.getElementById('processing-state');
+    const successState = document.getElementById('success-state');
+    const failedState = document.getElementById('failed-state');
+    const retryBtn = document.getElementById('retry-btn');
+    
+    const circumference = 2 * Math.PI * 65; // 408.4
+    let progress = 0;
+    let processingComplete = false;
+    
+    // Animate progress
+    function animateProgress() {
+        if (processingComplete) return;
+        
+        progress += Math.random() * 15;
+        if (progress >= 90) {
+            progress = 90;
+        }
+        
+        const offset = circumference - (progress / 100) * circumference;
+        progressCircle.style.strokeDashoffset = offset;
+        progressPercent.textContent = Math.round(progress) + '%';
+        
+        if (progress < 90) {
+            setTimeout(animateProgress, 300 + Math.random() * 400);
+        }
+    }
+    
+    // Start animation
+    setTimeout(animateProgress, 500);
+    
+    // Process payment via AJAX
+    function processPayment() {
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        
+        fetch('{% url "payments:process_payment" payment.id %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken,
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            processingComplete = true;
+            
+            // Complete progress to 100%
+            progressCircle.style.strokeDashoffset = '0';
+            progressPercent.textContent = '100%';
+            
+            setTimeout(() => {
+                processingState.style.display = 'none';
+                
+                if (data.success) {
+                    // Show success
+                    if (data.transaction_id) {
+                        document.getElementById('success-txn-id').textContent = data.transaction_id;
+                    }
+                    successState.style.display = 'block';
+                } else {
+                    // Show failure
+                    document.getElementById('failure-reason').textContent = data.message || 'Payment could not be processed.';
+                    failedState.style.display = 'block';
+                }
+            }, 800);
+        })
+        .catch(error => {
+            console.error('Payment error:', error);
+            processingComplete = true;
+            processingState.style.display = 'none';
+            document.getElementById('failure-reason').textContent = 'Network error. Please try again.';
+            failedState.style.display = 'block';
+        });
+    }
+    
+    // Start processing after short delay
+    setTimeout(processPayment, 2000);
+    
+    // Retry payment
+    window.retryPayment = function() {
+        if (retryBtn) {
+            retryBtn.disabled = true;
+            retryBtn.textContent = '⏳ Retrying...';
+        }
+        document.getElementById('retry-form').submit();
+    };
+    
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ course.title }} - CourseCart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard-saas.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dash-layout">
+    <div class="dash-overlay" id="dashOverlay" onclick="closeSidebar()"></div>
+    {% if user.is_authenticated %}
+        {% if user.is_student %}{% include 'includes/dash_sidebar_student.html' %}
+        {% elif user.is_instructor %}{% include 'includes/dash_sidebar_instructor.html' %}{% endif %}
+    {% endif %}
+    
+    <div class="dash-main">
+        <header class="dash-header">
+            <div class="dash-header-left">
+                {% if user.is_authenticated %}<button class="btn-hamburger" onclick="toggleSidebar()">☰</button>{% endif %}
+                <div class="dash-breadcrumb"><a href="{% url 'courses:course_list' %}" style="color:var(--gray-400);text-decoration:none;">Courses</a> › <span>{{ course.title|truncatechars:30 }}</span></div>
+            </div>
+            <div class="dash-header-right">
+                {% if user.is_authenticated %}
+                <div class="dash-user-avatar {% if user.is_instructor %}warm{% endif %}">{{ user.full_name|slice:":1"|upper }}</div>
+                {% else %}
+                <a href="{% url 'accounts:login' %}" class="btn btn-outline btn-sm">Login</a>
+                <a href="{% url 'accounts:register_student' %}" class="btn btn-primary btn-sm">Get Started</a>
+                {% endif %}
+            </div>
+        </header>
+        
+        <div class="dash-content">
+            <div style="display:grid;grid-template-columns:1fr 340px;gap:var(--space-6);align-items:start;">
+                <!-- Main Content -->
+                <div>
+                    <!-- Course Hero -->
+                    <div class="section-card" style="overflow:hidden;margin-bottom:var(--space-6);">
+                        <div style="height:200px;background:linear-gradient(135deg,var(--teal-500),var(--teal-700));position:relative;overflow:hidden;">
+                            {% if course.thumbnail %}
+                            <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" style="width:100%;height:100%;object-fit:cover;">
+                            {% else %}
+                            <div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:5rem;opacity:0.5;">{{ course.category.icon|default:'📚' }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="section-card-body">
+                            <div style="font-size:11px;text-transform:uppercase;color:var(--teal-600);font-weight:600;margin-bottom:4px;">{{ course.category.name }}</div>
+                            <h1 style="font-size:22px;font-weight:700;margin-bottom:var(--space-3);">{{ course.title }}</h1>
+                            <div style="display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-4);font-size:14px;color:var(--gray-500);">
+                                <span>👨‍🏫 {{ course.instructor.full_name }}</span>
+                            </div>
+                            <div style="display:flex;gap:var(--space-4);flex-wrap:wrap;font-size:13px;color:var(--gray-400);">
+                                <span>⏱️ {{ course.duration_weeks }} Weeks</span>
+                                <span>📚 {{ course.total_lessons }} Lessons</span>
+                                <span>📊 {{ course.get_level_display }}</span>
+                                <span>👥 {{ course.total_enrollments }} Students</span>
+                                <span>⭐ {{ avg_rating|floatformat:1 }} ({{ review_count }})</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Description -->
+                    <div class="section-card" style="margin-bottom:var(--space-6);">
+                        <div class="section-card-header"><h2>📖 About This Course</h2></div>
+                        <div class="section-card-body">
+                            <p style="color:var(--gray-600);line-height:1.8;">{{ course.description|linebreaks }}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Reviews -->
+                    <div class="section-card">
+                        <div class="section-card-header"><h2>⭐ Reviews ({{ review_count }})</h2></div>
+                        <div class="section-card-body">
+                            {% if reviews %}
+                            {% for review in reviews %}
+                            <div style="padding:var(--space-3) 0;border-bottom:1px solid var(--gray-100);">
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                                    <strong>{{ review.student.full_name }}</strong>
+                                    <span style="color:var(--amber-500);">{% for i in "12345" %}{% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}{% endfor %}</span>
+                                </div>
+                                {% if review.comment %}<p style="color:var(--gray-600);font-size:14px;">{{ review.comment }}</p>{% endif %}
+                            </div>
+                            {% endfor %}
+                            {% else %}
+                            <p style="color:var(--gray-400);">No reviews yet.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sidebar -->
+                <div style="position:sticky;top:80px;">
+                    <div class="section-card" style="overflow:hidden;">
+                        <div style="background:linear-gradient(135deg,var(--teal-600),var(--teal-700));color:white;padding:var(--space-6);text-align:center;">
+                            <div style="font-size:32px;font-weight:800;">{% if course.price == 0 %}Free{% else %}TZS {{ course.price|floatformat:0 }}{% endif %}</div>
+                            <div style="font-size:12px;opacity:0.8;">Course Price</div>
+                        </div>
+                        <div class="section-card-body">
+                            {% if user.is_authenticated and user.is_student %}
+                                {% if is_enrolled %}
+                                    {% if enrollment.payment_status == 'completed' %}
+                                    <a href="{% url 'courses:my_enrollments' %}" class="btn btn-primary btn-lg" style="width:100%;">📚 Continue Learning</a>
+                                    <div style="margin-top:var(--space-3);">
+                                        <div class="progress-bar-sm" style="margin-bottom:4px;"><div class="progress-fill-sm" style="width:{{ enrollment.progress_percentage }}%"></div></div>
+                                        <span style="font-size:11px;color:var(--gray-400);">{{ enrollment.progress_percentage }}% complete</span>
+                                    </div>
+                                    {% elif enrollment.payment_status == 'pending' %}
+                                    <a href="{% url 'payments:checkout' enrollment.id %}" class="btn btn-warm btn-lg" style="width:100%;">⏳ Complete Payment</a>
+                                    {% endif %}
+                                {% else %}
+                                <a href="{% url 'courses:enroll_course' course.slug %}" class="btn btn-primary btn-lg" style="width:100%;">🎓 Enroll Now</a>
+                                {% endif %}
+                            {% elif not user.is_authenticated %}
+                            <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-primary btn-lg" style="width:100%;">🔑 Login to Enroll</a>
+                            {% endif %}
+                            
+                            <div style="margin-top:var(--space-4);">
+                                <h4 style="font-size:13px;font-weight:600;margin-bottom:var(--space-2);">📋 Includes:</h4>
+                                <ul style="list-style:none;font-size:13px;color:var(--gray-500);display:flex;flex-direction:column;gap:4px;">
+                                    <li>✅ {{ course.duration_weeks }} weeks</li>
+                                    <li>✅ {{ course.total_lessons }} lessons</li>
+                                    <li>✅ {{ course.get_level_display }} level</li>
+                                    <li>{% if course.is_certificate_ready %}✅{% else %}❌{% endif %} Certificate</li>
+                                    <li>✅ Lifetime access</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleSidebar(){var s=document.getElementById('dashSidebar');var o=document.getElementById('dashOverlay');if(s&&o){s.classList.toggle('open');o.classList.toggle('show');}}
+function closeSidebar(){var s=document.getElementById('dashSidebar');var o=document.getElementById('dashOverlay');if(s&&o){s.classList.remove('open');o.classList.remove('show');}}
+</script>
+{% endblock %}

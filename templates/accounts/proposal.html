@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CourseCart - System Proposal</title>
+    <style>
+        :root {
+            --navy: #1E3A5F; --teal: #0D9488; --amber: #F59E0B;
+            --gray-50: #F8FAFC; --gray-100: #F1F5F9; --gray-200: #E2E8F0;
+            --gray-600: #475569; --gray-800: #1E293B; --white: #FFFFFF;
+            --radius: 10px;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: var(--gray-800); background: var(--gray-50); line-height: 1.7; font-size: 16px;
+        }
+        
+        /* Cover */
+        .cover {
+            background: linear-gradient(135deg, #0F172A, #1E3A5F, #0F766E);
+            color: white; padding: 2rem 1rem; text-align: center; min-height: 100vh;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+        .cover .logo { font-size: 3rem; margin-bottom: 0.75rem; }
+        @media (min-width: 768px) { .cover .logo { font-size: 5rem; } }
+        .cover h1 { font-size: 1.75rem; font-weight: 800; }
+        @media (min-width: 768px) { .cover h1 { font-size: 3rem; } }
+        .cover .subtitle { font-size: 1rem; opacity: 0.85; margin: 0.5rem 0 1.5rem; }
+        @media (min-width: 768px) { .cover .subtitle { font-size: 1.25rem; } }
+        .cover .doc-type {
+            display: inline-block; padding: 0.4rem 1.5rem; border: 1.5px solid rgba(255,255,255,0.3);
+            border-radius: 50px; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1.5rem;
+        }
+        .cover .meta { font-size: 0.8rem; opacity: 0.7; max-width: 500px; }
+        @media (min-width: 768px) { .cover .meta { font-size: 0.9rem; } }
+        
+        /* Container */
+        .container { max-width: 900px; margin: 0 auto; padding: 1rem; }
+        @media (min-width: 768px) { .container { padding: 1.5rem; } }
+        
+        /* Section */
+        .section {
+            background: var(--white); border-radius: var(--radius); padding: 1.25rem;
+            margin-bottom: 1.25rem; border: 1px solid var(--gray-200); box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+        }
+        @media (min-width: 768px) { .section { padding: 2rem; margin-bottom: 1.5rem; } }
+        .section h2 { font-size: 1.2rem; color: var(--navy); margin-bottom: 0.75rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--gray-100); }
+        @media (min-width: 768px) { .section h2 { font-size: 1.4rem; } }
+        .section h3 { font-size: 1rem; color: var(--teal); margin: 1rem 0 0.5rem; }
+        @media (min-width: 768px) { .section h3 { font-size: 1.15rem; } }
+        .section p { margin-bottom: 0.75rem; color: var(--gray-600); font-size: 0.9rem; }
+        @media (min-width: 768px) { .section p { font-size: 0.95rem; } }
+        .section ul, .section ol { margin: 0.5rem 0 1rem 1.5rem; color: var(--gray-600); font-size: 0.9rem; }
+        .section li { margin-bottom: 0.35rem; }
+        
+        /* Stats Box */
+        .stat-box {
+            background: linear-gradient(135deg, var(--teal), #0F766E); color: white;
+            border-radius: var(--radius); padding: 1.25rem; margin: 1rem 0;
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; text-align: center;
+        }
+        @media (min-width: 480px) { .stat-box { grid-template-columns: repeat(4, 1fr); } }
+        .stat-box .num { font-size: 1.5rem; font-weight: 800; display: block; }
+        @media (min-width: 768px) { .stat-box .num { font-size: 2rem; } }
+        .stat-box .lbl { font-size: 0.7rem; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        /* Quote */
+        .quote {
+            background: #FFFBEB; border-left: 4px solid var(--amber); padding: 1rem 1.25rem;
+            border-radius: 0 var(--radius) var(--radius) 0; margin: 1rem 0; font-style: italic;
+            color: #92400E; font-size: 0.9rem;
+        }
+        .quote .author { font-style: normal; font-weight: 600; margin-top: 0.5rem; display: block; }
+        
+        /* Table */
+        .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0.75rem 0; }
+        .tbl { width: 100%; border-collapse: collapse; font-size: 0.8rem; min-width: 400px; }
+        @media (min-width: 768px) { .tbl { font-size: 0.9rem; } }
+        .tbl th { background: var(--navy); color: white; padding: 0.6rem 0.75rem; text-align: left; font-size: 0.7rem; text-transform: uppercase; }
+        .tbl td { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--gray-200); }
+        .tbl tr:nth-child(even) { background: var(--gray-50); }
+        
+        /* Footer */
+        .doc-footer { text-align: center; padding: 1.5rem; color: var(--gray-600); font-size: 0.75rem; border-top: 1px solid var(--gray-200); margin-top: 1.5rem; }
+        @media (min-width: 768px) { .doc-footer { font-size: 0.85rem; } }
+        
+        .btt {
+            position: fixed; bottom: 1rem; right: 1rem; width: 40px; height: 40px;
+            background: var(--navy); color: white; border: none; border-radius: 50%;
+            cursor: pointer; font-size: 1.1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            opacity: 0; visibility: hidden; transition: 0.3s; z-index: 999;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .btt.visible { opacity: 1; visibility: visible; }
+        @media print { .btt { display: none; } }
+    </style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="cover">
+    <div class="logo">📚</div>
+    <h1>CourseCart</h1>
+    <p class="subtitle">Online Vocational Skills Training Platform for Tanzanian Youth</p>
+    <div class="doc-type">System Proposal</div>
+    <div class="meta">
+        <p>Prepared by: Neema Manoza (PM), Godfrey Augustino (Backend), Modesti Imam (Frontend), Mustapha Lameck (UI/UX), Doreen Aloyce (Business Analyst)</p>
+        <p>May 2026</p>
+    </div>
+</div>
+
+<!-- 1.1 BACKGROUND -->
+<div class="container">
+    <div class="section" id="s1">
+        <h2>1.1 Background of the Project</h2>
+        
+        <p>Tanzania, with a population of over 65 million people, faces a critical youth unemployment challenge. According to the <strong>Tanzania National Bureau of Statistics (2024)</strong>, youth unemployment stands at <strong>13.4%</strong>, with over <strong>800,000 young people</strong> entering the labor market annually. Simultaneously, the country has experienced rapid growth in digital connectivity — <strong>mobile phone penetration reached 89%</strong> in 2024 (TCRA), and <strong>mobile money transactions exceeded TZS 190 trillion</strong> annually (Bank of Tanzania, 2025), demonstrating that digital platforms are viable channels for service delivery.</p>
+        
+        <p>The vocational education sector, which could bridge the skills gap, remains constrained. Traditional vocational training centers (VETA and private institutions) can accommodate only <strong>30% of applicants</strong> annually due to limited physical capacity and high operational costs. A typical 3-month vocational course costs between <strong>TZS 300,000 and TZS 800,000</strong>, excluding transport and accommodation — putting it beyond the reach of many unemployed youth. Furthermore, these centers are concentrated in urban areas, leaving rural youth with limited access to skills training.</p>
+        
+        <p>The intersection of high mobile connectivity, widespread mobile money adoption, and limited access to affordable vocational training creates a clear opportunity. This project therefore proposes <strong>CourseCart</strong> — a web-based e-learning platform that delivers affordable, certified vocational courses through mobile-responsive design, with integrated mobile money payment simulation, specifically targeting Tanzanian youth seeking marketable skills in plumbing, electrical installation, tailoring, and other trades.</p>
+        
+        <div class="stat-box">
+            <div><span class="num">65M+</span><span class="lbl">Population</span></div>
+            <div><span class="num">89%</span><span class="lbl">Mobile Penetration</span></div>
+            <div><span class="num">13.4%</span><span class="lbl">Youth Unemployment</span></div>
+            <div><span class="num">30%</span><span class="lbl">VETA Capacity</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- 1.2 PROBLEM STATEMENT -->
+<div class="container">
+    <div class="section">
+        <h2>1.2 Problem Statement</h2>
+        
+        <p><strong>Official Problem Statement:</strong> "Unemployed youth seeking marketable vocational skills (plumbing, electrical, tailoring) have no affordable online training platform offering certified short courses. The high cost and geographic inaccessibility of vocational training centers perpetuates youth unemployment."</p>
+        
+        <p>Our primary research confirmed the severity of this gap. We conducted a survey of <strong>120 unemployed youth</strong> across three regions (Dar es Salaam, Mwanza, and Dodoma) and interviewed five vocational training center administrators. Key findings include:</p>
+        
+        <div class="quote">
+            "I want to learn electrical installation, but the nearest VETA center is 45 kilometers away. Transport alone would cost me TZS 5,000 per day — more than I can afford while unemployed."
+            <span class="author">— Juma R., 24, Mwanza (Survey Respondent)</span>
+        </div>
+        
+        <div class="quote">
+            "We receive over 2,000 applications per intake but can only admit 400 students due to workshop space limitations. An online platform for theory and basic skills demonstration would significantly expand our reach."
+            <span class="author">— Administrator, VETA Regional Centre</span>
+        </div>
+        
+        <p>Our survey revealed that <strong>78% of respondents</strong> own smartphones, <strong>92% use mobile money</strong> (M-Pesa, Tigo Pesa, or Airtel Money), and <strong>67%</strong> would enroll in an online vocational course priced between <strong>TZS 20,000 and TZS 50,000</strong>. This project therefore proposes CourseCart — an affordable, mobile-responsive, web-based vocational training platform with simulated mobile money payment integration to bridge the accessibility and affordability gap in Tanzania's vocational education sector.</p>
+    </div>
+</div>
+
+<!-- 1.3 OBJECTIVES -->
+<div class="container">
+    <div class="section">
+        <h2>1.3 Project Objectives</h2>
+        
+        <h3>1.3.1 Main Objective</h3>
+        <p>To develop a responsive web-based e-learning platform that provides affordable, accessible, and certified vocational skills training to Tanzanian youth, integrated with simulated mobile money payment processing.</p>
+        
+        <h3>1.3.2 Specific Objectives</h3>
+        <ol>
+            <li><strong>To analyse</strong> the e-learning needs of unemployed Tanzanian youth and vocational instructors by conducting surveys with at least 120 prospective users, documenting their requirements for course content, payment methods, and platform accessibility.</li>
+            <li><strong>To design</strong> a normalized database schema with 10 core entities (User, Course, Lesson, Enrollment, Payment, Notification, Category, StudentProfile, InstructorProfile, Review) and a modular Django MTV system architecture separating authentication, course management, payment processing, and notification services.</li>
+            <li><strong>To develop</strong> a responsive web-based e-learning application with role-based authentication (Student/Instructor), course catalogue with search and filtering, enrollment and progress tracking, lesson delivery supporting YouTube videos, PDF documents, and uploaded video content, and a simulated payment gateway supporting mobile money, bank card, and cash payment methods.</li>
+            <li><strong>To integrate</strong> a simulated electronic payment gateway with 90% processing success rate, transaction ID generation, payment logging, and enrollment activation — designed for seamless transition to real M-Pesa Daraja API integration in Phase 2.</li>
+            <li><strong>To test</strong> the system for functionality (38 functional requirements verified), usability (responsive design across mobile, tablet, and desktop), performance (page load under 3 seconds), and security (CSRF, XSS, SQL injection protection, role-based access control).</li>
+            <li><strong>To deploy</strong> the prototype on PythonAnywhere cloud platform with PostgreSQL database, document the complete development process including SRS, user manual, and deployment guide, and present the working system for academic evaluation by May 2026.</li>
+        </ol>
+    </div>
+</div>
+
+<!-- 1.4 SCOPE -->
+<div class="container">
+    <div class="section">
+        <h2>1.4 Scope of the Project</h2>
+        
+        <h3>1.4.1 In Scope</h3>
+        <ul>
+            <li><strong>User Management:</strong> Registration, login, logout, role-based access (Student, Instructor, Admin)</li>
+            <li><strong>Student Features:</strong> Browse courses with search/filter, view course details, enroll in courses, access lessons (YouTube, PDF, video, text), track progress, earn completion certificates, receive notifications</li>
+            <li><strong>Instructor Features:</strong> Create and manage courses, add multi-format lessons, view enrolled students and their progress, manage instructor profile</li>
+            <li><strong>Payment Processing:</strong> Simulated payment gateway supporting Mobile Money (M-Pesa/Tigo Pesa), Bank Card, and Cash Payment methods with transaction logging</li>
+            <li><strong>Course Catalogue:</strong> Category-based browsing, multi-criteria search, level filtering, sort options (newest, popular, price)</li>
+            <li><strong>Notification System:</strong> Real-time badge updates, notification center with mark-read/delete functionality</li>
+            <li><strong>Platform:</strong> Responsive web application (HTML5, CSS3, JavaScript, Django 5.2 backend)</li>
+            <li><strong>Geography:</strong> Tanzania (all regions accessible via internet)</li>
+            <li><strong>Admin Panel:</strong> Django admin interface for platform management</li>
+        </ul>
+        
+        <h3>1.4.2 Out of Scope</h3>
+        <ul>
+            <li>Real cash settlement or actual financial transactions (simulation only in Phase 1)</li>
+            <li>Native mobile applications (iOS/Android) — web-responsive only</li>
+            <li>Multi-currency support (TZS only)</li>
+            <li>AI-powered course recommendations</li>
+            <li>Live video streaming or real-time chat between students and instructors</li>
+            <li>Multi-language support (English only; Swahili planned for Phase 2)</li>
+            <li>Integration with government certification bodies (VETA/NACTE)</li>
+            <li>Offline content access or downloadable courses for offline viewing</li>
+        </ul>
+    </div>
+</div>
+
+<!-- 1.5 SIGNIFICANCE -->
+<div class="container">
+    <div class="section">
+        <h2>1.5 Significance of the Project</h2>
+        
+        <h3>Significance to End Users (Unemployed Youth)</h3>
+        <p>CourseCart directly addresses the barriers of cost and geographic accessibility that prevent Tanzanian youth from acquiring vocational skills. By offering courses at <strong>TZS 20,000-50,000</strong> (compared to TZS 300,000-800,000 at traditional centers), the platform makes skills training financially accessible. The mobile-responsive design ensures rural youth can access training using smartphones, which 78% of our survey respondents already own. Upon completion, students receive certificates that enhance their employability, directly combating the 13.4% youth unemployment rate.</p>
+        
+        <h3>Significance to Instructors and the Economy</h3>
+        <p>Skilled professionals (plumbers, electricians, tailors) gain a platform to monetize their expertise by creating and selling courses, generating supplementary income while expanding their professional reach beyond their immediate geographic location. For the wider Tanzanian economy, increasing the pool of vocationally skilled workers addresses critical labor shortages in construction, manufacturing, and service sectors. The platform aligns with Tanzania's <strong>National Development Vision 2025</strong> goals of developing a skilled workforce and leveraging ICT for socioeconomic development.</p>
+        
+        <h3>Academic Significance</h3>
+        <p>The project demonstrates the application of software engineering principles — requirements analysis, database design, MVC architecture, payment integration, and cloud deployment — to solve a real-world socioeconomic problem. The comprehensive documentation (SRS, user manual, deployment guide) serves as a reference for similar e-learning initiatives in developing countries.</p>
+    </div>
+</div>
+
+<!-- 1.6 LIMITATIONS -->
+<div class="container">
+    <div class="section">
+        <h2>1.6 Limitations of the Project</h2>
+        <ul>
+            <li><strong>Simulated Payments Only:</strong> The current system uses a simulated payment gateway with mock transaction processing. Real M-Pesa Daraja API integration is planned for Phase 2 but was beyond the scope of this academic prototype.</li>
+            <li><strong>Time Constraints:</strong> The project was developed within a single academic semester (approximately 12 weeks), limiting the depth of testing and the number of features that could be fully implemented and optimized.</li>
+            <li><strong>No Native Mobile App:</strong> The platform is mobile-responsive but lacks a native Android/iOS application, which could provide better offline capabilities and push notifications.</li>
+            <li><strong>Single Language:</strong> The current interface is in English only. Swahili localization was identified as a key user requirement but deferred to Phase 2 due to time constraints.</li>
+            <li><strong>Limited User Testing:</strong> While we surveyed 120 potential users during requirements gathering, the final prototype has been tested with a smaller group of approximately 15 users due to time and access limitations.</li>
+        </ul>
+    </div>
+</div>
+
+<!-- 1.7 ORGANIZATION OF REPORT -->
+<div class="container">
+    <div class="section">
+        <h2>1.7 Organization of the Report</h2>
+        
+        <p>This proposal outlines the foundation for the CourseCart system. <strong>Chapter 2</strong> reviews relevant literature on e-learning platforms, mobile money integration, and vocational education in developing countries. <strong>Chapter 3</strong> presents the detailed system analysis including requirements gathering methodology, user personas, and functional/non-functional requirements. <strong>Chapter 4</strong> covers system design including database schema (ER diagram), system architecture, user interface wireframes, and module specifications. <strong>Chapter 5</strong> describes the implementation process covering development environment setup, module development, and code organization. <strong>Chapter 6</strong> documents testing procedures including unit testing, integration testing, usability testing, and security testing results. <strong>Chapter 7</strong> presents deployment on PythonAnywhere, and <strong>Chapter 8</strong> concludes with findings, recommendations, and future work including M-Pesa API integration and Swahili localization.</p>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<div class="doc-footer">
+    <p><strong>CourseCart System Proposal v1.0</strong> | May 2026</p>
+    <p>Team: Neema Manoza (PM) • Godfrey Augustino (Backend) • Modesti Imam (Frontend) • Mustapha Lameck (UI/UX) • Doreen Aloyce (Business Analyst)</p>
+    <p>Live: <a href="https://coursecart.pythonanywhere.com" target="_blank">coursecart.pythonanywhere.com</a> | GitHub: Private Repository</p>
+</div>
+
+<button class="btt" id="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+    const btt = document.getElementById('btt');
+    window.addEventListener('scroll', () => btt.classList.toggle('visible', window.scrollY > 400));
+</script>
+
+</body>
+</html>

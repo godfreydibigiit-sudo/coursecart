@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Notifications - CourseCart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard-saas.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dash-layout">
+    <div class="dash-overlay" id="dashOverlay" onclick="closeSidebar()"></div>
+    {% if user.is_student %}
+        {% include 'includes/dash_sidebar_student.html' %}
+    {% elif user.is_instructor %}
+        {% include 'includes/dash_sidebar_instructor.html' %}
+    {% endif %}
+    
+    <div class="dash-main">
+        <header class="dash-header">
+            <div class="dash-header-left">
+                <button class="btn-hamburger" onclick="toggleSidebar()">☰</button>
+                <div class="dash-breadcrumb">Notifications</div>
+            </div>
+            <div class="dash-header-right">
+                <div class="dash-user-avatar {% if user.is_instructor %}warm{% endif %}">{{ user.full_name|slice:":1"|upper }}</div>
+            </div>
+        </header>
+        
+        <div class="dash-content">
+            <div class="page-header">
+                <div>
+                    <h1>🔔 Notifications</h1>
+                    <p>{% if unread_count > 0 %}{{ unread_count }} unread{% else %}All caught up!{% endif %}</p>
+                </div>
+                {% if unread_count > 0 %}
+                <form method="post" action="{% url 'notifications:mark_all_read' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline">✅ Mark All Read</button>
+                </form>
+                {% endif %}
+            </div>
+            
+            <div class="section-card">
+                <div class="section-card-body">
+                    {% if notifications %}
+                    <div class="enrollment-list">
+                        {% for notification in notifications %}
+                        <div class="enrollment-item {% if not notification.is_read %}" style="border-left:4px solid var(--teal-500);background:var(--teal-50);{% endif %}" onclick="window.location.href='{% url 'notifications:mark_notification_read' notification.id %}'">
+                            <div style="width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;background:{% if notification.notification_type == 'success' %}var(--success-light){% elif notification.notification_type == 'error' %}var(--error-light){% elif notification.notification_type == 'warning' %}var(--warning-light){% else %}var(--info-light){% endif %};flex-shrink:0;">
+                                {% if notification.notification_type == 'success' %}✅{% elif notification.notification_type == 'error' %}❌{% elif notification.notification_type == 'warning' %}⚠️{% elif notification.notification_type == 'payment' %}💳{% elif notification.notification_type == 'enrollment' %}📚{% elif notification.notification_type == 'certificate' %}📜{% else %}ℹ️{% endif %}
+                            </div>
+                            <div class="enroll-info">
+                                <div class="enroll-title">{% if not notification.is_read %}<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--teal-500);margin-right:6px;"></span>{% endif %}{{ notification.title }}</div>
+                                <div class="enroll-meta">{{ notification.message|truncatechars:100 }}</div>
+                                <div style="font-size:11px;color:var(--gray-400);margin-top:2px;">{{ notification.created_at|timesince }} ago</div>
+                            </div>
+                            <button onclick="event.stopPropagation();if(confirm('Delete?')){var f=document.createElement('form');f.method='POST';f.action='{% url 'notifications:delete_notification' notification.id %}';var c=document.createElement('input');c.type='hidden';c.name='csrfmiddlewaretoken';c.value=document.querySelector('[name=csrfmiddlewaretoken]').value;f.appendChild(c);document.body.appendChild(f);f.submit();}" style="width:28px;height:28px;border-radius:50%;border:1px solid var(--gray-200);background:white;cursor:pointer;font-size:12px;flex-shrink:0;">✕</button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="empty-state">
+                        <span class="empty-icon">🔔</span>
+                        <h3>No Notifications</h3>
+                        <p>You're all caught up!</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleSidebar(){var s=document.getElementById('dashSidebar');var o=document.getElementById('dashOverlay');if(s&&o){s.classList.toggle('open');o.classList.toggle('show');}}
+function closeSidebar(){var s=document.getElementById('dashSidebar');var o=document.getElementById('dashOverlay');if(s&&o){s.classList.remove('open');o.classList.remove('show');}}
+</script>
+{% endblock %}

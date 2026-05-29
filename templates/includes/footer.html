@@ -1,0 +1,56 @@
+{% load static %}
+<footer class="footer" role="contentinfo">
+    <div class="container">
+        <div class="footer-grid">
+            <!-- Brand Column -->
+            <div>
+                <div class="footer-brand">
+                    <span style="background: linear-gradient(135deg, #14B8A6, #F59E0B); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                        CourseCart
+                    </span>
+                </div>
+                <p class="footer-description">
+                    Empowering Tanzanian youth with affordable, accessible vocational skills training. 
+                    Learn plumbing, electrical work, tailoring, and more from expert instructors.
+                </p>
+            </div>
+            
+            <!-- Quick Links -->
+            <div>
+                <h3 class="footer-heading">Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="{% url 'accounts:welcome' %}">Home</a></li>
+                    <li><a href="{% url 'accounts:login' %}">Login</a></li>
+                    <li><a href="{% url 'accounts:register_student' %}">Student Registration</a></li>
+                    <li><a href="{% url 'accounts:register_instructor' %}">Become an Instructor</a></li>
+                </ul>
+            </div>
+            
+            <!-- Courses -->
+            <div>
+                <h3 class="footer-heading">Popular Courses</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Plumbing</a></li>
+                    <li><a href="#">Electrical Installation</a></li>
+                    <li><a href="#">Tailoring & Fashion</a></li>
+                    <li><a href="#">Carpentry</a></li>
+                    <li><a href="#">Welding</a></li>
+                </ul>
+            </div>
+            
+            <!-- Contact -->
+            <div>
+                <h3 class="footer-heading">Contact Us</h3>
+                <ul class="footer-links">
+                    <li>📧 support@coursecart.co.tz</li>
+                    <li>📱 +255 777 675 021</li>
+                    <li>📍 Dar es Salaam, Tanzania</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; {% now "Y" %} CourseCart. All rights reserved. Made with ❤️ in Tanzania.</p>
+        </div>
+    </div>
+</footer>

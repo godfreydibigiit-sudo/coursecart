@@ -1,0 +1,65 @@
+<aside class="dash-sidebar" id="dashSidebar">
+    <!-- Sidebar Header -->
+    <div class="dash-sidebar-header">
+        <div class="dash-logo">C</div>
+        <span class="dash-brand">CourseCart</span>
+    </div>
+    
+    <!-- Navigation -->
+    <nav class="dash-sidebar-nav">
+        <span class="dash-nav-section">Main</span>
+        
+        <a href="{% url 'profiles:instructor_dashboard' %}" class="dash-nav-item active">
+            <span class="nav-icon"></span> Dashboard
+        </a>
+        
+        <a href="{% url 'courses:instructor_course_list' %}" class="dash-nav-item">
+            <span class="nav-icon"></span> My Courses
+            <span class="nav-badge warm">{{ courses.count|default:0 }}</span>
+        </a>
+        
+        <a href="{% url 'courses:course_create' %}" class="dash-nav-item">
+            <span class="nav-icon"></span> Create Course
+        </a>
+        
+        <span class="dash-nav-section">Students</span>
+        
+        <a href="{% url 'courses:instructor_course_list' %}" class="dash-nav-item">
+            <span class="nav-icon"></span> Enrollments
+        </a>
+        
+        <span class="dash-nav-section">Account</span>
+        
+        <a href="{% url 'notifications:notification_list' %}" class="dash-nav-item">
+            <span class="nav-icon"></span> Notifications
+            {% if has_unread_notifications %}
+            <span class="nav-badge">{{ notification_unread_count }}</span>
+            {% endif %}
+        </a>
+        
+        <a href="{% url 'profiles:instructor_profile_edit' %}" class="dash-nav-item">
+            <span class="nav-icon"></span> Settings
+        </a>
+    </nav>
+    
+    <!-- Sidebar Footer - User Profile -->
+    <div class="dash-sidebar-footer">
+        <div class="dash-user-card">
+            <div class="dash-user-avatar warm">
+                {% if profile.avatar %}
+                    <img src="{{ profile.avatar.url }}" alt="{{ user.full_name }}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">
+                {% else %}
+                    {{ user.full_name|slice:":1"|upper }}
+                {% endif %}
+            </div>
+            <div class="dash-user-info">
+                <div class="dash-user-name">{{ user.full_name|truncatechars:15 }}</div>
+                <div class="dash-user-role">Instructor</div>
+            </div>
+           
+        </div>
+    </div>
+</aside>
+
+<!-- Overlay for mobile -->
+<div class="dash-overlay" id="dashOverlay" onclick="closeSidebar()"></div>

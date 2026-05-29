@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if form.instance.pk %}Edit{% else %}Create{% endif %} Course - CourseCart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard-saas.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dash-layout">
+    <div class="dash-overlay" id="dashOverlay" onclick="closeSidebar()"></div>
+    {% include 'includes/dash_sidebar_instructor.html' %}
+    
+    <div class="dash-main">
+        <header class="dash-header">
+            <div class="dash-header-left">
+                <button class="btn-hamburger" onclick="toggleSidebar()">☰</button>
+                <div class="dash-breadcrumb">{% if form.instance.pk %}Edit Course{% else %}Create Course{% endif %}</div>
+            </div>
+            <div class="dash-header-right">
+                <a href="{% url 'notifications:notification_list' %}" class="btn-header" style="position:relative;">
+                    🔔{% if has_unread_notifications %}<span class="badge-dot"></span>{% endif %}
+                </a>
+                <div class="dash-user-avatar warm">{{ user.full_name|slice:":1"|upper }}</div>
+            </div>
+        </header>
+        
+        <div class="dash-content">
+            <div class="page-header">
+                <div>
+                    <h1>{% if form.instance.pk %}✏️ Edit Course{% else %}➕ Create New Course{% endif %}</h1>
+                    <p>{% if form.instance.pk %}Update your course details{% else %}Share your skills with students across Tanzania{% endif %}</p>
+                </div>
+                <div class="page-actions">
+                    <a href="{% url 'courses:instructor_course_list' %}" class="btn btn-outline">← Back to Courses</a>
+                </div>
+            </div>
+            
+            <div class="section-card" style="max-width:800px;">
+                <div class="section-card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Step 1: Basic Info -->
+                        <div style="margin-bottom:var(--space-6);padding-bottom:var(--space-6);border-bottom:1px solid var(--gray-100);">
+                            <h3 style="font-size:14px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:var(--space-4);">📝 Basic Information</h3>
+                            
+                            <div style="margin-bottom:var(--space-4);">
+                                <label for="{{ form.title.id_for_label }}" style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:4px;">Course Title <span style="color:var(--error);">*</span></label>
+                                {{ form.title }}
+                                {% if form.title.errors %}<p style="color:var(--error);font-size:11px;">{{ form.title.errors.0 }}</p>{% endif %}
+                            </div>
+                            
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-bottom:var(--space-4);">
+                                <div>
+                                    <label for="{{ form.category.id_for_label }}" style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:4px;">Category <span style="color:var(--error);">*</span></label>
+                                    {{ form.category }}
+                                </div>
+                                <div>
+                                    <label for="{{ form.level.id_for_label }}" style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:4px;">Skill Level</label>
+                                    {{ form.level }}
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom:var(--space-4);">
+                                <label for="{{ form.short_description.id_for_label }}" style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:4px;">Short Description</label>
+                                {{ form.short_description }}
+                                <p style="font-size:11px;color:var(--gray-400);margin-top:2px;">Brief summary shown in course cards (<span id="charCount">0</span>/300)</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 2: Details -->
+                        <div style="margin-bottom:var(--space-6);padding-bottom:var(--space-6);border-bottom:1px solid var(--gray-100);">
+                            <h3 style="font-size:14px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:var(--space-4);">📋 Course Details</h3>
+                            
+                            <div style="margin-bottom:var(--space-4);">
+                                <label for="{{ form.description.id_for_label }}" style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:4px;">Full Description <span style="color:var(--error);">*</span></label>
+                                {{ form.description }}
+                            </div>
+                            
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-bottom:var(--space-4);">
+                                <div>
+                                    <label for="{{ form.price.id_for_label }}" style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:4px;">Price (TZS) <span style="color:var(--error);">*</span></label>
+                                    <div style="position:relative;">
+                                        <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-weight:600;color:var(--gray-400);">TZS</span>
+                                        {{ form.price }}
+                                    </div>
+                                    <p style="font-size:11px;color:var(--gray-400);margin-top:2px;">Set 0 for a free course</p>
+                                </div>
+                                <div>
+                                    <label for="{{ form.duration_weeks.id_for_label }}" style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:4px;">Duration (Weeks) <span style="color:var(--error);">*</span></label>
+                                    {{ form.duration_weeks }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 3: Media & Settings -->
+                        <div style="margin-bottom:var(--space-6);">
+                            <h3 style="font-size:14px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:var(--space-4);">🖼️ Media & Settings</h3>
+                            
+                            <div style="margin-bottom:var(--space-4);">
+                                <label style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:4px;">Course Thumbnail</label>
+                                <div style="border:2px dashed var(--gray-200);border-radius:var(--radius-lg);padding:var(--space-6);text-align:center;cursor:pointer;transition:all 0.2s;" onclick="document.getElementById('{{ form.thumbnail.id_for_label }}').click()" onmouseover="this.style.borderColor='var(--teal-400)';this.style.background='var(--teal-50)'" onmouseout="this.style.borderColor='var(--gray-200)';this.style.background='transparent'">
+                                    <span style="font-size:2rem;">🖼️</span>
+                                    <p style="font-weight:500;color:var(--gray-600);margin-top:4px;">Click to upload thumbnail</p>
+                                    <p style="font-size:11px;color:var(--gray-400);">1280×720px recommended</p>
+                                    {{ form.thumbnail }}
+                                </div>
+                            </div>
+                            
+                            {% if form.instance.pk %}
+                            <div style="margin-bottom:var(--space-4);">
+                                <label for="{{ form.status.id_for_label }}" style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:4px;">Status</label>
+                                {{ form.status }}
+                            </div>
+                            {% endif %}
+                            
+                            <div style="display:flex;align-items:center;gap:var(--space-2);margin-bottom:var(--space-4);padding:var(--space-3) var(--space-4);background:var(--gray-50);border-radius:var(--radius-md);">
+                                {{ form.is_certificate_ready }}
+                                <label for="{{ form.is_certificate_ready.id_for_label }}" style="font-size:13px;font-weight:500;cursor:pointer;">📜 Issue certificates upon course completion</label>
+                            </div>
+                        </div>
+                        
+                        <!-- Actions -->
+                        <div style="display:flex;gap:var(--space-3);padding-top:var(--space-4);border-top:1px solid var(--gray-100);">
+                            <button type="submit" class="btn btn-lg" style="background:var(--amber-500);color:white;border:none;">
+                                {% if form.instance.pk %}💾 Update Course{% else %}🚀 Publish Course{% endif %}
+                            </button>
+                            <a href="{% url 'courses:instructor_course_list' %}" class="btn btn-outline btn-lg">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleSidebar(){var s=document.getElementById('dashSidebar');var o=document.getElementById('dashOverlay');if(s&&o){s.classList.toggle('open');o.classList.toggle('show');}}
+function closeSidebar(){var s=document.getElementById('dashSidebar');var o=document.getElementById('dashOverlay');if(s&&o){s.classList.remove('open');o.classList.remove('show');}}
+// Character counter
+var sd=document.getElementById('{{ form.short_description.id_for_label }}');
+if(sd){sd.addEventListener('input',function(){document.getElementById('charCount').textContent=this.value.length})}
+</script>
+{% endblock %}

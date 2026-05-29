@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Checkout - {{ enrollment.course.title }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard-saas.css' %}">
+<style>
+    .checkout-wrapper { max-width: 1100px; margin: 0 auto; }
+    
+    .checkout-grid {
+        display: grid; grid-template-columns: 1fr; gap: var(--space-6); align-items: start;
+    }
+    @media (min-width: 768px) { .checkout-grid { grid-template-columns: 1fr 340px; } }
+    @media (min-width: 1024px) { .checkout-grid { grid-template-columns: 1fr 380px; } }
+    
+    .payment-method-cards {
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2);
+    }
+    @media (max-width: 480px) { .payment-method-cards { grid-template-columns: 1fr; } }
+    
+    .pm-card {
+        padding: var(--space-3); border: 2px solid var(--gray-200);
+        border-radius: var(--radius-lg); text-align: center; cursor: pointer;
+        transition: all 0.2s; background: var(--white);
+    }
+    @media (min-width: 480px) { .pm-card { padding: var(--space-4); } }
+    
+    .pm-card:hover { border-color: var(--teal-300); background: var(--teal-50); }
+    .pm-card.active { border-color: var(--teal-600); background: var(--teal-50); box-shadow: var(--shadow-md); }
+    .pm-card .pm-icon { font-size: 1.5rem; display: block; margin-bottom: 4px; }
+    @media (min-width: 480px) { .pm-card .pm-icon { font-size: 1.75rem; } }
+    .pm-card .pm-label { font-weight: 600; font-size: 12px; color: var(--gray-700); }
+    @media (min-width: 480px) { .pm-card .pm-label { font-size: 13px; } }
+    .pm-card .pm-desc { font-size: 10px; color: var(--gray-400); margin-top: 2px; display: none; }
+    @media (min-width: 480px) { .pm-card .pm-desc { display: block; } }
+    
+    .panel { display: none; animation: fadeIn 0.25s ease; }
+    .panel.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    
+    .order-summary { position: static; }
+    @media (min-width: 768px) { .order-summary { position: sticky; top: 80px; } }
+    
+    .alert-banner {
+        display: flex; align-items: flex-start; gap: var(--space-3);
+        padding: var(--space-4); border-radius: var(--radius-xl); margin-bottom: var(--space-4);
+        flex-wrap: wrap;
+    }
+    @media (min-width: 480px) { .alert-banner { gap: var(--space-4); padding: var(--space-5); } }
+    
+    .btn-pay {
+        width: 100%; padding: 14px; font-size: 15px; font-weight: 600;
+        border-radius: var(--radius-lg); border: none; cursor: pointer;
+        background: linear-gradient(135deg, var(--amber-500), var(--amber-600));
+        color: white; transition: all 0.2s; font-family: var(--font-sans);
+    }
+    @media (min-width: 480px) { .btn-pay { padding: 16px; font-size: 16px; } }
+    .btn-pay:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(245,158,11,0.3); }
+    
+    @media (max-width: 480px) {
+        .dash-content { padding: var(--space-3); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dash-layout">
+    <div class="dash-overlay" id="dashOverlay" onclick="closeSidebar()"></div>
+    {% include 'includes/dash_sidebar_student.html' %}
+    
+    <div class="dash-main">
+        <header class="dash-header">
+            <div class="dash-header-left">
+                <button class="btn-hamburger" onclick="toggleSidebar()">☰</button>
+                <div class="dash-breadcrumb">
+                    <a href="{% url 'courses:course_detail' enrollment.course.slug %}" style="color:var(--gray-400);text-decoration:none;">{{ enrollment.course.title|truncatechars:20 }}</a> › 
+                    <span>Checkout</span>
+                </div>
+            </div>
+            <div class="dash-header-right">
+                <div class="dash-user-avatar">{{ user.full_name|slice:":1"|upper }}</div>
+            </div>
+        </header>
+        
+        <div class="dash-content">
+            <div class="checkout-wrapper">
+                
+                <!-- Status Alerts -->
+                {% if has_completed_payment %}
+                <div class="alert-banner" style="background:var(--success-light);border:1px solid #6EE7B7;">
+                    <span style="font-size:2rem;flex-shrink:0;">✅</span>
+                    <div style="flex:1;">
+                        <h3 style="color:#065F46;margin-bottom:2px;font-size:15px;">Payment Already Completed!</h3>
+                        <p style="color:#065F46;opacity:0.8;font-size:13px;">You have full access to this course.</p>
+                        <a href="{% url 'courses:my_enrollments' %}" class="btn btn-sm" style="background:#059669;color:white;margin-top:var(--space-2);">📚 Go to My Courses</a>
+                    </div>
+                </div>
+                {% elif existing_payment and existing_payment.is_failed %}
+                <div class="alert-banner" style="background:var(--error-light);border:1px solid #FECACA;">
+                    <span style="font-size:2rem;flex-shrink:0;">❌</span>
+                    <div style="flex:1;">
+                        <h3 style="color:#991B1B;margin-bottom:2px;font-size:15px;">Previous Payment Failed</h3>
+                        <p style="color:#991B1B;opacity:0.8;font-size:13px;">Please try again below.</p>
+                    </div>
+                </div>
+                {% elif existing_payment and existing_payment.is_pending %}
+                <div class="alert-banner" style="background:var(--warning-light);border:1px solid #FDE68A;">
+                    <span style="font-size:2rem;flex-shrink:0;">⏳</span>
+                    <div style="flex:1;">
+                        <h3 style="color:#92400E;margin-bottom:2px;font-size:15px;">Payment In Progress</h3>
+                        <a href="{% url 'payments:payment_simulator' existing_payment.id %}" class="btn btn-warm btn-sm" style="margin-top:var(--space-2);">Continue Payment →</a>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if not has_completed_payment %}
+                <div class="checkout-grid">
+                    
+                    <!-- Main Form -->
+                    <div class="section-card">
+                        <div class="section-card-header">
+                            <h2>💳 Select Payment Method</h2>
+                        </div>
+                        <div class="section-card-body">
+                            <form method="post" action="{% url 'payments:initiate_payment' enrollment.id %}" id="payment-form">
+                                {% csrf_token %}
+                                <input type="hidden" name="payment_method" id="selectedMethod" value="mobile_money">
+                                
+                                <!-- Payment Method Cards -->
+                                <div class="payment-method-cards" style="margin-bottom:var(--space-5);">
+                                    <div class="pm-card active" data-method="mobile_money" onclick="switchTab('mobile_money')">
+                                        <span class="pm-icon">📱</span>
+                                        <span class="pm-label">Mobile Money</span>
+                                        <span class="pm-desc">M-Pesa, Tigo Pesa</span>
+                                    </div>
+                                    <div class="pm-card" data-method="bank_transfer" onclick="switchTab('bank_transfer')">
+                                        <span class="pm-icon">💳</span>
+                                        <span class="pm-label">Bank Card</span>
+                                        <span class="pm-desc">Visa, Mastercard</span>
+                                    </div>
+                                    <div class="pm-card" data-method="cash" onclick="switchTab('cash')">
+                                        <span class="pm-icon">💵</span>
+                                        <span class="pm-label">Cash</span>
+                                        <span class="pm-desc">Pay at agent</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Mobile Money Panel -->
+                                <div class="panel active" id="panel-mobile_money">
+                                    <label style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:6px;">📱 Phone Number <span style="color:var(--error);">*</span></label>
+                                    <div style="display:flex;border:1px solid var(--gray-300);border-radius:var(--radius-md);overflow:hidden;transition:border-color 0.2s;" onfocusin="this.style.borderColor='var(--teal-500)';this.style.boxShadow='0 0 0 3px rgba(13,148,136,0.1)'" onfocusout="this.style.borderColor='var(--gray-300)';this.style.boxShadow='none'">
+                                        <span style="background:var(--gray-50);padding:10px 14px;font-weight:600;color:var(--gray-500);border-right:1px solid var(--gray-300);font-size:14px;">+255</span>
+                                        <input type="tel" name="phone_number" placeholder="7XX XXX XXX" style="flex:1;border:none;padding:10px 14px;font-size:14px;outline:none;min-width:0;">
+                                    </div>
+                                    <p style="font-size:11px;color:var(--gray-400);margin-top:4px;">Enter your mobile money phone number</p>
+                                </div>
+                                
+                                <!-- Bank Card Panel -->
+                                <div class="panel" id="panel-bank_transfer">
+                                    <div style="margin-bottom:var(--space-3);">
+                                        <label style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:6px;">💳 Card Number</label>
+                                        <input type="text" name="card_number" placeholder="1234 5678 9012 3456" style="width:100%;padding:10px 14px;border:1px solid var(--gray-300);border-radius:var(--radius-md);font-size:14px;outline:none;transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--teal-500)';this.style.boxShadow='0 0 0 3px rgba(13,148,136,0.1)'" onblur="this.style.borderColor='var(--gray-300)';this.style.boxShadow='none'">
+                                    </div>
+                                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-3);margin-bottom:var(--space-3);">
+                                        <div>
+                                            <label style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:6px;">📅 Expiry</label>
+                                            <input type="text" name="card_expiry" placeholder="MM/YY" style="width:100%;padding:10px 14px;border:1px solid var(--gray-300);border-radius:var(--radius-md);font-size:14px;outline:none;transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--teal-500)'" onblur="this.style.borderColor='var(--gray-300)'">
+                                        </div>
+                                        <div>
+                                            <label style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:6px;">🔒 CVV</label>
+                                            <input type="text" name="card_cvv" placeholder="123" style="width:100%;padding:10px 14px;border:1px solid var(--gray-300);border-radius:var(--radius-md);font-size:14px;outline:none;transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--teal-500)'" onblur="this.style.borderColor='var(--gray-300)'">
+                                        </div>
+                                    </div>
+                                    <p style="font-size:11px;color:var(--gray-400);">Your card details are never stored</p>
+                                </div>
+                                
+                                <!-- Cash Panel -->
+                                <div class="panel" id="panel-cash">
+                                    <div style="background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border:1px solid var(--amber-200);border-radius:var(--radius-lg);padding:var(--space-4);">
+                                        <h4 style="color:var(--amber-700);font-size:14px;margin-bottom:var(--space-3);">💵 How to Pay with Cash</h4>
+                                        <ol style="font-size:13px;color:var(--gray-600);padding-left:1.2rem;display:flex;flex-direction:column;gap:var(--space-2);margin-bottom:var(--space-3);">
+                                            <li>Visit any <strong>CourseCart agent</strong> near you</li>
+                                            <li>Provide course details and your email: <strong>{{ user.email }}</strong></li>
+                                            <li>Pay <strong>TZS {{ enrollment.course.price|floatformat:0 }}</strong> and receive a confirmation code</li>
+                                            <li>Enter the code below to activate your course</li>
+                                        </ol>
+                                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-2);margin-bottom:var(--space-3);">
+                                            <div style="background:white;padding:var(--space-2);border-radius:var(--radius-md);font-size:11px;"><strong>📍 Dar es Salaam</strong><br>Kariakoo Market</div>
+                                            <div style="background:white;padding:var(--space-2);border-radius:var(--radius-md);font-size:11px;"><strong>📍 Mwanza</strong><br>City Centre</div>
+                                        </div>
+                                        <label style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:6px;">🔢 Confirmation Code</label>
+                                        <input type="text" name="cash_code" placeholder="Enter code from agent" style="width:100%;padding:10px 14px;border:1px solid var(--gray-300);border-radius:var(--radius-md);font-size:14px;outline:none;">
+                                    </div>
+                                </div>
+                                
+                                <!-- Security Notice -->
+                                <div style="display:flex;align-items:center;gap:var(--space-2);padding:var(--space-3) var(--space-4);background:var(--teal-50);border:1px solid var(--teal-200);border-radius:var(--radius-md);margin-top:var(--space-4);font-size:12px;color:var(--teal-700);">
+                                    <span>🔒</span> Secure simulated payment for testing purposes
+                                </div>
+                                
+                                <!-- Pay Button -->
+                                <button type="submit" class="btn-pay" style="margin-top:var(--space-5);">
+                                    💰 Pay TZS {{ enrollment.course.price|floatformat:0 }}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <!-- Order Summary -->
+                    <div class="order-summary">
+                        <div class="section-card" style="overflow:hidden;">
+                            <div style="height:100px;background:linear-gradient(135deg,var(--teal-500),var(--teal-700));display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                                {% if enrollment.course.thumbnail %}
+                                <img src="{{ enrollment.course.thumbnail.url }}" alt="{{ enrollment.course.title }}" style="width:100%;height:100%;object-fit:cover;">
+                                {% else %}
+                                <span style="font-size:2.5rem;opacity:0.6;">{{ enrollment.course.category.icon|default:'📚' }}</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="section-card-body">
+                                <h3 style="font-weight:600;font-size:14px;margin-bottom:2px;">{{ enrollment.course.title }}</h3>
+                                <p style="font-size:12px;color:var(--gray-400);margin-bottom:var(--space-3);">👨‍🏫 {{ enrollment.course.instructor.full_name }}</p>
+                                
+                                <div style="display:flex;flex-direction:column;gap:var(--space-1);margin-bottom:var(--space-3);padding-bottom:var(--space-3);border-bottom:1px solid var(--gray-100);font-size:12px;color:var(--gray-500);">
+                                    <div style="display:flex;justify-content:space-between;"><span>Duration</span><span>{{ enrollment.course.duration_weeks }} Weeks</span></div>
+                                    <div style="display:flex;justify-content:space-between;"><span>Lessons</span><span>{{ enrollment.course.total_lessons }}</span></div>
+                                    <div style="display:flex;justify-content:space-between;"><span>Level</span><span>{{ enrollment.course.get_level_display }}</span></div>
+                                </div>
+                                
+                                <div style="display:flex;justify-content:space-between;align-items:center;">
+                                    <span style="font-weight:600;font-size:14px;color:var(--gray-700);">Total</span>
+                                    <span style="font-weight:800;font-size:18px;color:var(--teal-700);">{% if enrollment.course.price == 0 %}Free{% else %}TZS {{ enrollment.course.price|floatformat:0 }}{% endif %}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleSidebar(){var s=document.getElementById('dashSidebar');var o=document.getElementById('dashOverlay');if(s&&o){s.classList.toggle('open');o.classList.toggle('show');}}
+function closeSidebar(){var s=document.getElementById('dashSidebar');var o=document.getElementById('dashOverlay');if(s&&o){s.classList.remove('open');o.classList.remove('show');}}
+
+function switchTab(method){
+    document.getElementById('selectedMethod').value = method;
+    document.querySelectorAll('.pm-card').forEach(function(c){
+        c.classList.remove('active');
+        c.style.borderColor = 'var(--gray-200)';
+        c.style.background = 'var(--white)';
+    });
+    var active = document.querySelector('.pm-card[data-method="'+method+'"]');
+    if(active){
+        active.classList.add('active');
+        active.style.borderColor = 'var(--teal-600)';
+        active.style.background = 'var(--teal-50)';
+    }
+    document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+    var panel = document.getElementById('panel-'+method);
+    if(panel) panel.classList.add('active');
+}
+
+// Phone formatting
+var phoneInput = document.querySelector('input[name="phone_number"]');
+if(phoneInput){
+    phoneInput.addEventListener('input',function(){
+        this.value = this.value.replace(/\D/g,'').substring(0,9);
+    });
+}
+</script>
+{% endblock %}

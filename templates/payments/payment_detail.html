@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Receipt #{{ payment.id }} - CourseCart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard-saas.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dash-layout">
+    <div class="dash-overlay" id="dashOverlay" onclick="closeSidebar()"></div>
+    {% include 'includes/dash_sidebar_student.html' %}
+    
+    <div class="dash-main">
+        <header class="dash-header">
+            <div class="dash-header-left">
+                <button class="btn-hamburger" onclick="toggleSidebar()">☰</button>
+                <div class="dash-breadcrumb">
+                    <a href="{% url 'payments:payment_history' %}" style="color:var(--gray-400);text-decoration:none;">Payment History</a> › 
+                    <span>Receipt #{{ payment.id }}</span>
+                </div>
+            </div>
+            <div class="dash-header-right">
+                <div class="dash-user-avatar">{{ user.full_name|slice:":1"|upper }}</div>
+            </div>
+        </header>
+        
+        <div class="dash-content" style="max-width:700px;margin:0 auto;">
+            
+            <!-- Receipt Card -->
+            <div class="section-card" style="overflow:hidden;">
+                <!-- Receipt Header -->
+                <div style="background:linear-gradient(135deg,var(--teal-600),var(--teal-700));color:white;padding:var(--space-6);text-align:center;">
+                    <span style="font-size:3rem;display:block;margin-bottom:var(--space-2);">🧾</span>
+                    <h2 style="color:white;font-size:20px;margin-bottom:var(--space-2);">Payment Receipt</h2>
+                    <span style="display:inline-block;padding:4px 14px;border-radius:var(--radius-full);font-size:12px;font-weight:600;
+                        {% if payment.is_completed %}background:rgba(255,255,255,0.2);
+                        {% elif payment.is_failed %}background:rgba(239,68,68,0.3);color:#FCA5A5;
+                        {% elif payment.is_pending %}background:rgba(245,158,11,0.3);color:#FCD34D;{% endif %}">
+                        {{ payment.get_status_display }}
+                    </span>
+                </div>
+                
+                <div class="section-card-body">
+                    <!-- Transaction ID -->
+                    <div style="text-align:center;margin-bottom:var(--space-6);padding-bottom:var(--space-6);border-bottom:1px solid var(--gray-100);">
+                        <p style="font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">Transaction ID</p>
+                        <code style="font-size:16px;font-weight:700;color:var(--gray-800);background:var(--gray-50);padding:6px 14px;border-radius:var(--radius-md);">{{ payment.transaction_id }}</code>
+                    </div>
+                    
+                    <!-- Payment Details -->
+                    <div style="margin-bottom:var(--space-6);padding-bottom:var(--space-6);border-bottom:1px solid var(--gray-100);">
+                        <h4 style="font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:var(--space-3);">Payment Details</h4>
+                        <div style="display:flex;flex-direction:column;gap:var(--space-2);">
+                            <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--gray-600);"><span>Status</span><span>
+                                {% if payment.is_completed %}<span style="color:var(--success);font-weight:600;">✅ Completed</span>
+                                {% elif payment.is_failed %}<span style="color:var(--error);font-weight:600;">❌ Failed</span>
+                                {% elif payment.is_pending %}<span style="color:var(--amber-500);font-weight:600;">⏳ Pending</span>{% endif %}
+                            </span></div>
+                            <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--gray-600);"><span>Method</span><span>{{ payment.get_payment_method_display }}</span></div>
+                            <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--gray-600);"><span>Date Initiated</span><span>{{ payment.initiated_at|date:"F d, Y H:i" }}</span></div>
+                            {% if payment.processed_at %}
+                            <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--gray-600);"><span>Date Processed</span><span>{{ payment.processed_at|date:"F d, Y H:i" }}</span></div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Course Details -->
+                    <div style="margin-bottom:var(--space-6);padding-bottom:var(--space-6);border-bottom:1px solid var(--gray-100);">
+                        <h4 style="font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:var(--space-3);">Payment For</h4>
+                        <div style="display:flex;align-items:center;gap:var(--space-4);margin-bottom:var(--space-4);">
+                            <div style="width:48px;height:36px;border-radius:var(--radius-md);background:linear-gradient(135deg,var(--teal-500),var(--teal-700));display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">
+                                {{ payment.course.category.icon|default:'📚' }}
+                            </div>
+                            <div>
+                                <div style="font-weight:600;font-size:14px;">{{ payment.course.title }}</div>
+                                <div style="font-size:12px;color:var(--gray-400);">👨‍🏫 {{ payment.course.instructor.full_name }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Amount -->
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:var(--space-4);background:var(--teal-50);border-radius:var(--radius-lg);">
+                        <span style="font-weight:600;font-size:16px;color:var(--teal-700);">Total Amount</span>
+                        <span style="font-weight:800;font-size:22px;color:var(--teal-700);">TZS {{ payment.amount|floatformat:0 }}</span>
+                    </div>
+                </div>
+                
+                <!-- Actions -->
+                <div style="padding:var(--space-6);padding-top:0;display:flex;gap:var(--space-3);flex-wrap:wrap;">
+                    {% if payment.is_completed %}
+                    <a href="{% url 'courses:my_enrollments' %}" class="btn btn-primary">📚 Go to Course</a>
+                    {% elif payment.is_failed %}
+                    <a href="{% url 'payments:checkout' payment.enrollment.id %}" class="btn btn-warm">🔄 Try Again</a>
+                    {% elif payment.is_pending %}
+                    <a href="{% url 'payments:payment_simulator' payment.id %}" class="btn btn-primary">⏳ Complete Payment</a>
+                    {% endif %}
+                    <a href="{% url 'payments:payment_history' %}" class="btn btn-outline">📋 All Payments</a>
+                    <button onclick="window.print()" class="btn btn-outline" style="margin-left:auto;">🖨️ Print</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleSidebar(){var s=document.getElementById('dashSidebar');var o=document.getElementById('dashOverlay');if(s&&o){s.classList.toggle('open');o.classList.toggle('show');}}
+function closeSidebar(){var s=document.getElementById('dashSidebar');var o=document.getElementById('dashOverlay');if(s&&o){s.classList.remove('open');o.classList.remove('show');}}
+</script>
+{% endblock %}

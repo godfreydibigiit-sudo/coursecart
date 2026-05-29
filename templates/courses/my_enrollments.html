@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Courses - CourseCart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard-saas.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dash-layout">
+    <div class="dash-overlay" id="dashOverlay" onclick="closeSidebar()"></div>
+    {% include 'includes/dash_sidebar_student.html' %}
+    
+    <div class="dash-main">
+        <header class="dash-header">
+            <div class="dash-header-left">
+                <button class="btn-hamburger" onclick="toggleSidebar()">☰</button>
+                <div class="dash-breadcrumb">My Courses</div>
+            </div>
+            <div class="dash-header-right">
+                <a href="{% url 'notifications:notification_list' %}" class="btn-header" style="position:relative;">
+                    🔔
+                    {% if has_unread_notifications %}<span class="badge-dot"></span>{% endif %}
+                </a>
+                <div class="dash-user-avatar">{{ user.full_name|slice:":1"|upper }}</div>
+            </div>
+        </header>
+        
+        <div class="dash-content">
+            <div class="page-header">
+                <div>
+                    <h1>📚 My Enrolled Courses</h1>
+                    <p>Continue where you left off</p>
+                </div>
+                <div class="page-actions">
+                    <a href="{% url 'courses:course_list' %}" class="btn btn-primary">🔍 Browse More</a>
+                </div>
+            </div>
+            
+            {% if enrollments %}
+            <div class="section-card">
+                <div class="section-card-header">
+                    <h2>All Courses ({{ enrollments.count }})</h2>
+                </div>
+                <div class="section-card-body">
+                    <div class="enrollment-list">
+                        {% for enrollment in enrollments %}
+                        <div class="enrollment-item" style="{% if enrollment.is_completed %}border-left: 4px solid var(--success);{% endif %}">
+                            <div class="enroll-thumb">
+                                {% if enrollment.course.thumbnail %}
+                                <img src="{{ enrollment.course.thumbnail.url }}" alt="{{ enrollment.course.title }}">
+                                {% else %}
+                                {{ enrollment.course.category.icon|default:'📖' }}
+                                {% endif %}
+                            </div>
+                            <div class="enroll-info">
+                                <div class="enroll-title">{{ enrollment.course.title }}</div>
+                                <div class="enroll-meta">
+                                    <span>👨‍🏫 {{ enrollment.course.instructor.full_name }}</span>
+                                    <span>📅 {{ enrollment.enrolled_at|date:"M d, Y" }}</span>
+                                    {% if enrollment.payment_status == 'completed' %}
+                                    <span class="badge-status paid">✅ Paid</span>
+                                    {% elif enrollment.payment_status == 'pending' %}
+                                    <span class="badge-status pending">⏳ Pending</span>
+                                    {% else %}
+                                    <span class="badge-status" style="background:#FEF3F2;color:#B42318;">❌ Failed</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="enroll-progress-mini">
+                                {% if enrollment.payment_status == 'completed' and not enrollment.is_completed %}
+                                <div class="progress-label">
+                                    <span>Progress</span><span>{{ enrollment.progress_percentage }}%</span>
+                                </div>
+                                <div class="progress-bar-sm">
+                                    <div class="progress-fill-sm" style="width:{{ enrollment.progress_percentage }}%"></div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="enroll-action">
+                                {% if enrollment.payment_status == 'completed' %}
+                                    {% if not enrollment.is_completed %}
+                                        {% with first_lesson=enrollment.course.lessons.first %}
+                                        {% if first_lesson %}
+                                        <a href="{% url 'courses:lesson_view' course_slug=enrollment.course.slug lesson_pk=first_lesson.pk %}" class="btn btn-primary btn-sm">📚 Continue</a>
+                                        {% endif %}
+                                        {% endwith %}
+                                    {% else %}
+                                        {% if enrollment.certificate_issued %}
+                                        <a href="#" class="btn btn-outline btn-sm">📜 Certificate</a>
+                                        {% endif %}
+                                    {% endif %}
+                                {% elif enrollment.payment_status == 'pending' %}
+                                <a href="{% url 'payments:checkout' enrollment.id %}" class="btn btn-warm btn-sm">💰 Pay TZS {{ enrollment.course.price|floatformat:0 }}</a>
+                                {% elif enrollment.payment_status == 'failed' %}
+                                <a href="{% url 'payments:checkout' enrollment.id %}" class="btn btn-warm btn-sm">🔄 Retry</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="section-card">
+                <div class="section-card-body">
+                    <div class="empty-state">
+                        <span class="empty-icon">📭</span>
+                        <h3>No Enrollments Yet</h3>
+                        <p>Browse courses and start learning today!</p>
+                        <a href="{% url 'courses:course_list' %}" class="btn btn-primary btn-lg">Browse Courses</a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleSidebar(){document.getElementById('dashSidebar').classList.toggle('open');document.getElementById('dashOverlay').classList.toggle('show');}
+function closeSidebar(){document.getElementById('dashSidebar').classList.remove('open');document.getElementById('dashOverlay').classList.remove('show');}
+</script>
+{% endblock %}

@@ -1,0 +1,45 @@
+<aside class="dash-sidebar" id="dashSidebar">
+    <div class="dash-sidebar-header">
+        <div class="dash-logo">C</div>
+        <span class="dash-brand">CourseCart</span>
+    </div>
+    
+    <nav class="dash-sidebar-nav">
+        <span class="dash-nav-section">Main</span>
+        <a href="{% url 'profiles:student_dashboard' %}" class="dash-nav-item active">
+            <span class="nav-icon"></span> Dashboard
+        </a>
+        <a href="{% url 'courses:my_enrollments' %}" class="dash-nav-item">
+            <span class="nav-icon"></span> My Courses
+            <span class="nav-badge">{{ active_enrollments.count|default:0 }}</span>
+        </a>
+        <a href="{% url 'courses:course_list' %}" class="dash-nav-item">
+            <span class="nav-icon"></span> Browse Courses
+        </a>
+        
+        <span class="dash-nav-section">Account</span>
+        <a href="{% url 'payments:payment_history' %}" class="dash-nav-item">
+            <span class="nav-icon"></span> Payment History
+        </a>
+        <a href="{% url 'notifications:notification_list' %}" class="dash-nav-item">
+            <span class="nav-icon"></span> Notifications
+        </a>
+        <a href="{% url 'profiles:student_profile_edit' %}" class="dash-nav-item">
+            <span class="nav-icon"></span> Settings
+        </a>
+    </nav>
+    
+    <div class="dash-sidebar-footer">
+        <div class="dash-user-card">
+            <div class="dash-user-avatar">{{ user.full_name|slice:":1"|upper }}</div>
+            <div class="dash-user-info">
+                <div class="dash-user-name">{{ user.full_name|truncatechars:15 }}</div>
+                <div class="dash-user-role">🎓 Student</div>
+            </div>
+            <form action="{% url 'accounts:logout' %}" method="post" style="margin-left:auto;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-icon btn-outline" title="Logout">🚪</button>
+            </form>
+        </div>
+    </div>
+</aside>

@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CourseCart - Software Requirements Specification</title>
+    <style>
+        :root {
+            --navy: #1E3A5F; --navy-light: #2D5F8A; --teal: #0D9488;
+            --gray-50: #F8FAFC; --gray-100: #F1F5F9; --gray-200: #E2E8F0;
+            --gray-600: #475569; --gray-800: #1E293B; --white: #FFFFFF;
+            --amber: #F59E0B; --red: #EF4444; --green: #10B981;
+            --radius: 10px;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: var(--gray-800); background: var(--gray-50); line-height: 1.7;
+        }
+        
+        /* Cover Page */
+        .cover {
+            background: linear-gradient(135deg, #0F172A 0%, #1E3A5F 50%, #0F766E 100%);
+            color: white; padding: 3rem 2rem; text-align: center; min-height: 100vh;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+        .cover .logo { font-size: 5rem; margin-bottom: 1rem; }
+        .cover h1 { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.02em; }
+        @media (min-width: 768px) { .cover h1 { font-size: 3.5rem; } }
+        .cover .tagline { font-size: 1.25rem; opacity: 0.85; margin: 0.5rem 0 2rem; }
+        .cover .doc-type {
+            display: inline-block; padding: 0.5rem 2rem; border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50px; font-size: 0.9rem; letter-spacing: 0.1em; text-transform: uppercase;
+            margin-bottom: 2rem;
+        }
+        .cover .meta-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 2rem;
+            text-align: left; font-size: 0.9rem; max-width: 600px;
+        }
+        @media (max-width: 500px) { .cover .meta-grid { grid-template-columns: 1fr; } }
+        .cover .meta-grid .lbl {
+            font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em;
+            opacity: 0.55; display: block; margin-bottom: 0.15rem;
+        }
+        .cover .meta-grid .val { font-weight: 500; }
+        
+        /* Container */
+        .container { max-width: 960px; margin: 0 auto; padding: 1.5rem; }
+        
+        /* TOC */
+        .toc {
+            background: var(--white); border-radius: var(--radius); padding: 2rem;
+            margin: 2rem auto; box-shadow: 0 4px 16px rgba(0,0,0,0.06); max-width: 960px;
+        }
+        .toc h2 { font-size: 1.35rem; color: var(--navy); margin-bottom: 1rem; border-bottom: 2px solid var(--gray-200); padding-bottom: 0.5rem; }
+        .toc ol { list-style: none; counter-reset: toc; }
+        .toc ol li { counter-increment: toc; margin-bottom: 0.3rem; }
+        .toc ol li a {
+            display: block; padding: 0.45rem 0.75rem; border-radius: 6px;
+            color: var(--gray-600); text-decoration: none; font-size: 0.9rem; transition: 0.15s;
+        }
+        .toc ol li a::before { content: counter(toc) ". "; font-weight: 700; color: var(--navy); }
+        .toc ol li a:hover { background: #F0FDFA; color: var(--teal); }
+        .toc ol ol { margin-left: 1.5rem; }
+        .toc ol ol li a { font-size: 0.85rem; }
+        .toc ol ol li a::before { content: counter(toc) "." counter(sec, lower-alpha) " "; }
+        
+        /* Sections */
+        .section {
+            background: var(--white); border-radius: var(--radius); padding: 2rem;
+            margin-bottom: 1.5rem; border: 1px solid var(--gray-200);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03); counter-increment: section;
+        }
+        @media (max-width: 480px) { .section { padding: 1.25rem; } }
+        .section h2 {
+            font-size: 1.35rem; color: var(--navy); margin-bottom: 1rem;
+            padding-bottom: 0.6rem; border-bottom: 2px solid var(--gray-100);
+        }
+        .section h2::before { content: counter(section) ". "; color: var(--teal); }
+        .section h3 { font-size: 1.1rem; color: var(--navy-light); margin: 1.5rem 0 0.75rem; }
+        .section h4 { font-size: 1rem; margin: 1rem 0 0.5rem; }
+        .section p { margin-bottom: 0.75rem; color: var(--gray-600); font-size: 0.95rem; }
+        .section ul, .section ol { margin: 0.5rem 0 1rem 1.5rem; color: var(--gray-600); font-size: 0.95rem; }
+        .section li { margin-bottom: 0.35rem; }
+        
+        /* Tables */
+        .tbl {
+            width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem;
+        }
+        .tbl caption {
+            font-weight: 700; color: var(--navy); margin-bottom: 0.5rem; text-align: left;
+            font-size: 1rem;
+        }
+        .tbl th {
+            background: var(--navy); color: white; padding: 0.7rem 1rem;
+            text-align: left; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        .tbl td { padding: 0.6rem 1rem; border-bottom: 1px solid var(--gray-200); vertical-align: top; }
+        .tbl tr:nth-child(even) { background: var(--gray-50); }
+        .tbl .id { font-family: 'Courier New', monospace; font-weight: 700; color: var(--teal); white-space: nowrap; }
+        .pri-high { color: var(--red); font-weight: 700; }
+        .pri-med { color: var(--amber); font-weight: 700; }
+        .pri-low { color: var(--teal); font-weight: 700; }
+        
+        /* ER Diagram */
+        .er-diagram {
+            background: #F8FAFC; border: 2px solid var(--gray-200); border-radius: var(--radius);
+            padding: 2rem; margin: 1.5rem 0; overflow-x: auto; font-family: 'Courier New', monospace;
+            font-size: 0.82rem; line-height: 1.8; white-space: pre;
+        }
+        .er-diagram .entity { color: var(--navy); font-weight: 700; }
+        .er-diagram .attr { color: var(--teal); }
+        .er-diagram .pk { color: var(--amber); font-weight: 700; }
+        .er-diagram .fk { color: var(--red); }
+        .er-diagram .rel { color: #6366F1; }
+        
+        /* Team Cards */
+        .team-grid {
+            display: grid; grid-template-columns: 1fr; gap: 1rem; margin: 1rem 0;
+        }
+        @media (min-width: 500px) { .team-grid { grid-template-columns: 1fr 1fr; } }
+        @media (min-width: 768px) { .team-grid { grid-template-columns: repeat(3, 1fr); } }
+        .team-card {
+            background: linear-gradient(135deg, var(--white), var(--gray-50));
+            border: 1px solid var(--gray-200); border-radius: var(--radius);
+            padding: 1.5rem; text-align: center; transition: 0.2s;
+        }
+        .team-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+        .team-card .avatar {
+            width: 64px; height: 64px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--teal), var(--navy));
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1.5rem; font-weight: 700;
+            margin: 0 auto 0.75rem;
+        }
+        .team-card .name { font-weight: 700; font-size: 1rem; }
+        .team-card .role {
+            font-size: 0.8rem; color: var(--teal); font-weight: 600;
+            margin: 0.25rem 0;
+        }
+        .team-card .desc { font-size: 0.8rem; color: var(--gray-600); margin-top: 0.5rem; }
+        
+        /* Deployment Box */
+        .deploy-box {
+            background: linear-gradient(135deg, #0F172A, #1E3A5F); color: white;
+            border-radius: var(--radius); padding: 1.5rem; margin: 1rem 0;
+            display: grid; grid-template-columns: 1fr; gap: 1rem;
+        }
+        @media (min-width: 600px) { .deploy-box { grid-template-columns: 1fr 1fr; } }
+        .deploy-box .dep-item h4 { color: var(--amber); font-size: 0.9rem; margin-bottom: 0.25rem; }
+        .deploy-box .dep-item p { color: rgba(255,255,255,0.8); font-size: 0.85rem; margin: 0; }
+        .deploy-box .dep-item a { color: var(--teal); word-break: break-all; }
+        
+        /* Callouts */
+        .note {
+            background: #F0FDFA; border-left: 4px solid var(--teal);
+            padding: 0.75rem 1rem; border-radius: 0 8px 8px 0; margin: 1rem 0;
+            font-size: 0.9rem; color: #0F766E;
+        }
+        .warning {
+            background: #FFFBEB; border-left: 4px solid var(--amber);
+            padding: 0.75rem 1rem; border-radius: 0 8px 8px 0; margin: 1rem 0;
+            font-size: 0.9rem; color: #92400E;
+        }
+        
+        /* Use Case */
+        .uc {
+            background: var(--gray-50); border: 1px solid var(--gray-200);
+            border-radius: var(--radius); padding: 1.25rem; margin: 1rem 0;
+        }
+        .uc h4 { color: var(--navy); margin-top: 0; }
+        .uc .row { display: grid; grid-template-columns: 120px 1fr; gap: 0.4rem; font-size: 0.88rem; margin-bottom: 0.2rem; }
+        @media (max-width: 500px) { .uc .row { grid-template-columns: 1fr; } }
+        .uc .lbl { font-weight: 600; color: var(--gray-600); }
+        
+        /* Footer */
+        .doc-footer {
+            text-align: center; padding: 2rem; color: var(--gray-600);
+            font-size: 0.85rem; border-top: 1px solid var(--gray-200); margin-top: 2rem;
+        }
+        
+        /* Back to Top */
+        .btt {
+            position: fixed; bottom: 1.5rem; right: 1.5rem;
+            width: 44px; height: 44px; background: var(--navy); color: white;
+            border: none; border-radius: 50%; cursor: pointer; font-size: 1.2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2); opacity: 0; visibility: hidden;
+            transition: 0.3s; z-index: 999;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .btt.visible { opacity: 1; visibility: visible; }
+        .btt:hover { background: #2D5F8A; }
+        
+        @media print {
+            .btt { display: none; }
+            body { background: white; font-size: 11pt; }
+            .section { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
+            .cover { background: var(--navy) !important; -webkit-print-color-adjust: exact; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ==================== COVER PAGE ==================== -->
+<div class="cover">
+    <div class="logo">📚</div>
+    <h1>CourseCart</h1>
+    <p class="tagline">Online Vocational Skills Training Platform</p>
+    <div class="doc-type">Software Requirements Specification</div>
+    
+    <div class="meta-grid">
+        <div><span class="lbl">Document Version</span><span class="val">2.0 — Final</span></div>
+        <div><span class="lbl">Release Date</span><span class="val">May 11, 2026</span></div>
+        <div><span class="lbl">Project Manager</span><span class="val">Neema Manoza</span></div>
+        <div><span class="lbl">Development Team</span><span class="val">5 Members (Group Project)</span></div>
+        <div><span class="lbl">Live URL</span><span class="val">coursecart.pythonanywhere.com</span></div>
+        <div><span class="lbl">Repository</span><span class="val">github.com (Private)</span></div>
+    </div>
+</div>
+
+<!-- ==================== DOCUMENT CONTROL ==================== -->
+<div class="container">
+    <div class="section">
+        <h2>Document Control</h2>
+        
+        <h3>Revision History</h3>
+        <table class="tbl">
+            <thead><tr><th>Version</th><th>Date</th><th>Author</th><th>Changes</th></tr></thead>
+            <tbody>
+                <tr><td>0.1</td><td>May 01, 2026</td><td>Neema Manoza (PM)</td><td>Initial draft and structure</td></tr>
+                <tr><td>0.5</td><td>May 05, 2026</td><td>Godfrey Augustino</td><td>Backend architecture & functional requirements</td></tr>
+                <tr><td>0.8</td><td>May 08, 2026</td><td>Modesti Imam</td><td>Frontend specifications & UI requirements</td></tr>
+                <tr><td>1.0</td><td>May 10, 2026</td><td>Neema Manoza</td><td>Integration & reviewed version</td></tr>
+                <tr><td>2.0</td><td>May 11, 2026</td><td>Full Team</td><td>Final approved — Deployment & ER diagrams added</td></tr>
+            </tbody>
+        </table>
+        
+        <h3>Approval Signatures</h3>
+        <table class="tbl">
+            <thead><tr><th>Role</th><th>Name</th><th>Signature</th><th>Date</th></tr></thead>
+            <tbody>
+                <tr><td>Project Manager</td><td>Neema Manoza</td><td>___________</td><td>__/__/2026</td></tr>
+                <tr><td>Backend Developer</td><td>Godfrey Augustino</td><td>___________</td><td>__/__/2026</td></tr>
+                <tr><td>Frontend Developer</td><td>Modesti Imam</td><td>___________</td><td>__/__/2026</td></tr>
+                <tr><td>UI/UX Designer</td><td>Mustapha Lameck</td><td>___________</td><td>__/__/2026</td></tr>
+                <tr><td>Business Analyst</td><td>Doreen Aloyce</td><td>___________</td><td>__/__/2026</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ==================== TEAM SECTION ==================== -->
+<div class="container">
+    <div class="section">
+        <h2>Development Team</h2>
+        <p>CourseCart was developed as a group project by five dedicated students, each contributing specialized expertise:</p>
+        
+        <div class="team-grid">
+            <div class="team-card">
+                <div class="avatar" style="background:linear-gradient(135deg,#0D9488,#1E3A5F);">NM</div>
+                <div class="name">Neema Manoza</div>
+                <div class="role">📋 Project Manager</div>
+                <p class="desc">Oversaw project planning, timelines, resource allocation, and ensured deliverables met quality standards. Coordinated team communication and client requirements.</p>
+            </div>
+            
+            <div class="team-card">
+                <div class="avatar" style="background:linear-gradient(135deg,#6366F1,#4F46E5);">GA</div>
+                <div class="name">Godfrey Augustino</div>
+                <div class="role">💻 Backend Developer</div>
+                <p class="desc">Designed and implemented Django architecture, database models, API logic, payment simulation, authentication system, and all server-side functionality.</p>
+            </div>
+            
+            <div class="team-card">
+                <div class="avatar" style="background:linear-gradient(135deg,#F59E0B,#D97706);">MI</div>
+                <div class="name">Modesti Imam</div>
+                <div class="role">🎨 Frontend Developer</div>
+                <p class="desc">Built responsive HTML/CSS templates, JavaScript interactions, responsive design system, and all user-facing interfaces across the platform.</p>
+            </div>
+            
+            <div class="team-card">
+                <div class="avatar" style="background:linear-gradient(135deg,#EC4899,#BE185D);">ML</div>
+                <div class="name">Mustapha Lameck</div>
+                <div class="role">🖌️ UI/UX Designer</div>
+                <p class="desc">Created the visual design system, color scheme (Teal+Amber+White), wireframes, prototypes, and ensured intuitive user experience across all devices.</p>
+            </div>
+            
+            <div class="team-card">
+                <div class="avatar" style="background:linear-gradient(135deg,#10B981,#047857);">DA</div>
+                <div class="name">Doreen Aloyce</div>
+                <div class="role">📊 Business Analyst</div>
+                <p class="desc">Conducted market research, defined business requirements, created use cases, analyzed user needs for Tanzanian youth, and documented functional specifications.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== TABLE OF CONTENTS ==================== -->
+<div class="toc">
+    <h2>📑 Table of Contents</h2>
+    <ol>
+        <li><a href="#s1">Introduction</a></li>
+        <li><a href="#s2">Overall Description</a></li>
+        <li><a href="#s3">Functional Requirements</a></li>
+        <li><a href="#s4">Non-Functional Requirements</a></li>
+        <li><a href="#s5">Entity-Relationship Diagram</a></li>
+        <li><a href="#s6">Use Case Descriptions</a></li>
+        <li><a href="#s7">System Architecture & Deployment</a></li>
+        <li><a href="#s8">Appendices</a></li>
+    </ol>
+</div>
+
+<!-- ==================== 1. INTRODUCTION ==================== -->
+<div class="container" id="s1">
+    <div class="section">
+        <h2>Introduction</h2>
+        
+        <h3>1.1 Purpose</h3>
+        <p>This Software Requirements Specification (SRS) defines the complete functional and non-functional requirements for <strong>CourseCart</strong> — an online vocational skills training platform designed to provide affordable, accessible, and certified vocational education to Tanzanian youth. The platform addresses the critical gap between unemployed youth seeking marketable skills and the high cost and geographic inaccessibility of traditional vocational training centers.</p>
+        
+        <h3>1.2 Scope</h3>
+        <p>CourseCart is a Django-based web application that connects students with vocational instructors. The system facilitates user registration with role-based access (Student/Instructor), course creation and management, course browsing with search/filter, enrollment with simulated payment processing, lesson delivery through multiple formats (YouTube, PDF, video, text), progress tracking with completion certificates, and a comprehensive notification system.</p>
+        
+        <h3>1.3 Definitions & Acronyms</h3>
+        <table class="tbl">
+            <thead><tr><th>Term</th><th>Definition</th></tr></thead>
+            <tbody>
+                <tr><td>SRS</td><td>Software Requirements Specification (IEEE 830 standard)</td></tr>
+                <tr><td>MTV</td><td>Model-Template-View — Django's architectural pattern</td></tr>
+                <tr><td>ER Diagram</td><td>Entity-Relationship Diagram — visual representation of database structure</td></tr>
+                <tr><td>ORM</td><td>Object-Relational Mapping — database abstraction layer</td></tr>
+                <tr><td>CRUD</td><td>Create, Read, Update, Delete — basic data operations</td></tr>
+                <tr><td>TZS</td><td>Tanzanian Shilling — currency used for course pricing</td></tr>
+                <tr><td>PythonAnywhere</td><td>Cloud hosting platform for Python/Django applications</td></tr>
+                <tr><td>GitHub</td><td>Version control and collaboration platform</td></tr>
+            </tbody>
+        </table>
+        
+        <h3>1.4 References</h3>
+        <ul>
+            <li>IEEE Std 830-1998 — Recommended Practice for Software Requirements Specifications</li>
+            <li>Django 5.2 Official Documentation</li>
+            <li>CourseCart User Manual v1.0</li>
+            <li>PythonAnywhere Deployment Guide</li>
+            <li>Tanzania National ICT Policy 2016</li>
+        </ul>
+    </div>
+</div>
+
+<!-- ==================== 2. OVERALL DESCRIPTION ==================== -->
+<div class="container" id="s2">
+    <div class="section">
+        <h2>Overall Description</h2>
+        
+        <h3>2.1 Product Perspective</h3>
+        <p>CourseCart is a standalone web application serving as an alternative to physical vocational training centers. It operates on the Django MTV architecture with SQLite for development and PostgreSQL for production. The system simulates payment gateways in its initial release with planned integration of real Tanzanian payment systems (M-Pesa, Tigo Pesa, NMB, CRDB).</p>
+        
+        <h3>2.2 User Roles</h3>
+        <table class="tbl">
+            <caption>System Users</caption>
+            <thead><tr><th>Role</th><th>Description</th><th>Technical Level</th></tr></thead>
+            <tbody>
+                <tr><td><strong>🎓 Student</strong></td><td>Youth seeking vocational skills. Browses courses, enrolls, pays, learns, earns certificates.</td><td>Basic — Can use web browser and mobile money</td></tr>
+                <tr><td><strong>👨‍🏫 Instructor</strong></td><td>Skilled professionals creating courses, adding lessons, tracking student progress.</td><td>Intermediate — Uploads files, manages content</td></tr>
+                <tr><td><strong>👑 Administrator</strong></td><td>Platform manager via Django admin panel at /admin/.</td><td>Advanced — Full system management</td></tr>
+            </tbody>
+        </table>
+        
+        <h3>2.3 Operating Environment</h3>
+        <table class="tbl">
+            <thead><tr><th>Component</th><th>Development</th><th>Production</th></tr></thead>
+            <tbody>
+                <tr><td>Backend</td><td>Django 5.2, Python 3.13</td><td>Same (PythonAnywhere)</td></tr>
+                <tr><td>Database</td><td>SQLite3</td><td>PostgreSQL (PythonAnywhere)</td></tr>
+                <tr><td>Frontend</td><td>HTML5, CSS3, Vanilla JS</td><td>Same</td></tr>
+                <tr><td>Version Control</td><td>Git + GitHub</td><td>Same</td></tr>
+                <tr><td>Hosting</td><td>Localhost:8000</td><td>PythonAnywhere</td></tr>
+            </tbody>
+        </table>
+        
+        <h3>2.4 Design Constraints</h3>
+        <ul>
+            <li>Django MTV architecture — no REST framework in initial release</li>
+            <li>Vanilla CSS/JS — no external frontend frameworks</li>
+            <li>Payment simulation only — real gateway integration in Phase 2</li>
+            <li>File uploads: 100MB max (videos), 50MB max (PDFs)</li>
+            <li>Responsive design for mobile, tablet, and desktop</li>
+            <li>Must work on low-bandwidth connections (common in Tanzania)</li>
+        </ul>
+    </div>
+</div>
+
+<!-- ==================== 3. FUNCTIONAL REQUIREMENTS ==================== -->
+<div class="container" id="s3">
+    <div class="section">
+        <h2>Functional Requirements</h2>
+        
+        <h3>3.1 Authentication & User Management</h3>
+        <table class="tbl">
+            <thead><tr><th>ID</th><th>Requirement</th><th>Priority</th></tr></thead>
+            <tbody>
+                <tr><td class="id">FR-AUTH-01</td><td>System shall allow registration with email, full name, password, and role</td><td class="pri-high">HIGH</td></tr>
+                <tr><td class="id">FR-AUTH-02</td><td>System shall authenticate users using email as unique identifier</td><td class="pri-high">HIGH</td></tr>
+                <tr><td class="id">FR-AUTH-03</td><td>System shall redirect to role-appropriate dashboard after login</td><td class="pri-high">HIGH</td></tr>
+                <tr><td class="id">FR-AUTH-04</td><td>System shall prevent duplicate email registrations</td><td class="pri-high">HIGH</td></tr>
+                <tr><td class="id">FR-AUTH-05</td><td>System shall enforce minimum 8-character password length</td><td class="pri-med">MED</td></tr>
+            </tbody>
+        </table>
+        
+        <h3>3.2 Student Features</h3>
+        <table class="tbl">
+            <thead><tr><th>ID</th><th>Requirement</th><th>Priority</th></tr></thead>
+            <tbody>
+                <tr><td class="id">FR-STU-01</td><td>Browse published courses with search, category filter, and level filter</td><td class="pri-high">HIGH</td></tr>
+                <tr><td class="id">FR-STU-02</td><td>View course details: price, duration, lessons, instructor, rating</td><td class="pri-high">HIGH</td></tr>
+                <tr><td class="id">FR-STU-03</td><td>Enroll in courses with duplicate prevention</td><td class="pri-high">HIGH</td></tr>
+                <tr><td class="id">FR-STU-04</td><td>Redirect to payment (paid courses) or instant access (free courses)</td><td class="pri-high">HIGH</td></tr>
+                <tr><td class="id">FR-STU-05</td><td>Access lessons: YouTube videos, PDF documents, uploaded videos, text</td><td class="pri-high">HIGH</td></tr>
+                <tr><td class="id">FR-STU-06</td><td>Track lesson completion with progress percentage</td><td class="pri-high">HIGH</td></tr>
+                <tr><td class="id">FR-STU-07</td><td>Student dashboard: active courses, completed courses, KPIs</td><td class="pri-high">HIGH</td></tr>
+                <tr><td class="id">FR-STU-08</td><td>Download PDF lesson materials</td><td class="pri-med">MED</td></tr>
+                <tr><td class="id">FR-STU-09</td><td>Submit course reviews and ratings upon completion</td><td class="pri-low">LOW</td></tr>
+            </tbody>
+        </table>
+        
+        <h3>3.3 Instructor Features</h3>
+        <table class="tbl">
+            <thead><tr><th>ID</th><th>Requirement</th><th>Priority</th></tr></thead>
+            <tbody>
+                <tr><td class="id">FR-INS-01</td><td>Create courses: title, category, description, price, duration, thumbnail</td><td class="pri-high">HIGH</td></tr>
+                <tr><td class="id">FR-INS-02</td><td>Auto-publish on creation or save as draft</td><td class="pri-high">HIGH</td></tr>
+                <tr><td class="id">FR-INS-03</td><td>Add lessons: YouTube URL, PDF, video file, or text notes</td><td class="pri-high">HIGH</td></tr>
+                <tr><td class="id">FR-INS-04</td><td>Auto-order lessons within a course</td><td class="pri-med">MED</td></tr>
+                <tr><td class="id">FR-INS-05</td><td>View enrolled students and their progress per course</td><td class="pri-high">HIGH</td></tr>
+                <tr><td class="id">FR-INS-06</td><td>Instructor dashboard: KPIs, course list, student counts</td><td class="pri-high">HIGH</td></tr>
+                <tr><td class="id">FR-INS-07</td><td>Edit instructor profile, bio, expertise, website</td><td class="pri-low">LOW</td></tr>
+            </tbody>
+        </table>
+        
+        <h3>3.4 Payment Processing</h3>
+        <table class="tbl">
+            <thead><tr><th>ID</th><th>Requirement</th><th>Priority</th></tr></thead>
+            <tbody>
+                <tr><td class="id">FR-PAY-01</td><td>Support 3 methods: Mobile Money, Bank Card, Cash Payment</td><td class="pri-high">HIGH</td></tr>
+                <tr><td class="id">FR-PAY-02</td><td>Simulate payment processing with 90% success rate</td><td class="pri-high">HIGH</td></tr>
+                <tr><td class="id">FR-PAY-03</td><td>Generate unique transaction IDs per payment</td><td class="pri-high">HIGH</td></tr>
+                <tr><td class="id">FR-PAY-04</td><td>Update enrollment status upon successful payment</td><td class="pri-high">HIGH</td></tr>
+                <tr><td class="id">FR-PAY-05</td><td>Allow retry of failed payments</td><td class="pri-med">MED</td></tr>
+                <tr><td class="id">FR-PAY-06</td><td>Maintain payment history with audit logs</td><td class="pri-med">MED</td></tr>
+            </tbody>
+        </table>
+        
+        <h3>3.5 Notifications</h3>
+        <table class="tbl">
+            <thead><tr><th>ID</th><th>Requirement</th><th>Priority</th></tr></thead>
+            <tbody>
+                <tr><td class="id">FR-NOT-01</td><td>Send notifications for payments, enrollments, certificates</td><td class="pri-high">HIGH</td></tr>
+                <tr><td class="id">FR-NOT-02</td><td>Display unread count badge on navbar bell icon</td><td class="pri-high">HIGH</td></tr>
+                <tr><td class="id">FR-NOT-03</td><td>Mark as read (single/all), delete notifications</td><td class="pri-med">MED</td></tr>
+                <tr><td class="id">FR-NOT-04</td><td>Auto-refresh notification count every 30 seconds</td><td class="pri-low">LOW</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ==================== 4. NON-FUNCTIONAL REQUIREMENTS ==================== -->
+<div class="container" id="s4">
+    <div class="section">
+        <h2>Non-Functional Requirements</h2>
+        
+        <h3>4.1 Performance</h3>
+        <table class="tbl">
+            <thead><tr><th>ID</th><th>Requirement</th><th>Target</th></tr></thead>
+            <tbody>
+                <tr><td class="id">NFR-P01</td><td>Page load time</td><td>&lt; 3 seconds on 3G</td></tr>
+                <tr><td class="id">NFR-P02</td><td>Concurrent users</td><td>100+ simultaneous</td></tr>
+                <tr><td class="id">NFR-P03</td><td>Image optimization</td><td>Lazy loading, thumbnails</td></tr>
+            </tbody>
+        </table>
+        
+        <h3>4.2 Security</h3>
+        <ul>
+            <li>Password hashing via Django PBKDF2 algorithm</li>
+            <li>CSRF protection on all POST requests</li>
+            <li>XSS protection via Django template auto-escaping</li>
+            <li>SQL injection prevention via Django ORM parameterized queries</li>
+            <li>Role-based access control (Student/Instructor/Admin)</li>
+            <li>Secure file upload validation (extension + MIME type checking)</li>
+            <li>Production: HTTPS enforcement, secure cookies, HSTS headers</li>
+        </ul>
+        
+        <h3>4.3 Usability</h3>
+        <ul>
+            <li>Fully responsive design (mobile, tablet, desktop)</li>
+            <li>Consistent Teal + Amber + White color scheme</li>
+            <li>Intuitive navigation with clear call-to-action buttons</li>
+            <li>Form validation with descriptive error messages</li>
+            <li>Accessible — WCAG 2.1 AA compliant</li>
+        </ul>
+        
+        <h3>4.4 Reliability & Scalability</h3>
+        <ul>
+            <li>System uptime: 99.5% (excluding planned maintenance)</li>
+            <li>Modular app structure for easy feature addition</li>
+            <li>Database migration path: SQLite → PostgreSQL</li>
+            <li>Payment service designed for real gateway integration</li>
+        </ul>
+    </div>
+</div>
+
+<!-- ==================== 5. ER DIAGRAM ==================== -->
+<div class="container" id="s5">
+    <div class="section">
+        <h2>Entity-Relationship Diagram</h2>
+        <p>The following ER diagram represents the core database structure of CourseCart, showing entities, their attributes, primary keys (PK), foreign keys (FK), and relationships.</p>
+        
+        <div class="er-diagram">
+╔══════════════════════════════════════════════════════════════════╗
+║                    COURSECART  —  ER DIAGRAM                     ║
+╚══════════════════════════════════════════════════════════════════╝
+
+┌─────────────────────────┐          ┌─────────────────────────┐
+│        <span class="entity">USER</span>              │          │    <span class="entity">STUDENT PROFILE</span>      │
+├─────────────────────────┤          ├─────────────────────────┤
+│ <span class="pk">PK</span>  id                  │ 1 ─── 1  │ <span class="pk">PK</span>  user_id (<span class="fk">FK→User</span>)  │
+│      email (unique)     │          │      bio                │
+│      full_name          │          │      location           │
+│      role               │          │      date_of_birth      │
+│      phone_number       │          │      avatar             │
+│      password           │          │      total_enrolled     │
+│      is_active          │          │      total_completed    │
+│      is_staff           │          │      created_at         │
+│      date_joined        │          └─────────────────────────┘
+└────────┬────────────────┘
+         │                    ┌─────────────────────────┐
+         │ 1 ─── 1            │  <span class="entity">INSTRUCTOR PROFILE</span>   │
+         ├────────────────────│─────────────────────────│
+         │                    │ <span class="pk">PK</span>  user_id (<span class="fk">FK→User</span>)  │
+         │                    │      bio                │
+         │ 1 ─── *            │      expertise          │
+         │                    │      website            │
+         │                    │      total_courses      │
+         │                    │      total_students     │
+         │                    │      average_rating     │
+         │                    │      is_verified        │
+         │                    └─────────────────────────┘
+         │
+         │ 1 ─── *
+         │
+    ┌────▼──────────────────┐          ┌─────────────────────────┐
+    │     <span class="entity">COURSE</span>             │          │     <span class="entity">CATEGORY</span>            │
+    ├────────────────────────┤          ├─────────────────────────┤
+    │ <span class="pk">PK</span>  id                  │ * ─── 1  │ <span class="pk">PK</span>  id                  │
+    │      title             │          │      name               │
+    │      slug (unique)     │          │      slug (unique)      │
+    │ <span class="fk">FK</span>  instructor→User    │          │      description        │
+    │ <span class="fk">FK</span>  category→Category  │          │      icon               │
+    │      description        │          └─────────────────────────┘
+    │      price              │
+    │      duration_weeks     │          ┌─────────────────────────┐
+    │      level              │          │     <span class="entity">ENROLLMENT</span>          │
+    │      status             │          ├─────────────────────────┤
+    │      total_lessons      │ 1 ─── *  │ <span class="pk">PK</span>  id                  │
+    │      total_enrollments  │          │ <span class="fk">FK</span>  student→User        │
+    │      thumbnail          │          │ <span class="fk">FK</span>  course→Course        │
+    └────────┬───────────────┘          │      payment_status     │
+             │                          │      is_completed       │
+             │ 1 ─── *                  │      progress_pct       │
+             │                          │      certificate_issued │
+    ┌────────▼───────────────┐          │      enrolled_at        │
+    │      <span class="entity">LESSON</span>            │          └───────────┬─────────────┘
+    ├────────────────────────┤                      │
+    │ <span class="pk">PK</span>  id                  │ 1 ─── 1              │ 1 ─── *
+    │ <span class="fk">FK</span>  course→Course       │                      │
+    │      title             │          ┌───────────▼─────────────┐
+    │      order             │          │     <span class="entity">PAYMENT</span>             │
+    │      lesson_type       │          ├─────────────────────────┤
+    │      notes             │          │ <span class="pk">PK</span>  id                  │
+    │      youtube_url       │          │ <span class="fk">FK</span>  enrollment→Enroll  │
+    │      pdf_file          │          │ <span class="fk">FK</span>  student→User        │
+    │      video_file        │          │ <span class="fk">FK</span>  course→Course        │
+    │      duration_minutes  │          │      amount             │
+    │      is_free_preview   │          │      payment_method     │
+    └────────────────────────┘          │      transaction_id     │
+                                        │      status             │
+    ┌────────────────────────┐          │      initiated_at       │
+    │ <span class="entity">LESSON COMPLETION</span>     │          └─────────────────────────┘
+    ├────────────────────────┤
+    │ <span class="pk">PK</span>  id                  │          ┌─────────────────────────┐
+    │ <span class="fk">FK</span>  enrollment→Enroll  │          │   <span class="entity">NOTIFICATION</span>          │
+    │ <span class="fk">FK</span>  lesson→Lesson       │          ├─────────────────────────┤
+    │      completed_at       │          │ <span class="pk">PK</span>  id                  │
+    └────────────────────────┘          │ <span class="fk">FK</span>  user→User           │
+                                        │      title             │
+    ┌────────────────────────┐          │      message           │
+    │  <span class="entity">COURSE REVIEW</span>         │          │      notification_type │
+    ├────────────────────────┤          │      is_read           │
+    │ <span class="pk">PK</span>  id                  │          │      link              │
+    │ <span class="fk">FK</span>  student→User        │          │      created_at        │
+    │ <span class="fk">FK</span>  course→Course        │          └─────────────────────────┘
+    │      rating            │
+    │      comment           │
+    └────────────────────────┘
+
+<span class="rel">═══ RELATIONSHIPS ═══</span>
+User ||--|| StudentProfile   (One-to-One)
+User ||--|| InstructorProfile(One-to-One)
+User ||--o{ Course           (One-to-Many: Instructor teaches courses)
+User ||--o{ Enrollment       (One-to-Many: Student enrolls)
+Course ||--o{ Lesson         (One-to-Many: Course contains lessons)
+Course ||--o{ Enrollment     (One-to-Many: Course has enrollments)
+Enrollment ||--|| Payment    (One-to-One: Enrollment has payment)
+Enrollment ||--o{ LessonCompletion (One-to-Many)
+Category ||--o{ Course       (One-to-Many)
+        </div>
+        
+        <div class="note">
+            <strong>🔑 Key:</strong> <span class="pk">PK</span> = Primary Key | <span class="fk">FK</span> = Foreign Key | 
+            <code>||--||</code> = One-to-One | <code>||--o{</code> = One-to-Many
+        </div>
+    </div>
+</div>
+
+<!-- ==================== 6. USE CASES ==================== -->
+<div class="container" id="s6">
+    <div class="section">
+        <h2>Use Case Descriptions</h2>
+        
+        <div class="uc">
+            <h4>UC-01: Student Enrollment & Payment</h4>
+            <div class="row"><span class="lbl">Actor</span><span>Student</span></div>
+            <div class="row"><span class="lbl">Precondition</span><span>Student authenticated; course published and not previously enrolled</span></div>
+            <div class="row"><span class="lbl">Main Flow</span><span>1. Student browses courses → 2. Clicks course detail → 3. Clicks "Enroll Now" → 4. System checks duplicate → 5. Enrollment created → 6. Free course: instant access / Paid: redirect to checkout → 7. Student selects payment method → 8. System simulates processing → 9. On success: enrollment activated, lessons accessible → 10. Notifications sent to student and instructor</span></div>
+            <div class="row"><span class="lbl">Postcondition</span><span>Enrollment payment_status='completed'; student can access all lessons</span></div>
+        </div>
+        
+        <div class="uc">
+            <h4>UC-02: Instructor Publishes Course with Lessons</h4>
+            <div class="row"><span class="lbl">Actor</span><span>Instructor</span></div>
+            <div class="row"><span class="lbl">Precondition</span><span>Instructor authenticated</span></div>
+            <div class="row"><span class="lbl">Main Flow</span><span>1. Instructor navigates to "Create Course" → 2. Fills multi-step form (title, category, price, description, thumbnail) → 3. Course auto-published → 4. Adds lessons (YouTube/PDF/Video/Text) → 5. Lessons auto-ordered → 6. Course visible to students</span></div>
+            <div class="row"><span class="lbl">Postcondition</span><span>Course status='published'; lessons available for enrolled students</span></div>
+        </div>
+        
+        <div class="uc">
+            <h4>UC-03: Student Completes Course & Receives Certificate</h4>
+            <div class="row"><span class="lbl">Actor</span><span>Student</span></div>
+            <div class="row"><span class="lbl">Precondition</span><span>Enrollment active; payment completed</span></div>
+            <div class="row"><span class="lbl">Main Flow</span><span>1. Student accesses lesson → 2. Views content (video/PDF/text) → 3. Clicks "Mark Complete" → 4. Progress recalculated → 5. Repeat for all lessons → 6. On 100% completion: enrollment marked complete → 7. Certificate issued if course setting enabled → 8. Notification sent</span></div>
+            <div class="row"><span class="lbl">Postcondition</span><span>Enrollment is_completed=True; certificate issued if applicable</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== 7. ARCHITECTURE & DEPLOYMENT ==================== -->
+<div class="container" id="s7">
+    <div class="section">
+        <h2>System Architecture & Deployment</h2>
+        
+        <h3>7.1 Architecture Overview</h3>
+        <p>CourseCart follows the <strong>Django MTV (Model-Template-View)</strong> pattern with a modular application structure:</p>
+        
+        <table class="tbl">
+            <caption>Application Modules</caption>
+            <thead><tr><th>Module</th><th>Responsibility</th><th>Developer</th></tr></thead>
+            <tbody>
+                <tr><td><strong>accounts</strong></td><td>Custom User model, authentication, registration</td><td>Godfrey Augustino</td></tr>
+                <tr><td><strong>profiles</strong></td><td>Student & Instructor profile management</td><td>Godfrey Augustino</td></tr>
+                <tr><td><strong>courses</strong></td><td>Course CRUD, lessons, enrollments, progress</td><td>Godfrey Augustino</td></tr>
+                <tr><td><strong>payments</strong></td><td>Payment simulation, transaction logging</td><td>Godfrey Augustino</td></tr>
+                <tr><td><strong>notifications</strong></td><td>User notifications system</td><td>Godfrey Augustino</td></tr>
+                <tr><td><strong>templates/static</strong></td><td>Frontend HTML, CSS, JavaScript</td><td>Modesti Imam</td></tr>
+                <tr><td><strong>UI/UX Design</strong></td><td>Color scheme, wireframes, responsive design</td><td>Mustapha Lameck</td></tr>
+            </tbody>
+        </table>
+        
+        <h3>7.2 Technology Stack</h3>
+        <table class="tbl">
+            <thead><tr><th>Layer</th><th>Technology</th></tr></thead>
+            <tbody>
+                <tr><td>Backend Framework</td><td>Django 5.2 (Python 3.13)</td></tr>
+                <tr><td>Database (Dev)</td><td>SQLite3</td></tr>
+                <tr><td>Database (Prod)</td><td>PostgreSQL (PythonAnywhere)</td></tr>
+                <tr><td>Frontend</td><td>HTML5, CSS3, JavaScript (Vanilla)</td></tr>
+                <tr><td>Static Files</td><td>WhiteNoise (PythonAnywhere)</td></tr>
+                <tr><td>Version Control</td><td>Git + GitHub</td></tr>
+                <tr><td>Hosting</td><td>PythonAnywhere (Cloud)</td></tr>
+            </tbody>
+        </table>
+        
+        <h3>7.3 Deployment Architecture</h3>
+        <div class="deploy-box">
+            <div class="dep-item">
+                <h4>🔧 Development Environment</h4>
+                <p><strong>Local:</strong> Windows/macOS/Linux</p>
+                <p><strong>Server:</strong> Django runserver (localhost:8000)</p>
+                <p><strong>Database:</strong> SQLite3 (db.sqlite3)</p>
+                <p><strong>Version Control:</strong> Git with GitHub remote</p>
+            </div>
+            <div class="dep-item">
+                <h4>🚀 Production Environment</h4>
+                <p><strong>Platform:</strong> PythonAnywhere</p>
+                <p><strong>URL:</strong> <a href="https://coursecart.pythonanywhere.com" target="_blank">coursecart.pythonanywhere.com</a></p>
+                <p><strong>Database:</strong> PostgreSQL</p>
+                <p><strong>Static Files:</strong> WhiteNoise / collectstatic</p>
+            </div>
+            <div class="dep-item">
+                <h4>📂 GitHub Repository</h4>
+                <p><strong>Platform:</strong> GitHub</p>
+                <p><strong>Branch:</strong> main</p>
+                <p><strong>CI/CD:</strong> Manual deployment</p>
+                <p><strong>Collaborators:</strong> 5 team members</p>
+            </div>
+            <div class="dep-item">
+                <h4>📊 Project Management</h4>
+                <p><strong>Methodology:</strong> Agile / Scrum</p>
+                <p><strong>PM Lead:</strong> Neema Manoza</p>
+                <p><strong>Timeline:</strong> May 2026</p>
+                <p><strong>Status:</strong> ✅ Live</p>
+            </div>
+        </div>
+        
+        <h3>7.4 Deployment Flow</h3>
+        <ol>
+            <li><strong>Development:</strong> Code written locally on individual machines</li>
+            <li><strong>Version Control:</strong> Code pushed to GitHub repository</li>
+            <li><strong>Testing:</strong> Pull requests reviewed by team members</li>
+            <li><strong>Deployment:</strong> Code pulled from GitHub to PythonAnywhere</li>
+            <li><strong>Static Files:</strong> <code>python manage.py collectstatic</code></li>
+            <li><strong>Database:</strong> Migrations applied via <code>python manage.py migrate</code></li>
+            <li><strong>Go Live:</strong> Application restarted on PythonAnywhere</li>
+        </ol>
+        
+        <div class="note">
+            <strong>🔗 Live URL:</strong> <a href="https://coursecart.pythonanywhere.com" target="_blank">https://coursecart.pythonanywhere.com</a><br>
+            <strong>📂 GitHub:</strong> Repository hosted on GitHub with team collaboration
+        </div>
+    </div>
+</div>
+
+<!-- ==================== 8. APPENDICES ==================== -->
+<div class="container" id="s8">
+    <div class="section">
+        <h2>Appendices</h2>
+        
+        <h3>Appendix A: URL Routing</h3>
+        <table class="tbl">
+            <thead><tr><th>URL</th><th>View</th><th>Access</th></tr></thead>
+            <tbody>
+                <tr><td><code>/</code></td><td>Welcome/Landing</td><td>Public</td></tr>
+                <tr><td><code>/courses/</code></td><td>Course Listing</td><td>Public</td></tr>
+                <tr><td><code>/courses/course/&lt;slug&gt;/</code></td><td>Course Detail</td><td>Public</td></tr>
+                <tr><td><code>/dashboard/student/</code></td><td>Student Dashboard</td><td>Student</td></tr>
+                <tr><td><code>/dashboard/instructor/</code></td><td>Instructor Dashboard</td><td>Instructor</td></tr>
+                <tr><td><code>/payments/checkout/&lt;id&gt;/</code></td><td>Payment Checkout</td><td>Student</td></tr>
+                <tr><td><code>/payments/simulate/&lt;id&gt;/</code></td><td>Payment Simulator</td><td>Student</td></tr>
+                <tr><td><code>/notifications/</code></td><td>Notification Center</td><td>Authenticated</td></tr>
+                <tr><td><code>/admin/</code></td><td>Admin Panel</td><td>Admin</td></tr>
+            </tbody>
+        </table>
+        
+        <h3>Appendix B: Status Codes</h3>
+        <table class="tbl">
+            <thead><tr><th>Entity</th><th>Valid Status Values</th></tr></thead>
+            <tbody>
+                <tr><td><strong>Course</strong></td><td>draft, published, archived</td></tr>
+                <tr><td><strong>Enrollment</strong></td><td>pending, completed, failed</td></tr>
+                <tr><td><strong>Payment</strong></td><td>pending, processing, completed, failed, cancelled, refunded</td></tr>
+                <tr><td><strong>Lesson Type</strong></td><td>video, youtube, document, quiz</td></tr>
+            </tbody>
+        </table>
+        
+        <h3>Appendix C: File Structure</h3>
+        <pre style="background:#F8FAFC;padding:1rem;border-radius:8px;font-size:0.8rem;overflow-x:auto;">
+vocational_platform/
+├── config/              # Project settings (base, dev, prod)
+├── apps/
+│   ├── accounts/        # User authentication & profiles
+│   ├── profiles/        # Student & Instructor dashboards
+│   ├── courses/         # Course, lesson, enrollment management
+│   ├── payments/        # Payment simulation & logging
+│   └── notifications/   # User notification system
+├── static/              # CSS, JavaScript, images
+├── media/               # User uploads (thumbnails, videos, PDFs)
+├── templates/           # HTML templates
+└── manage.py            # Django management script
+        </pre>
+        
+        <div class="warning">
+            <strong>⚠️ Important:</strong> This SRS is a living document. Update it as requirements evolve. Version-control this file alongside the source code on GitHub. The latest version is always available in the project repository.
+        </div>
+    </div>
+</div>
+
+<!-- ==================== FOOTER ==================== -->
+<div class="doc-footer">
+    <p><strong>CourseCart SRS v2.0</strong> | May 2026</p>
+    <p>Prepared by: Neema Manoza (PM), Godfrey Augustino (Backend), Modesti Imam (Frontend), Mustapha Lameck (UI/UX), Doreen Aloyce (Business Analyst)</p>
+    <p>Live: <a href="https://coursecart.pythonanywhere.com" target="_blank">coursecart.pythonanywhere.com</a> | GitHub: Private Repository</p>
+    <p style="margin-top:1rem;font-size:0.75rem;opacity:0.6;">Confidential — For authorized academic and project personnel only</p>
+</div>
+
+<!-- Back to Top -->
+<button class="btt" id="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
+
+<script>
+    const btt = document.getElementById('btt');
+    window.addEventListener('scroll', () => btt.classList.toggle('visible', window.scrollY > 400));
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', function(e) {
+            e.preventDefault();
+            const t = document.querySelector(this.getAttribute('href'));
+            if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+</script>
+
+</body>
+</html>

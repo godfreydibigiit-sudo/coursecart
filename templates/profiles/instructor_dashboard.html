@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Instructor Dashboard - CourseCart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard-saas.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dash-layout">
+    <div class="dash-overlay" id="dashOverlay" onclick="closeSidebar()"></div>
+    
+    {% include 'includes/dash_sidebar_instructor.html' %}
+    
+    <div class="dash-main">
+        <header class="dash-header">
+            <div class="dash-header-left">
+                <button class="btn-hamburger" onclick="toggleSidebar()">☰</button>
+                <div class="dash-breadcrumb">Dashboard</div>
+            </div>
+            
+        </header>
+        
+        <div class="dash-content">
+            <div class="page-header">
+                <div>
+                    <h1>Welcome back, {{ user.full_name }}! </h1>
+                    <p>Manage your courses and track student progress</p>
+                </div>
+                <div class="page-actions">
+                    <a href="{% url 'courses:course_create' %}" class="btn btn-warm"> New Course</a>
+                </div>
+            </div>
+            
+            <!-- KPI ROW -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                   
+                    <div class="kpi-value">{{ published_courses.count|default:0 }}</div>
+                    <div class="kpi-label">Published Courses</div>
+                </div>
+                <div class="kpi-card">
+                    
+                    <div class="kpi-value">{{ draft_courses.count|default:0 }}</div>
+                    <div class="kpi-label">Draft Courses</div>
+                </div>
+                <div class="kpi-card">
+                    
+                    <div class="kpi-value">{{ total_students|default:0 }}</div>
+                    <div class="kpi-label">Total Students</div>
+                </div>
+                <div class="kpi-card">
+                    
+                    <div class="kpi-value">{{ profile.average_rating|default:'0.0' }}</div>
+                    <div class="kpi-label">Avg Rating</div>
+                </div>
+            </div>
+            
+            <!-- COURSES LIST -->
+            <div class="section-card">
+                <div class="section-card-header">
+                    <h2>Your Courses</h2>
+                    <a href="{% url 'courses:instructor_course_list' %}" class="btn btn-outline btn-sm">View All</a>
+                </div>
+                <div class="section-card-body">
+                    {% if courses %}
+                    <div class="enrollment-list">
+                        {% for course in courses|slice:":5" %}
+                        <div class="enrollment-item">
+                            
+                            <div class="enroll-info">
+                                <div class="enroll-title">{{ course.title }}</div>
+                                <div class="enroll-meta">
+                                    <span> {{ course.total_enrollments }} students</span>
+                                    <span> {{ course.total_lessons }} lessons</span>
+                                    <span class="badge-status paid">{{ course.get_status_display }}</span>
+                                </div>
+                            </div>
+                            <div class="enroll-action">
+                                <a href="{% url 'courses:instructor_course_manage' course.slug %}" class="btn btn-primary btn-sm">Manage</a>
+                                <a href="{% url 'courses:course_edit' course.slug %}" class="btn btn-outline btn-sm">Edit</a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="empty-state">
+                        <span class="empty-icon">📭</span>
+                        <h3>No Courses Yet</h3>
+                        <p>Create your first course and start teaching</p>
+                        <a href="{% url 'courses:course_create' %}" class="btn btn-warm">Create Course</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+(function() {
+    'use strict';
+    
+    var sidebar = document.getElementById('dashSidebar');
+    var overlay = document.getElementById('dashOverlay');
+    
+    // Only run if elements exist
+    if (!sidebar || !overlay) {
+        console.warn('Sidebar elements not found');
+        return;
+    }
+    
+    window.toggleSidebar = function() {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('show');
+    };
+    
+    window.closeSidebar = function() {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('show');
+    };
+    
+    // Close sidebar when clicking a nav link (mobile)
+    sidebar.querySelectorAll('.dash-nav-item').forEach(function(link) {
+        link.addEventListener('click', function() {
+            if (window.innerWidth <= 768) {
+                closeSidebar();
+            }
+        });
+    });
+    
+    // Close on escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeSidebar();
+    });
+    
+})();
+</script>
+{% endblock %}

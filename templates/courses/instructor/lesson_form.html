@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Add Lesson - {{ course.title }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard-saas.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dash-layout">
+    <div class="dash-overlay" id="dashOverlay" onclick="closeSidebar()"></div>
+    {% include 'includes/dash_sidebar_instructor.html' %}
+    
+    <div class="dash-main">
+        <header class="dash-header">
+            <div class="dash-header-left">
+                <button class="btn-hamburger" onclick="toggleSidebar()">☰</button>
+                <div class="dash-breadcrumb"><a href="{% url 'courses:instructor_course_manage' course.slug %}" style="color:var(--gray-400);text-decoration:none;">{{ course.title }}</a> › <span>Add Lesson</span></div>
+            </div>
+            <div class="dash-header-right">
+                <div class="dash-user-avatar warm">{{ user.full_name|slice:":1"|upper }}</div>
+            </div>
+        </header>
+        
+        <div class="dash-content">
+            <div class="page-header">
+                <div>
+                    <h1>➕ Add Lesson</h1>
+                    <p>Course: <strong>{{ course.title }}</strong></p>
+                </div>
+                <div class="page-actions">
+                    <a href="{% url 'courses:instructor_course_manage' course.slug %}" class="btn btn-outline">← Back</a>
+                </div>
+            </div>
+            
+            <div class="section-card" style="max-width:750px;">
+                <div class="section-card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Lesson Title -->
+                        <div style="margin-bottom:var(--space-4);">
+                            <label for="{{ form.title.id_for_label }}" style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:4px;">Lesson Title <span style="color:var(--error);">*</span></label>
+                            {{ form.title }}
+                        </div>
+                        
+                        <!-- Lesson Type Selector -->
+                        <div style="margin-bottom:var(--space-4);">
+                            <label style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:4px;">Lesson Type</label>
+                            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-2);">
+                                <div class="type-card" data-type="youtube" onclick="selectType('youtube')" style="padding:var(--space-3);border:2px solid var(--teal-600);border-radius:var(--radius-lg);text-align:center;cursor:pointer;background:var(--teal-50);">
+                                    <span style="font-size:1.5rem;display:block;">▶️</span>
+                                    <span style="font-size:11px;font-weight:600;">YouTube</span>
+                                </div>
+                                <div class="type-card" data-type="document" onclick="selectType('document')" style="padding:var(--space-3);border:2px solid var(--gray-200);border-radius:var(--radius-lg);text-align:center;cursor:pointer;transition:all 0.2s;">
+                                    <span style="font-size:1.5rem;display:block;">📄</span>
+                                    <span style="font-size:11px;font-weight:600;">PDF Notes</span>
+                                </div>
+                                <div class="type-card" data-type="video" onclick="selectType('video')" style="padding:var(--space-3);border:2px solid var(--gray-200);border-radius:var(--radius-lg);text-align:center;cursor:pointer;transition:all 0.2s;">
+                                    <span style="font-size:1.5rem;display:block;">🎬</span>
+                                    <span style="font-size:11px;font-weight:600;">Video File</span>
+                                </div>
+                                <div class="type-card" data-type="quiz" onclick="selectType('quiz')" style="padding:var(--space-3);border:2px solid var(--gray-200);border-radius:var(--radius-lg);text-align:center;cursor:pointer;transition:all 0.2s;">
+                                    <span style="font-size:1.5rem;display:block;">📝</span>
+                                    <span style="font-size:11px;font-weight:600;">Text/Notes</span>
+                                </div>
+                            </div>
+                            {{ form.lesson_type }}
+                        </div>
+                        
+                        <!-- Description -->
+                        <div style="margin-bottom:var(--space-4);">
+                            <label for="{{ form.description.id_for_label }}" style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:4px;">Description</label>
+                            {{ form.description }}
+                        </div>
+                        
+                        <!-- Dynamic Fields -->
+                        <div id="youtube-group" style="margin-bottom:var(--space-4);">
+                            <label for="{{ form.youtube_url.id_for_label }}" style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:4px;">▶️ YouTube URL</label>
+                            {{ form.youtube_url }}
+                            <p style="font-size:11px;color:var(--gray-400);margin-top:2px;">Paste link: https://www.youtube.com/watch?v=...</p>
+                        </div>
+                        
+                        <div id="document-group" style="display:none;margin-bottom:var(--space-4);">
+                            <label style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:4px;">📄 PDF Document</label>
+                            <div style="border:2px dashed var(--gray-200);border-radius:var(--radius-lg);padding:var(--space-6);text-align:center;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--teal-400)';this.style.background='var(--teal-50)'" onmouseout="this.style.borderColor='var(--gray-200)';this.style.background='transparent'">
+                                <span style="font-size:2rem;">📤</span>
+                                <p style="font-weight:500;color:var(--gray-600);">Click to upload PDF</p>
+                                <p style="font-size:11px;color:var(--gray-400);">PDF files only, max 50MB</p>
+                                {{ form.pdf_file }}
+                            </div>
+                        </div>
+                        
+                        <div id="video-group" style="display:none;margin-bottom:var(--space-4);">
+                            <label style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:4px;">🎬 Video File</label>
+                            <div style="border:2px dashed var(--gray-200);border-radius:var(--radius-lg);padding:var(--space-6);text-align:center;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--teal-400)';this.style.background='var(--teal-50)'" onmouseout="this.style.borderColor='var(--gray-200)';this.style.background='transparent'">
+                                <span style="font-size:2rem;">🎬</span>
+                                <p style="font-weight:500;color:var(--gray-600);">Click to upload video</p>
+                                <p style="font-size:11px;color:var(--gray-400);">MP4, WebM, max 100MB</p>
+                                {{ form.video_file }}
+                            </div>
+                        </div>
+                        
+                        <!-- Notes -->
+                        <div style="margin-bottom:var(--space-4);">
+                            <label for="{{ form.notes.id_for_label }}" style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:4px;">Lesson Notes</label>
+                            {{ form.notes }}
+                        </div>
+                        
+                        <!-- Duration & Options -->
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-bottom:var(--space-4);">
+                            <div>
+                                <label for="{{ form.duration_minutes.id_for_label }}" style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:4px;">Duration (Minutes)</label>
+                                {{ form.duration_minutes }}
+                            </div>
+                        </div>
+                        
+                        <div style="display:flex;gap:var(--space-4);margin-bottom:var(--space-4);">
+                            <label style="display:flex;align-items:center;gap:var(--space-2);cursor:pointer;font-size:13px;">
+                                {{ form.is_free_preview }} 🔓 Free Preview
+                            </label>
+                            <label style="display:flex;align-items:center;gap:var(--space-2);cursor:pointer;font-size:13px;">
+                                {{ form.is_published }} ✅ Published
+                            </label>
+                        </div>
+                        
+                        <div style="display:flex;gap:var(--space-3);padding-top:var(--space-4);border-top:1px solid var(--gray-100);">
+                            <button type="submit" class="btn btn-primary btn-lg">➕ Add Lesson</button>
+                            <a href="{% url 'courses:instructor_course_manage' course.slug %}" class="btn btn-outline btn-lg">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleSidebar(){var s=document.getElementById('dashSidebar');var o=document.getElementById('dashOverlay');if(s&&o){s.classList.toggle('open');o.classList.toggle('show');}}
+function closeSidebar(){var s=document.getElementById('dashSidebar');var o=document.getElementById('dashOverlay');if(s&&o){s.classList.remove('open');o.classList.remove('show');}}
+
+// Hide Django select
+document.getElementById('{{ form.lesson_type.id_for_label }}').style.display='none';
+
+function selectType(type){
+    document.getElementById('{{ form.lesson_type.id_for_label }}').value=type;
+    document.querySelectorAll('.type-card').forEach(c=>{c.style.borderColor='var(--gray-200)';c.style.background='var(--white)';});
+    document.querySelector('.type-card[data-type="'+type+'"]').style.borderColor='var(--teal-600)';document.querySelector('.type-card[data-type="'+type+'"]').style.background='var(--teal-50)';
+    document.querySelectorAll('#youtube-group,#document-group,#video-group').forEach(g=>g.style.display='none');
+    if(type==='youtube')document.getElementById('youtube-group').style.display='block';
+    if(type==='document')document.getElementById('document-group').style.display='block';
+    if(type==='video')document.getElementById('video-group').style.display='block';
+}
+</script>
+{% endblock %}
