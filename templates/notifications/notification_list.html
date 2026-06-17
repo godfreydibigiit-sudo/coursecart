@@ -22,15 +22,13 @@
                 <button class="btn-hamburger" onclick="toggleSidebar()">☰</button>
                 <div class="dash-breadcrumb">Notifications</div>
             </div>
-            <div class="dash-header-right">
-                <div class="dash-user-avatar {% if user.is_instructor %}warm{% endif %}">{{ user.full_name|slice:":1"|upper }}</div>
-            </div>
+           
         </header>
         
         <div class="dash-content">
             <div class="page-header">
                 <div>
-                    <h1>🔔 Notifications</h1>
+                    <h1>Notifications</h1>
                     <p>{% if unread_count > 0 %}{{ unread_count }} unread{% else %}All caught up!{% endif %}</p>
                 </div>
                 {% if unread_count > 0 %}

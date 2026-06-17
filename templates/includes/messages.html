@@ -1,17 +1,18 @@
 {% if messages %}
-<div class="messages-container" style="position: fixed; top: 80px; right: 20px; z-index: 9999; max-width: 400px;">
+<div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true">
     {% for message in messages %}
-    <div class="alert alert-{{ message.tags|default:'info' }}" role="alert">
-        {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
-            <span aria-hidden="true">✅</span>
-        {% elif message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
-            <span aria-hidden="true">❌</span>
-        {% elif message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
-            <span aria-hidden="true">⚠️</span>
-        {% else %}
-            <span aria-hidden="true">ℹ️</span>
-        {% endif %}
-        <span>{{ message }}</span>
+    <div class="toast toast-{{ message.tags|default:'info' }}" role="alert" aria-live="assertive" aria-atomic="true" data-delay="5000">
+        <div class="toast-icon">
+            {% if message.tags == 'success' %}✅
+            {% elif message.tags == 'error' %}❌
+            {% elif message.tags == 'warning' %}⚠️
+            {% elif message.tags == 'info' %}ℹ️
+            {% else %}💬{% endif %}
+        </div>
+        <div class="toast-content">
+            <p class="toast-message">{{ message }}</p>
+        </div>
+        <button class="toast-close" onclick="this.parentElement.remove()" aria-label="Close notification">✕</button>
     </div>
     {% endfor %}
 </div>

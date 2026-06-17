@@ -18,24 +18,23 @@
                 <button class="btn-hamburger" onclick="toggleSidebar()">☰</button>
                 <div class="dash-breadcrumb">My Courses</div>
             </div>
-            <div class="dash-header-right">
-                <a href="{% url 'notifications:notification_list' %}" class="btn-header" style="position:relative;">
-                    🔔
-                    {% if has_unread_notifications %}<span class="badge-dot"></span>{% endif %}
-                </a>
-                <div class="dash-user-avatar">{{ user.full_name|slice:":1"|upper }}</div>
-            </div>
+            
         </header>
         
         <div class="dash-content">
             <div class="page-header">
                 <div>
-                    <h1>📚 My Enrolled Courses</h1>
+                    <h1>My Enrolled Courses</h1>
                     <p>Continue where you left off</p>
                 </div>
-                <div class="page-actions">
-                    <a href="{% url 'courses:course_list' %}" class="btn btn-primary">🔍 Browse More</a>
-                </div>
+                 <a href="{% url 'courses:course_list' %}" class="dash-nav-item">
+            <span class="nav-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                </svg>
+            </span>
+            <span class="nav-label">Browse Courses</span>
+        </a>
             </div>
             
             {% if enrollments %}
@@ -57,8 +56,8 @@
                             <div class="enroll-info">
                                 <div class="enroll-title">{{ enrollment.course.title }}</div>
                                 <div class="enroll-meta">
-                                    <span>👨‍🏫 {{ enrollment.course.instructor.full_name }}</span>
-                                    <span>📅 {{ enrollment.enrolled_at|date:"M d, Y" }}</span>
+                                    <span> {{ enrollment.course.instructor.full_name }}</span>
+                                    <span> {{ enrollment.enrolled_at|date:"M d, Y" }}</span>
                                     {% if enrollment.payment_status == 'completed' %}
                                     <span class="badge-status paid">✅ Paid</span>
                                     {% elif enrollment.payment_status == 'pending' %}
@@ -83,7 +82,7 @@
                                     {% if not enrollment.is_completed %}
                                         {% with first_lesson=enrollment.course.lessons.first %}
                                         {% if first_lesson %}
-                                        <a href="{% url 'courses:lesson_view' course_slug=enrollment.course.slug lesson_pk=first_lesson.pk %}" class="btn btn-primary btn-sm">📚 Continue</a>
+                                        <a href="{% url 'courses:lesson_view' course_slug=enrollment.course.slug lesson_pk=first_lesson.pk %}" class="btn btn-primary btn-sm">Continue</a>
                                         {% endif %}
                                         {% endwith %}
                                     {% else %}

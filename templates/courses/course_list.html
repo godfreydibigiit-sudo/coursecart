@@ -5,6 +5,275 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/dashboard-saas.css' %}">
+<style>
+    /* ============================================
+       BROWSE COURSES - FULLY RESPONSIVE
+       ============================================ */
+    
+    /* ========== SEARCH BAR ========== */
+    .search-section {
+        margin-bottom: var(--space-4);
+    }
+    @media (min-width: 768px) { .search-section { margin-bottom: var(--space-6); } }
+    
+    .search-form {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+        align-items: stretch;
+    }
+    @media (min-width: 480px) { .search-form { flex-direction: row; gap: var(--space-3); align-items: end; flex-wrap: wrap; } }
+    
+    .search-field {
+        flex: 1;
+        min-width: 0;
+    }
+    @media (min-width: 480px) { .search-field { min-width: 140px; } }
+    @media (min-width: 768px) { .search-field.search-main { flex: 2; } }
+    
+    .search-label {
+        font-size: 11px;
+        color: var(--gray-400);
+        display: block;
+        margin-bottom: 4px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+    @media (min-width: 480px) { .search-label { font-size: 12px; } }
+    
+    .search-input,
+    .search-select {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid var(--gray-300);
+        border-radius: var(--radius-md);
+        font-size: 13px;
+        font-family: var(--font-sans);
+        background: var(--white);
+        transition: border-color 0.2s;
+    }
+    @media (min-width: 480px) { .search-input, .search-select { padding: 10px 14px; font-size: 14px; } }
+    
+    .search-input:focus,
+    .search-select:focus {
+        outline: none;
+        border-color: var(--teal-500);
+        box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
+    }
+    
+    .search-buttons {
+        display: flex;
+        gap: var(--space-1);
+    }
+    @media (min-width: 480px) { .search-buttons { gap: var(--space-2); } }
+    
+    .search-buttons .btn {
+        flex: 1;
+        justify-content: center;
+    }
+    @media (min-width: 480px) { .search-buttons .btn { flex: 0; } }
+    
+    /* ========== SECTION CARD ========== */
+    .section-card-body {
+        padding: var(--space-3);
+    }
+    @media (min-width: 480px) { .section-card-body { padding: var(--space-4); } }
+    @media (min-width: 768px) { .section-card-body { padding: var(--space-5); } }
+    
+    /* ========== COURSE GRID ========== */
+    .course-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: var(--space-3);
+    }
+    @media (min-width: 400px) { .course-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 768px) { .course-grid { grid-template-columns: repeat(3, 1fr); gap: var(--space-4); } }
+    @media (min-width: 1024px) { .course-grid { grid-template-columns: repeat(4, 1fr); } }
+    
+    /* ========== COURSE CARD ========== */
+    .course-card {
+        background: var(--white);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        border: 1px solid var(--gray-200);
+        transition: all 0.2s;
+        display: flex;
+        flex-direction: column;
+    }
+    @media (min-width: 768px) { .course-card { border-radius: var(--radius-xl); } }
+    .course-card:hover {
+        box-shadow: var(--shadow-lg);
+        transform: translateY(-2px);
+        border-color: var(--teal-200);
+    }
+    
+    .course-card-img {
+        height: 110px;
+        background: linear-gradient(135deg, var(--teal-500), var(--teal-700));
+        position: relative;
+        overflow: hidden;
+    }
+    @media (min-width: 400px) { .course-card-img { height: 120px; } }
+    @media (min-width: 480px) { .course-card-img { height: 130px; } }
+    @media (min-width: 768px) { .course-card-img { height: 140px; } }
+    
+    .course-card-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s;
+    }
+    .course-card:hover .course-card-img img { transform: scale(1.05); }
+    
+    .course-card-placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        font-size: 2rem;
+        opacity: 0.6;
+    }
+    @media (min-width: 480px) { .course-card-placeholder { font-size: 2.5rem; } }
+    @media (min-width: 768px) { .course-card-placeholder { font-size: 3rem; } }
+    
+    .badge-level {
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        z-index: 2;
+    }
+    @media (min-width: 480px) { .badge-level { top: 8px; left: 8px; } }
+    
+    .badge-price {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        z-index: 2;
+        padding: 2px 8px;
+        border-radius: var(--radius-full);
+        font-size: 10px;
+        font-weight: 700;
+        background: var(--white);
+        color: var(--teal-700);
+    }
+    @media (min-width: 480px) { .badge-price { top: 8px; right: 8px; padding: 2px 10px; font-size: 12px; } }
+    .badge-price.free { background: var(--success); color: white; }
+    
+    .course-card-body {
+        padding: var(--space-3);
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    @media (min-width: 480px) { .course-card-body { padding: var(--space-4); } }
+    
+    .course-category {
+        font-size: 10px;
+        text-transform: uppercase;
+        color: var(--teal-600);
+        font-weight: 600;
+        margin-bottom: 2px;
+        letter-spacing: 0.03em;
+    }
+    @media (min-width: 480px) { .course-category { font-size: 11px; } }
+    
+    .course-title {
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 2px;
+        line-height: 1.3;
+    }
+    @media (min-width: 480px) { .course-title { font-size: 14px; } }
+    @media (min-width: 768px) { .course-title { font-size: 15px; } }
+    
+    .course-title a {
+        color: var(--gray-900);
+        text-decoration: none;
+    }
+    .course-title a:hover { color: var(--teal-600); }
+    
+    .course-instructor {
+        font-size: 11px;
+        color: var(--gray-400);
+        margin-bottom: var(--space-2);
+    }
+    @media (min-width: 480px) { .course-instructor { font-size: 12px; margin-bottom: var(--space-3); } }
+    
+    .course-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: var(--space-2);
+        border-top: 1px solid var(--gray-100);
+        font-size: 10px;
+        color: var(--gray-400);
+        margin-top: auto;
+        flex-wrap: wrap;
+        gap: var(--space-1);
+    }
+    @media (min-width: 480px) { .course-footer { font-size: 11px; padding-top: var(--space-3); } }
+    @media (min-width: 768px) { .course-footer { font-size: 12px; } }
+    
+    .course-footer .btn-sm {
+        padding: 4px 8px;
+        font-size: 10px;
+    }
+    @media (min-width: 480px) { .course-footer .btn-sm { padding: 5px 10px; font-size: 11px; } }
+    @media (min-width: 768px) { .course-footer .btn-sm { padding: 6px 12px; font-size: 12px; } }
+    
+    /* ========== EMPTY STATE ========== */
+    .empty-state {
+        text-align: center;
+        padding: var(--space-6) var(--space-3);
+    }
+    @media (min-width: 480px) { .empty-state { padding: var(--space-8) var(--space-4); } }
+    @media (min-width: 768px) { .empty-state { padding: var(--space-10) var(--space-6); } }
+    
+    .empty-state .empty-icon {
+        font-size: 36px;
+        display: block;
+        margin-bottom: var(--space-3);
+    }
+    @media (min-width: 480px) { .empty-state .empty-icon { font-size: 42px; } }
+    @media (min-width: 768px) { .empty-state .empty-icon { font-size: 48px; } }
+    
+    .empty-state h3 { font-size: 14px; margin-bottom: var(--space-1); }
+    @media (min-width: 480px) { .empty-state h3 { font-size: 15px; } }
+    @media (min-width: 768px) { .empty-state h3 { font-size: 16px; } }
+    
+    .empty-state p { font-size: 12px; color: var(--gray-400); margin-bottom: var(--space-4); }
+    @media (min-width: 480px) { .empty-state p { font-size: 13px; } }
+    
+    /* ========== PAGE HEADER ========== */
+    .page-header h1 { font-size: 18px; }
+    @media (min-width: 480px) { .page-header h1 { font-size: 20px; } }
+    @media (min-width: 768px) { .page-header h1 { font-size: 24px; } }
+    
+    .page-header p { font-size: 11px; }
+    @media (min-width: 480px) { .page-header p { font-size: 12px; } }
+    @media (min-width: 768px) { .page-header p { font-size: 14px; } }
+    
+    /* ========== BREADCRUMB ========== */
+    .dash-breadcrumb { font-size: 12px; }
+    @media (min-width: 480px) { .dash-breadcrumb { font-size: 13px; } }
+    @media (min-width: 768px) { .dash-breadcrumb { font-size: 14px; } }
+    
+    /* ========== DASH CONTENT ========== */
+    .dash-content { padding: var(--space-3); }
+    @media (min-width: 480px) { .dash-content { padding: var(--space-4); } }
+    @media (min-width: 768px) { .dash-content { padding: var(--space-6); } }
+    
+    /* ========== BUTTONS ========== */
+    .btn-sm { padding: 5px 10px; font-size: 12px; }
+    @media (min-width: 480px) { .btn-sm { padding: 6px 12px; font-size: 13px; } }
+    
+    @media (max-width: 360px) {
+        .course-grid { gap: var(--space-2); }
+        .course-card-img { height: 100px; }
+        .course-card-body { padding: var(--space-2); }
+    }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -22,91 +291,86 @@
         <header class="dash-header">
             <div class="dash-header-left">
                 {% if user.is_authenticated %}
-                <button class="btn-hamburger" onclick="toggleSidebar()">☰</button>
+                <button class="btn-hamburger" onclick="toggleSidebar()" aria-label="Toggle menu">☰</button>
                 {% endif %}
                 <div class="dash-breadcrumb">Browse Courses</div>
             </div>
-            <div class="dash-header-right">
-                {% if user.is_authenticated %}
-                <a href="{% url 'notifications:notification_list' %}" class="btn-header" style="position:relative;">
-                    🔔
-                    {% if has_unread_notifications %}<span class="badge-dot"></span>{% endif %}
-                </a>
-                <div class="dash-user-avatar">{{ user.full_name|slice:":1"|upper }}</div>
-                {% else %}
-                <a href="{% url 'accounts:login' %}" class="btn btn-outline btn-sm">Login</a>
-                <a href="{% url 'accounts:register_student' %}" class="btn btn-primary btn-sm">Get Started</a>
-                {% endif %}
-            </div>
+           
         </header>
         
         <div class="dash-content">
             <div class="page-header">
                 <div>
-                    <h1>📚 Browse Vocational Courses</h1>
+                    <h1> Browse Vocational Courses</h1>
                     <p>Find the perfect skill to advance your career</p>
                 </div>
             </div>
             
             <!-- Search Bar -->
-            <div class="section-card" style="margin-bottom:var(--space-6);">
+            <div class="section-card search-section">
                 <div class="section-card-body">
-                    <form method="get" style="display:flex;gap:var(--space-3);flex-wrap:wrap;align-items:end;">
-                        <div style="flex:2;min-width:200px;">
-                            <label style="font-size:12px;color:var(--gray-400);display:block;margin-bottom:4px;">🔍 Search</label>
-                            <input type="text" name="q" value="{{ search_query }}" placeholder="Search courses..." style="width:100%;padding:10px 14px;border:1px solid var(--gray-300);border-radius:var(--radius-md);font-size:14px;">
+                    <form method="get" class="search-form">
+                        <div class="search-field search-main">
+                            <label class="search-label">Search</label>
+                            <input type="text" name="q" value="{{ search_query }}" placeholder="Search courses, skills, or instructors..." class="search-input">
                         </div>
-                        <div style="flex:1;min-width:140px;">
-                            <label style="font-size:12px;color:var(--gray-400);display:block;margin-bottom:4px;">📂 Category</label>
-                            <select name="category" style="width:100%;padding:10px 14px;border:1px solid var(--gray-300);border-radius:var(--radius-md);font-size:14px;">
+                        <div class="search-field">
+                            <label class="search-label">Category</label>
+                            <select name="category" class="search-select">
                                 <option value="">All Categories</option>
                                 {% for cat in categories %}
                                 <option value="{{ cat.slug }}" {% if current_category == cat.slug %}selected{% endif %}>{{ cat.icon }} {{ cat.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
-                        <div style="flex:1;min-width:120px;">
-                            <label style="font-size:12px;color:var(--gray-400);display:block;margin-bottom:4px;">📊 Level</label>
-                            <select name="level" style="width:100%;padding:10px 14px;border:1px solid var(--gray-300);border-radius:var(--radius-md);font-size:14px;">
+                        <div class="search-field">
+                            <label class="search-label"> Level</label>
+                            <select name="level" class="search-select">
                                 <option value="">All Levels</option>
-                                <option value="beginner" {% if current_level == 'beginner' %}selected{% endif %}>Beginner</option>
-                                <option value="intermediate" {% if current_level == 'intermediate' %}selected{% endif %}>Intermediate</option>
-                                <option value="advanced" {% if current_level == 'advanced' %}selected{% endif %}>Advanced</option>
+                                <option value="beginner" {% if current_level == 'beginner' %}selected{% endif %}>🌱 Beginner</option>
+                                <option value="intermediate" {% if current_level == 'intermediate' %}selected{% endif %}>🌿 Intermediate</option>
+                                <option value="advanced" {% if current_level == 'advanced' %}selected{% endif %}>🌳 Advanced</option>
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-primary">Search</button>
-                        {% if search_query or current_category or current_level %}
-                        <a href="{% url 'courses:course_list' %}" class="btn btn-outline">Clear</a>
-                        {% endif %}
+                        <div class="search-buttons">
+                            <button type="submit" class="btn btn-primary btn-sm"> Search</button>
+                            {% if search_query or current_category or current_level %}
+                            <a href="{% url 'courses:course_list' %}" class="btn btn-outline btn-sm">✕ Clear</a>
+                            {% endif %}
+                        </div>
                     </form>
                 </div>
             </div>
             
             <!-- Course Grid -->
             {% if courses %}
-            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:var(--space-4);">
+            <div class="course-grid">
                 {% for course in courses %}
-                <div style="background:var(--white);border-radius:var(--radius-xl);overflow:hidden;border:1px solid var(--gray-200);transition:all 0.2s;cursor:pointer;" onmouseover="this.style.boxShadow='var(--shadow-lg)';this.style.transform='translateY(-2px)'" onmouseout="this.style.boxShadow='var(--shadow-xs)';this.style.transform='none'">
-                    <div style="height:140px;background:linear-gradient(135deg,var(--teal-500),var(--teal-700));position:relative;overflow:hidden;">
+                <a href="{{ course.get_absolute_url }}" class="course-card" style="text-decoration:none;color:inherit;">
+                    <div class="course-card-img">
                         {% if course.thumbnail %}
-                        <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" style="width:100%;height:100%;object-fit:cover;">
+                        <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" loading="lazy">
                         {% else %}
-                        <div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:3rem;opacity:0.6;">{{ course.category.icon|default:'📚' }}</div>
+                        <div class="course-card-placeholder">{{ course.category.icon|default:'📚' }}</div>
                         {% endif %}
-                        <span style="position:absolute;top:8px;left:8px;background:var(--teal-600);color:white;padding:2px 8px;border-radius:var(--radius-full);font-size:11px;font-weight:600;">{{ course.get_level_display }}</span>
-                        <span style="position:absolute;top:8px;right:8px;background:{% if course.price == 0 %}var(--success){% else %}var(--white){% endif %};color:{% if course.price == 0 %}white{% else %}var(--teal-700){% endif %};padding:2px 10px;border-radius:var(--radius-full);font-size:12px;font-weight:700;">{% if course.price == 0 %}Free{% else %}TZS {{ course.price|floatformat:0 }}{% endif %}</span>
+                        <span class="badge-level"><span class="badge badge-teal">{{ course.get_level_display }}</span></span>
+                        <span class="badge-price {% if course.price == 0 %}free{% endif %}">
+                            {% if course.price == 0 %}Free{% else %}TZS {{ course.price|floatformat:0 }}{% endif %}
+                        </span>
                     </div>
-                    <div style="padding:var(--space-4);">
-                        <div style="font-size:11px;text-transform:uppercase;color:var(--teal-600);font-weight:600;margin-bottom:4px;">{{ course.category.name }}</div>
-                        <h3 style="font-size:15px;font-weight:600;margin-bottom:4px;"><a href="{{ course.get_absolute_url }}" style="color:var(--gray-900);text-decoration:none;">{{ course.title }}</a></h3>
-                        <p style="font-size:12px;color:var(--gray-400);margin-bottom:12px;">👨‍🏫 {{ course.instructor.full_name }}</p>
-                        <div style="display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px solid var(--gray-100);font-size:12px;color:var(--gray-400);">
+                    <div class="course-card-body">
+                        {% if course.category %}
+                        <div class="course-category">{{ course.category.name }}</div>
+                        {% endif %}
+                        <h3 class="course-title">{{ course.title }}</h3>
+                        <p class="course-instructor">{{ course.instructor.full_name }}</p>
+                        <div class="course-footer">
                             <span>⏱️ {{ course.duration_weeks }}w</span>
                             <span>📖 {{ course.total_lessons }} lessons</span>
-                            <a href="{{ course.get_absolute_url }}" class="btn btn-primary btn-sm">View →</a>
+                            <span class="btn btn-primary btn-sm">View →</span>
                         </div>
                     </div>
-                </div>
+                </a>
                 {% endfor %}
             </div>
             {% include 'includes/pagination.html' %}
@@ -129,7 +393,26 @@
 
 {% block extra_js %}
 <script>
-function toggleSidebar(){var s=document.getElementById('dashSidebar');var o=document.getElementById('dashOverlay');if(s&&o){s.classList.toggle('open');o.classList.toggle('show');}}
-function closeSidebar(){var s=document.getElementById('dashSidebar');var o=document.getElementById('dashOverlay');if(s&&o){s.classList.remove('open');o.classList.remove('show');}}
+(function() {
+    'use strict';
+    var sidebar = document.getElementById('dashSidebar');
+    var overlay = document.getElementById('dashOverlay');
+    
+    window.toggleSidebar = function() {
+        if (!sidebar || !overlay) return;
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('show');
+        document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
+    };
+    window.closeSidebar = function() {
+        if (!sidebar || !overlay) return;
+        sidebar.classList.remove('open');
+        overlay.classList.remove('show');
+        document.body.style.overflow = '';
+    };
+    if (overlay) overlay.addEventListener('click', closeSidebar);
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeSidebar(); });
+    window.addEventListener('resize', function() { if (window.innerWidth > 768) closeSidebar(); });
+})();
 </script>
 {% endblock %}

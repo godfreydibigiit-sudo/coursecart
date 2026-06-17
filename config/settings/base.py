@@ -17,6 +17,7 @@ ALLOWED_HOSTS = ['coursecartt.pythonanywhere.com']
 
 # Application definition
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,6 +45,73 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'config.urls'
+
+# ============================================
+# JAZZMIN SETTINGS - Professional Responsive Admin
+# ============================================
+
+JAZZMIN_SETTINGS = {
+    "site_title": "CourseCart Admin",
+    "site_header": "CourseCart",
+    "site_brand": "CourseCart",
+    "welcome_sign": "Welcome to CourseCart Admin Panel",
+    "copyright": "CourseCart © 2026",
+    # "site_logo": "images/logo.png",
+    # "site_logo_classes": "elevation-3",
+    
+    "show_sidebar": True,
+    "navigation_expanded": True,
+
+    
+    # Search
+    "search_model": ["accounts.User", "courses.Course", "courses.Category"],
+
+    "topmenu_links": [
+        {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"name": "View Website", "url": "/", "new_window": True},
+        {"name": "User Manual", "url": "/accounts/manual/", "new_window": True},
+    ],
+    
+    "icons": {
+        "accounts.User": "fas fa-users",
+        "courses.Course": "fas fa-book",
+        "courses.Category": "fas fa-tags",
+        "courses.Enrollment": "fas fa-user-graduate",
+        "payments.Payment": "fas fa-money-bill-wave",
+        "notifications.Notification": "fas fa-bell",
+    },
+    
+    "related_modal_active": True,
+    "show_ui_builder": False,
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "navbar_small_text": False,
+    "footer_small_text": True,
+    "body_small_text": False,
+    "brand_small_text": False,
+    "brand_colour": "navbar-teal",
+    "accent": "accent-teal",
+    "navbar": "navbar-white navbar-light",
+    "no_navbar_border": False,
+    "navbar_fixed": True,
+    "footer_fixed": False,
+    "sidebar_fixed": True,
+    "sidebar": "sidebar-dark-teal",
+    "sidebar_nav_flat_style": True,
+    "theme": "default",
+    "button_classes": {
+        "primary": "btn-primary",
+        "secondary": "btn-outline-secondary",
+        "info": "btn-info",
+        "warning": "btn-warning",
+        "danger": "btn-danger",
+        "success": "btn-success",
+    },
+    "actions_sticky_top": True,
+
+    "custom_dashboard": "apps.accounts.admin_dashboard.get_dashboard_context",
+}
 
 TEMPLATES = [
     {

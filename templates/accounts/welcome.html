@@ -492,12 +492,12 @@
     <div class="container">
         <!-- Hero Text -->
         <div class="hero-text">
-            <span class="hero-badge">📚 Tanzania's #1 Vocational Learning Platform</span>
+            <!-- <span class="hero-badge">📚 Tanzania's #1 Vocational Learning Platform</span> -->
             <h1>Learn <span class="hero-highlight">Vocational Skills</span><br>Build Your Future</h1>
             <p>Affordable, certified online courses in plumbing, electrical, tailoring & more. Learn from expert Tanzanian instructors — anytime, anywhere.</p>
             <div class="hero-btns">
-                <a href="{% url 'accounts:register_student' %}" class="btn btn-primary btn-lg">🎓 Start Learning Free</a>
-                <a href="{% url 'accounts:register_instructor' %}" class="btn-ghost btn-lg">👨‍🏫 Become Instructor</a>
+                <a href="{% url 'accounts:register_student' %}" class="btn btn-primary btn-lg">Start Learning Free</a>
+                <a href="{% url 'accounts:register_instructor' %}" class="btn-ghost btn-lg"> Become Instructor</a>
             </div>
         </div>
         
@@ -523,7 +523,7 @@
 </section>
 
 <!-- Stats Bar -->
-<div class="stats-bar">
+<!-- <div class="stats-bar">
     <div class="container">
         <div class="stats-row">
             <div class="stat-item"><span class="stat-number">{{ total_students|default:'500' }}+</span><span class="stat-label">Active Students</span></div>
@@ -531,7 +531,7 @@
             <div class="stat-item"><span class="stat-number">{{ total_courses|default:'50' }}+</span><span class="stat-label">Practical Courses</span></div>
         </div>
     </div>
-</div>
+</div> -->
 
 <!-- Features Section -->
 <section class="section" style="background: var(--off-white);">
@@ -555,7 +555,7 @@
 {% if featured_courses %}
 <section class="section">
     <div class="container">
-        <div class="section-header"><h2 class="section-title">📚 Featured Courses</h2><p class="section-subtitle">Start with these in-demand skills</p></div>
+        <div class="section-header"><h2 class="section-title">Featured Courses</h2><p class="section-subtitle">Start with these in-demand skills</p></div>
         <div class="courses-grid">
             {% for course in featured_courses %}
             <div class="course-card">
@@ -568,13 +568,13 @@
                 <div class="course-card-body">
                     {% if course.category %}<div class="course-card-cat">{{ course.category.name }}</div>{% endif %}
                     <h3 class="course-card-title"><a href="{{ course.get_absolute_url }}">{{ course.title }}</a></h3>
-                    <p class="course-card-instructor">👨‍🏫 {{ course.instructor.full_name }}</p>
+                    <p class="course-card-instructor"> {{ course.instructor.full_name }}</p>
                     <div class="course-card-footer"><span>⏱️ {{ course.duration_weeks }}w</span><span>📖 {{ course.total_lessons }} lessons</span></div>
                 </div>
             </div>
             {% endfor %}
         </div>
-        <div class="view-all"><a href="{% url 'courses:course_list' %}" class="btn btn-outline btn-lg">📋 View All Courses →</a></div>
+        <div class="view-all"><a href="{% url 'courses:course_list' %}" class="btn btn-outline btn-lg"> View All Courses →</a></div>
     </div>
 </section>
 {% endif %}
@@ -582,7 +582,7 @@
 <!-- Testimonials -->
 <section class="section" style="background: var(--off-white);">
     <div class="container">
-        <div class="section-header"><h2 class="section-title">⭐ Success Stories</h2><p class="section-subtitle">From our graduates across Tanzania</p></div>
+        <div class="section-header"><h2 class="section-title">Success Stories</h2><p class="section-subtitle">From our graduates across Tanzania</p></div>
         <div class="testimonials-grid">
             <div class="testimonial-card"><p class="testimonial-text">"CourseCart helped me become a certified plumber in 6 weeks. I now run my own business!"</p><div class="testimonial-author"><div class="testimonial-avatar">J</div><div><div class="testimonial-name">Juma M.</div><div class="testimonial-role">Plumbing Graduate</div></div></div></div>
             <div class="testimonial-card"><p class="testimonial-text">"The electrical course was practical. I got certified and found work immediately."</p><div class="testimonial-author"><div class="testimonial-avatar">F</div><div><div class="testimonial-name">Fatma A.</div><div class="testimonial-role">Electrical Graduate</div></div></div></div>
@@ -597,8 +597,8 @@
         <h2>Ready to Start Your Journey?</h2>
         <p>Join thousands mastering vocational skills on CourseCart.</p>
         <div class="cta-buttons">
-            <a href="{% url 'accounts:register_student' %}" class="btn btn-lg" style="background:var(--amber-500);color:white;border-color:var(--amber-500);box-shadow:0 4px 15px rgba(245,158,11,0.3);">🎓 Register as Student</a>
-            <a href="{% url 'accounts:register_instructor' %}" class="btn btn-lg" style="background:white;color:var(--teal-700);border-color:white;">👨‍🏫 Become an Instructor</a>
+            <a href="{% url 'accounts:register_student' %}" class="btn btn-lg" style="background:var(--amber-500);color:white;border-color:var(--amber-500);box-shadow:0 4px 15px rgba(245,158,11,0.3);">Register as Student</a>
+            <a href="{% url 'accounts:register_instructor' %}" class="btn btn-lg" style="background:white;color:var(--teal-700);border-color:white;">Become an Instructor</a>
         </div>
     </div>
 </section>

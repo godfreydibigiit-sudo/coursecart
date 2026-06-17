@@ -5,6 +5,210 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/dashboard-saas.css' %}">
+<style>
+    /* ============================================
+       INSTRUCTOR PROFILE EDIT - FULLY RESPONSIVE
+       ============================================ */
+    
+    .profile-wrapper {
+        max-width: 800px;
+        margin: 0 auto;
+        width: 100%;
+    }
+    
+    /* ========== KPI GRID ========== */
+    .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-2);
+        margin-bottom: var(--space-4);
+    }
+    @media (min-width: 480px) { .kpi-grid { gap: var(--space-3); } }
+    @media (min-width: 768px) { .kpi-grid { grid-template-columns: repeat(4, 1fr); gap: var(--space-4); margin-bottom: var(--space-6); } }
+    
+    .kpi-card {
+        padding: var(--space-3);
+    }
+    @media (min-width: 480px) { .kpi-card { padding: var(--space-4); } }
+    @media (min-width: 768px) { .kpi-card { padding: var(--space-5); } }
+    
+    .kpi-card .kpi-icon {
+        width: 32px; height: 32px; border-radius: var(--radius-md); font-size: 16px;
+    }
+    @media (min-width: 480px) { .kpi-card .kpi-icon { width: 36px; height: 36px; font-size: 18px; } }
+    @media (min-width: 768px) { .kpi-card .kpi-icon { width: 40px; height: 40px; border-radius: var(--radius-lg); font-size: 20px; } }
+    
+    .kpi-card .kpi-value {
+        font-size: 22px; font-weight: 800;
+    }
+    @media (min-width: 480px) { .kpi-card .kpi-value { font-size: 24px; } }
+    @media (min-width: 768px) { .kpi-card .kpi-value { font-size: 28px; } }
+    
+    .kpi-card .kpi-label {
+        font-size: 10px;
+    }
+    @media (min-width: 480px) { .kpi-card .kpi-label { font-size: 11px; } }
+    @media (min-width: 768px) { .kpi-card .kpi-label { font-size: 12px; } }
+    
+    /* ========== SECTION CARD ========== */
+    .section-card-header {
+        padding: var(--space-3) var(--space-4);
+    }
+    @media (min-width: 480px) { .section-card-header { padding: var(--space-4) var(--space-5); } }
+    @media (min-width: 768px) { .section-card-header { padding: var(--space-5) var(--space-6); } }
+    
+    .section-card-header h2 {
+        font-size: 14px;
+    }
+    @media (min-width: 480px) { .section-card-header h2 { font-size: 15px; } }
+    @media (min-width: 768px) { .section-card-header h2 { font-size: 16px; } }
+    
+    .section-card-body {
+        padding: var(--space-3);
+    }
+    @media (min-width: 480px) { .section-card-body { padding: var(--space-4); } }
+    @media (min-width: 768px) { .section-card-body { padding: var(--space-6); } }
+    
+    /* ========== AVATAR UPLOAD ========== */
+    .avatar-section {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        margin-bottom: var(--space-4);
+        padding-bottom: var(--space-4);
+        border-bottom: 1px solid var(--gray-100);
+        flex-wrap: wrap;
+    }
+    @media (min-width: 480px) { .avatar-section { gap: var(--space-4); margin-bottom: var(--space-5); padding-bottom: var(--space-5); } }
+    @media (min-width: 768px) { .avatar-section { gap: var(--space-6); margin-bottom: var(--space-6); padding-bottom: var(--space-6); } }
+    
+    .avatar-preview {
+        width: 60px; height: 60px; border-radius: 50%;
+        background: linear-gradient(135deg, var(--amber-400), var(--amber-600));
+        display: flex; align-items: center; justify-content: center;
+        color: white; font-size: 22px; font-weight: 700;
+        overflow: hidden; flex-shrink: 0;
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    }
+    @media (min-width: 480px) { .avatar-preview { width: 68px; height: 68px; font-size: 26px; } }
+    @media (min-width: 768px) { .avatar-preview { width: 72px; height: 72px; font-size: 28px; } }
+    
+    .avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
+    
+    .avatar-upload-btn {
+        display: inline-flex; align-items: center; gap: var(--space-2);
+        padding: 6px 14px; border: 2px solid var(--amber-300);
+        border-radius: var(--radius-md); font-size: 12px; font-weight: 500;
+        background: var(--white); color: var(--amber-700);
+        cursor: pointer; transition: all 0.2s;
+    }
+    @media (min-width: 480px) { .avatar-upload-btn { padding: 8px 16px; font-size: 13px; } }
+    
+    .avatar-upload-btn:hover { background: var(--amber-50); border-color: var(--amber-500); }
+    
+    .avatar-upload-btn input[type="file"] { display: none; }
+    
+    .avatar-hint { font-size: 10px; color: var(--gray-400); margin-top: 4px; }
+    @media (min-width: 480px) { .avatar-hint { font-size: 11px; } }
+    
+    /* ========== FORM GRID ========== */
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: var(--space-3);
+        margin-bottom: var(--space-3);
+    }
+    @media (min-width: 480px) { 
+        .form-grid { gap: var(--space-4); margin-bottom: var(--space-4); }
+        .form-grid-2 { grid-template-columns: 1fr 1fr; }
+    }
+    
+    /* ========== FORM ELEMENTS ========== */
+    .form-group { margin-bottom: var(--space-3); }
+    @media (min-width: 480px) { .form-group { margin-bottom: var(--space-4); } }
+    
+    .form-label {
+        font-size: 12px; font-weight: 500; color: var(--gray-700);
+        display: block; margin-bottom: 4px;
+    }
+    @media (min-width: 480px) { .form-label { font-size: 13px; } }
+    
+    .form-control, input, select, textarea {
+        width: 100%; padding: 8px 12px; border: 1px solid var(--gray-300);
+        border-radius: var(--radius-md); font-size: 13px;
+        font-family: var(--font-sans); background: var(--white);
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    @media (min-width: 480px) { .form-control, input, select, textarea { padding: 10px 14px; font-size: 14px; } }
+    
+    .form-control:focus, input:focus, select:focus, textarea:focus {
+        outline: none; border-color: var(--amber-500);
+        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+    }
+    
+    textarea { min-height: 80px; resize: vertical; }
+    @media (min-width: 480px) { textarea { min-height: 90px; } }
+    @media (min-width: 768px) { textarea { min-height: 100px; } }
+    
+    .input-readonly {
+        width: 100%; padding: 8px 12px; border: 1px solid var(--gray-200);
+        border-radius: var(--radius-md); background: var(--gray-50);
+        font-size: 13px; color: var(--gray-500);
+    }
+    @media (min-width: 480px) { .input-readonly { padding: 10px 14px; font-size: 14px; } }
+    
+    .help-text { font-size: 10px; color: var(--gray-400); margin-top: 2px; }
+    @media (min-width: 480px) { .help-text { font-size: 11px; } }
+    
+    .error-text { color: var(--error); font-size: 10px; margin-top: 2px; }
+    @media (min-width: 480px) { .error-text { font-size: 11px; } }
+    
+    /* ========== FORM ACTIONS ========== */
+    .form-actions {
+        display: flex; gap: var(--space-2); padding-top: var(--space-3);
+        border-top: 1px solid var(--gray-100); flex-wrap: wrap;
+    }
+    @media (min-width: 480px) { .form-actions { gap: var(--space-3); padding-top: var(--space-4); } }
+    
+    @media (max-width: 400px) {
+        .form-actions { flex-direction: column; }
+        .form-actions .btn { width: 100%; justify-content: center; }
+    }
+    
+    /* ========== PAGE HEADER ========== */
+    .page-header h1 { font-size: 18px; }
+    @media (min-width: 480px) { .page-header h1 { font-size: 20px; } }
+    @media (min-width: 768px) { .page-header h1 { font-size: 24px; } }
+    
+    .page-header p { font-size: 11px; }
+    @media (min-width: 480px) { .page-header p { font-size: 12px; } }
+    @media (min-width: 768px) { .page-header p { font-size: 14px; } }
+    
+    /* ========== BUTTONS ========== */
+    .btn-lg { padding: 8px 16px; font-size: 13px; }
+    @media (min-width: 480px) { .btn-lg { padding: 10px 20px; font-size: 15px; } }
+    
+    .btn-sm { padding: 5px 10px; font-size: 12px; }
+    @media (min-width: 480px) { .btn-sm { padding: 6px 12px; font-size: 13px; } }
+    
+    /* ========== BREADCRUMB ========== */
+    .dash-breadcrumb { font-size: 12px; }
+    @media (min-width: 480px) { .dash-breadcrumb { font-size: 13px; } }
+    @media (min-width: 768px) { .dash-breadcrumb { font-size: 14px; } }
+    
+    /* ========== DASH CONTENT ========== */
+    .dash-content { padding: var(--space-3); }
+    @media (min-width: 480px) { .dash-content { padding: var(--space-4); } }
+    @media (min-width: 768px) { .dash-content { padding: var(--space-6); } }
+    
+    @media (max-width: 360px) {
+        .section-card-body { padding: var(--space-2); }
+        .kpi-grid { gap: var(--space-1); }
+        .kpi-card { padding: var(--space-2); }
+        .kpi-card .kpi-value { font-size: 18px; }
+        .avatar-preview { width: 50px; height: 50px; font-size: 18px; }
+    }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -15,27 +219,25 @@
     <div class="dash-main">
         <header class="dash-header">
             <div class="dash-header-left">
-                <button class="btn-hamburger" onclick="toggleSidebar()">☰</button>
-                <div class="dash-breadcrumb">Settings</div>
+                <button class="btn-hamburger" onclick="toggleSidebar()" aria-label="Toggle menu">☰</button>
+                <div class="dash-breadcrumb">
+                    <a href="{% url 'profiles:instructor_dashboard' %}" style="color:var(--gray-400);text-decoration:none;">Dashboard</a> › 
+                    <span>Edit Profile</span>
+                </div>
             </div>
-            <div class="dash-header-right">
-                <a href="{% url 'notifications:notification_list' %}" class="btn-header" style="position:relative;">
-                    🔔{% if has_unread_notifications %}<span class="badge-dot"></span>{% endif %}
-                </a>
-                <div class="dash-user-avatar warm">{{ user.full_name|slice:":1"|upper }}</div>
-            </div>
+           
         </header>
         
         <div class="dash-content">
             <div class="page-header">
                 <div>
-                    <h1>👨‍🏫 Edit Instructor Profile</h1>
+                    <h1>Edit Instructor Profile</h1>
                     <p>Manage your professional information and expertise</p>
                 </div>
             </div>
             
             <!-- Quick Stats -->
-            <div class="kpi-grid" style="margin-bottom:var(--space-6);">
+            <div class="kpi-grid">
                 <div class="kpi-card">
                     <div class="kpi-header"><div class="kpi-icon amber">📗</div></div>
                     <div class="kpi-value">{{ form.instance.total_courses_created|default:'0' }}</div>
@@ -59,81 +261,83 @@
             </div>
             
             <!-- Edit Form -->
-            <div class="section-card" style="max-width:800px;">
-                <div class="section-card-header">
-                    <h2>Profile Information</h2>
-                </div>
-                <div class="section-card-body">
-                    <form method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        
-                        <!-- Avatar Upload -->
-                        <div style="display:flex;align-items:center;gap:var(--space-4);margin-bottom:var(--space-6);padding-bottom:var(--space-6);border-bottom:1px solid var(--gray-100);">
-                            <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--amber-400),var(--amber-600));display:flex;align-items:center;justify-content:center;color:white;font-size:28px;font-weight:700;overflow:hidden;flex-shrink:0;" id="avatarPreview">
-                                {% if form.instance.avatar %}
-                                <img src="{{ form.instance.avatar.url }}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;">
-                                {% else %}
-                                {{ user.full_name|slice:":1"|upper }}
-                                {% endif %}
-                            </div>
-                            <div>
-                                <label class="btn btn-outline btn-sm" style="cursor:pointer;border-color:var(--amber-300);color:var(--amber-700);">
-                                    📷 Change Photo
+            <div class="profile-wrapper">
+                <div class="section-card">
+                    <div class="section-card-header">
+                        <h2>Profile Information</h2>
+                    </div>
+                    <div class="section-card-body">
+                        <form method="post" enctype="multipart/form-data" novalidate>
+                            {% csrf_token %}
+                            
+                            <!-- Avatar Upload -->
+                            <div class="avatar-section">
+                                <div class="avatar-preview" id="avatarPreview">
+                                    {% if form.instance.avatar %}
+                                    <img src="{{ form.instance.avatar.url }}" alt="Avatar">
+                                    {% else %}
+                                    {{ user.full_name|slice:":1"|upper }}
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <label class="avatar-upload-btn" for="{{ form.avatar.id_for_label }}">
+                                         Change Photo
+                                    </label>
                                     {{ form.avatar }}
-                                </label>
-                                <p style="font-size:11px;color:var(--gray-400);margin-top:4px;">JPG, PNG. Max 2MB</p>
+                                    <p class="avatar-hint">JPG, PNG. Max 2MB • Square image recommended</p>
+                                </div>
                             </div>
-                        </div>
-                        
-                        <!-- Account Info -->
-                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-bottom:var(--space-4);">
-                            <div>
-                                <label style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:4px;">Full Name</label>
-                                <input type="text" value="{{ user.full_name }}" disabled style="width:100%;padding:10px 14px;border:1px solid var(--gray-200);border-radius:var(--radius-md);background:var(--gray-50);font-size:14px;color:var(--gray-500);">
+                            
+                            <!-- Account Info -->
+                            <div class="form-grid form-grid-2">
+                                <div class="form-group">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" value="{{ user.full_name }}" disabled class="input-readonly">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Email Address</label>
+                                    <input type="email" value="{{ user.email }}" disabled class="input-readonly">
+                                </div>
                             </div>
-                            <div>
-                                <label style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:4px;">Email Address</label>
-                                <input type="email" value="{{ user.email }}" disabled style="width:100%;padding:10px 14px;border:1px solid var(--gray-200);border-radius:var(--radius-md);background:var(--gray-50);font-size:14px;color:var(--gray-500);">
+                            
+                            <!-- Bio -->
+                            <div class="form-group">
+                                <label for="{{ form.bio.id_for_label }}" class="form-label"> Professional Bio</label>
+                                {{ form.bio }}
+                                <p class="help-text">Share your experience, qualifications, and teaching philosophy</p>
+                                {% if form.bio.errors %}<p class="error-text">{{ form.bio.errors.0 }}</p>{% endif %}
                             </div>
-                        </div>
-                        
-                        <!-- Bio -->
-                        <div style="margin-bottom:var(--space-4);">
-                            <label for="{{ form.bio.id_for_label }}" style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:4px;">📝 Professional Bio</label>
-                            {{ form.bio }}
-                            <p style="font-size:11px;color:var(--gray-400);margin-top:2px;">Share your experience, qualifications, and teaching philosophy</p>
-                            {% if form.bio.errors %}<p style="color:var(--error);font-size:11px;">{{ form.bio.errors.0 }}</p>{% endif %}
-                        </div>
-                        
-                        <!-- Expertise -->
-                        <div style="margin-bottom:var(--space-4);">
-                            <label for="{{ form.expertise.id_for_label }}" style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:4px;">🎯 Area of Expertise</label>
-                            {{ form.expertise }}
-                            <p style="font-size:11px;color:var(--gray-400);margin-top:2px;">e.g., Plumbing, Electrical Installation, Tailoring & Fashion Design</p>
-                            {% if form.expertise.errors %}<p style="color:var(--error);font-size:11px;">{{ form.expertise.errors.0 }}</p>{% endif %}
-                        </div>
-                        
-                        <!-- Location & Website -->
-                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-bottom:var(--space-6);">
-                            <div>
-                                <label for="{{ form.location.id_for_label }}" style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:4px;">📍 Location</label>
-                                {{ form.location }}
-                                {% if form.location.errors %}<p style="color:var(--error);font-size:11px;">{{ form.location.errors.0 }}</p>{% endif %}
+                            
+                            <!-- Expertise -->
+                            <div class="form-group">
+                                <label for="{{ form.expertise.id_for_label }}" class="form-label"> Area of Expertise</label>
+                                {{ form.expertise }}
+                                <p class="help-text">e.g., Plumbing, Electrical Installation, Tailoring & Fashion Design</p>
+                                {% if form.expertise.errors %}<p class="error-text">{{ form.expertise.errors.0 }}</p>{% endif %}
                             </div>
-                            <div>
-                                <label for="{{ form.website.id_for_label }}" style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:4px;">🌐 Website / Portfolio</label>
-                                {{ form.website }}
-                                <p style="font-size:11px;color:var(--gray-400);margin-top:2px;">LinkedIn, portfolio, or business page</p>
-                                {% if form.website.errors %}<p style="color:var(--error);font-size:11px;">{{ form.website.errors.0 }}</p>{% endif %}
+                            
+                            <!-- Location & Website -->
+                            <div class="form-grid form-grid-2">
+                                <div class="form-group">
+                                    <label for="{{ form.location.id_for_label }}" class="form-label"> Location</label>
+                                    {{ form.location }}
+                                    {% if form.location.errors %}<p class="error-text">{{ form.location.errors.0 }}</p>{% endif %}
+                                </div>
+                                <div class="form-group">
+                                    <label for="{{ form.website.id_for_label }}" class="form-label">🌐 Website / Portfolio</label>
+                                    {{ form.website }}
+                                    <p class="help-text">LinkedIn, portfolio, or business page</p>
+                                    {% if form.website.errors %}<p class="error-text">{{ form.website.errors.0 }}</p>{% endif %}
+                                </div>
                             </div>
-                        </div>
-                        
-                        <!-- Action Buttons -->
-                        <div style="display:flex;gap:var(--space-3);padding-top:var(--space-4);border-top:1px solid var(--gray-100);">
-                            <button type="submit" class="btn btn-lg" style="background:var(--amber-500);color:white;border:none;">💾 Save Changes</button>
-                            <a href="{% url 'profiles:instructor_dashboard' %}" class="btn btn-outline btn-lg">Cancel</a>
-                        </div>
-                    </form>
+                            
+                            <!-- Action Buttons -->
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-lg" style="background:var(--amber-500);color:white;border:none;"> Save Changes</button>
+                                <a href="{% url 'profiles:instructor_dashboard' %}" class="btn btn-outline btn-lg">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -143,9 +347,55 @@
 
 {% block extra_js %}
 <script>
-function toggleSidebar(){var s=document.getElementById('dashSidebar');var o=document.getElementById('dashOverlay');if(s&&o){s.classList.toggle('open');o.classList.toggle('show');}}
-function closeSidebar(){var s=document.getElementById('dashSidebar');var o=document.getElementById('dashOverlay');if(s&&o){s.classList.remove('open');o.classList.remove('show');}}
-// Avatar preview
-document.getElementById('{{ form.avatar.id_for_label }}')?.addEventListener('change',function(e){if(this.files&&this.files[0]){var r=new FileReader();r.onload=function(e){document.getElementById('avatarPreview').innerHTML='<img src="'+e.target.result+'" style="width:100%;height:100%;object-fit:cover;">'};r.readAsDataURL(this.files[0])}});
+(function() {
+    'use strict';
+    
+    // Sidebar toggle
+    var sidebar = document.getElementById('dashSidebar');
+    var overlay = document.getElementById('dashOverlay');
+    
+    window.toggleSidebar = function() {
+        if (!sidebar || !overlay) return;
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('show');
+        document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
+    };
+    
+    window.closeSidebar = function() {
+        if (!sidebar || !overlay) return;
+        sidebar.classList.remove('open');
+        overlay.classList.remove('show');
+        document.body.style.overflow = '';
+    };
+    
+    if (overlay) overlay.addEventListener('click', closeSidebar);
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeSidebar(); });
+    window.addEventListener('resize', function() { if (window.innerWidth > 768) closeSidebar(); });
+    
+    // Avatar preview
+    var avatarInput = document.getElementById('{{ form.avatar.id_for_label }}');
+    if (avatarInput) {
+        avatarInput.style.display = 'none';
+        avatarInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('avatarPreview').innerHTML = '<img src="' + e.target.result + '" style="width:100%;height:100%;object-fit:cover;" alt="Preview">';
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    }
+    
+    // Auto-resize textareas
+    document.querySelectorAll('textarea').forEach(function(textarea) {
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 200) + 'px';
+        });
+        textarea.dispatchEvent(new Event('input'));
+    });
+    
+})();
 </script>
 {% endblock %}

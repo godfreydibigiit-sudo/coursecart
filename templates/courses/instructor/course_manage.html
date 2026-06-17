@@ -5,6 +5,242 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/dashboard-saas.css' %}">
+<style>
+    .manage-wrapper { max-width: 1400px; margin: 0 auto; width: 100%; }
+    
+    /* ========== PAGE HEADER (Same style as dashboard) ========== */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: var(--space-4);
+        flex-wrap: wrap;
+        gap: var(--space-3);
+    }
+    @media (min-width: 480px) { .page-header { flex-direction: row; align-items: flex-start; margin-bottom: var(--space-5); } }
+    @media (min-width: 768px) { .page-header { margin-bottom: var(--space-6); } }
+    
+    .page-header h1 {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin-bottom: 4px;
+        letter-spacing: -0.02em;
+    }
+    @media (min-width: 480px) { .page-header h1 { font-size: 22px; } }
+    @media (min-width: 768px) { .page-header h1 { font-size: 24px; } }
+    
+    .page-header p {
+        font-size: 12px;
+        color: var(--gray-400);
+        margin: 0;
+    }
+    @media (min-width: 480px) { .page-header p { font-size: 13px; } }
+    @media (min-width: 768px) { .page-header p { font-size: 14px; } }
+    
+    .page-header .meta-row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-top: 6px;
+    }
+    @media (min-width: 480px) { .page-header .meta-row { gap: 14px; } }
+    
+    .meta-tag {
+        font-size: 12px;
+        color: var(--gray-500);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    @media (min-width: 480px) { .meta-tag { font-size: 13px; } }
+    
+    .status-badge-lg {
+        padding: 4px 12px;
+        border-radius: 50px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+    @media (min-width: 480px) { .status-badge-lg { font-size: 12px; } }
+    .status-published { background: #ECFDF5; color: #059669; }
+    .status-draft { background: #FFFBEB; color: #D97706; }
+    
+    .page-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+    @media (min-width: 480px) { .page-actions { width: auto; } }
+    @media (max-width: 400px) { .page-actions .btn { width: 100%; justify-content: center; } }
+    
+    /* ========== STATS MINI ROW ========== */
+    .stats-mini-row {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    @media (min-width: 480px) { .stats-mini-row { gap: 12px; } }
+    @media (min-width: 768px) { .stats-mini-row { grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; } }
+    
+    .stat-mini-card {
+        background: #fff;
+        border-radius: 14px;
+        padding: 16px;
+        border: 1px solid #E2E8F0;
+        text-align: center;
+        transition: all 0.2s;
+    }
+    @media (min-width: 480px) { .stat-mini-card { padding: 18px; } }
+    .stat-mini-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.04); }
+    
+    .stat-mini-value {
+        font-size: 24px; font-weight: 800; color: #1E293B;
+        line-height: 1; margin-bottom: 4px;
+    }
+    @media (min-width: 480px) { .stat-mini-value { font-size: 26px; } }
+    
+    .stat-mini-label {
+        font-size: 10px; color: #94A3B8; font-weight: 500;
+        text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    @media (min-width: 480px) { .stat-mini-label { font-size: 11px; } }
+    
+    .stat-mini-card.stat-teal { border-top: 3px solid #0D9488; }
+    .stat-mini-card.stat-amber { border-top: 3px solid #F59E0B; }
+    .stat-mini-card.stat-green { border-top: 3px solid #10B981; }
+    .stat-mini-card.stat-blue { border-top: 3px solid #6366F1; }
+    
+    /* ========== TWO COLUMN GRID ========== */
+    .manage-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    @media (min-width: 768px) { .manage-grid { grid-template-columns: 1fr 1fr; gap: 24px; } }
+    
+    /* ========== SECTION CARD ========== */
+    .section-card {
+        background: #fff; border-radius: 16px;
+        border: 1px solid #E2E8F0; overflow: hidden;
+        display: flex; flex-direction: column;
+    }
+    
+    .section-card-header {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 14px 18px; border-bottom: 1px solid #F1F5F9;
+        flex-shrink: 0;
+    }
+    @media (min-width: 480px) { .section-card-header { padding: 16px 20px; } }
+    
+    .section-card-header h2 {
+        font-size: 15px; font-weight: 600; color: #1E293B;
+        display: flex; align-items: center; gap: 8px;
+    }
+    
+    .section-count {
+        font-size: 11px; color: #94A3B8; font-weight: 500;
+        background: #F8FAFC; padding: 3px 10px; border-radius: 50px;
+    }
+    
+    .section-card-body {
+        padding: 14px; flex: 1; overflow-y: auto; max-height: 500px;
+    }
+    @media (min-width: 480px) { .section-card-body { padding: 16px; } }
+    
+    /* ========== LESSON & STUDENT ITEMS ========== */
+    .list-item {
+        display: flex; align-items: center; gap: 12px;
+        padding: 10px 12px; border-radius: 10px;
+        transition: all 0.15s; margin-bottom: 4px;
+        border: 1px solid transparent;
+    }
+    @media (min-width: 480px) { .list-item { gap: 14px; padding: 12px 14px; } }
+    .list-item:hover { background: #F8FAFC; border-color: #F1F5F9; }
+    .list-item:last-child { margin-bottom: 0; }
+    
+    .item-number {
+        width: 32px; height: 32px; border-radius: 50%;
+        background: #F1F5F9; color: #64748B;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 700; font-size: 12px; flex-shrink: 0;
+    }
+    
+    .student-avatar-sm {
+        width: 32px; height: 32px; border-radius: 50%;
+        background: linear-gradient(135deg, #F59E0B, #D97706);
+        color: #fff; display: flex; align-items: center;
+        justify-content: center; font-weight: 700; font-size: 12px; flex-shrink: 0;
+    }
+    
+    .item-info { flex: 1; min-width: 0; }
+    .item-title { font-weight: 600; font-size: 13px; color: #1E293B; margin-bottom: 1px; }
+    @media (min-width: 480px) { .item-title { font-size: 14px; } }
+    
+    .item-meta {
+        font-size: 11px; color: #94A3B8;
+        display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+    }
+    @media (min-width: 480px) { .item-meta { font-size: 12px; gap: 10px; } }
+    
+    .badge-preview {
+        font-size: 10px; font-weight: 600;
+        background: #FFFBEB; color: #D97706;
+        padding: 2px 8px; border-radius: 50px;
+    }
+    .badge-completed {
+        font-size: 10px; font-weight: 600;
+        background: #ECFDF5; color: #059669;
+        padding: 2px 8px; border-radius: 50px;
+    }
+    
+    /* Progress mini */
+    .progress-mini {
+        display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+    }
+    .progress-mini-bar {
+        width: 60px; height: 4px; background: #F1F5F9;
+        border-radius: 4px; overflow: hidden;
+    }
+    .progress-mini-fill {
+        height: 100%; background: #0D9488; border-radius: 4px;
+        transition: width 0.4s ease;
+    }
+    .progress-mini-text { font-size: 11px; color: #64748B; font-weight: 500; min-width: 35px; text-align: right; }
+    
+    /* Empty State */
+    .empty-state {
+        text-align: center; padding: 30px 16px;
+    }
+    .empty-icon { font-size: 36px; display: block; margin-bottom: 8px; opacity: 0.5; }
+    .empty-state h3 { font-size: 14px; color: #1E293B; margin-bottom: 2px; }
+    .empty-state p { font-size: 12px; color: #94A3B8; margin-bottom: 12px; }
+    
+    /* Breadcrumb */
+    .dash-breadcrumb { font-size: 12px; }
+    @media (min-width: 480px) { .dash-breadcrumb { font-size: 13px; } }
+    @media (min-width: 768px) { .dash-breadcrumb { font-size: 14px; } }
+    .dash-breadcrumb a { color: #94A3B8; text-decoration: none; }
+    .dash-breadcrumb a:hover { color: #0D9488; }
+    
+    /* Dash Content */
+    .dash-content { padding: 12px; }
+    @media (min-width: 480px) { .dash-content { padding: 16px; } }
+    @media (min-width: 768px) { .dash-content { padding: 24px; } }
+    
+    .dash-header { height: 52px; padding: 0 12px; }
+    @media (min-width: 480px) { .dash-header { height: 56px; padding: 0 16px; } }
+    @media (min-width: 768px) { .dash-header { height: 60px; padding: 0 24px; } }
+    
+    @media (max-width: 360px) {
+        .stats-mini-row { grid-template-columns: 1fr 1fr; gap: 6px; }
+        .stat-mini-card { padding: 12px; }
+        .stat-mini-value { font-size: 20px; }
+        .page-header h1 { font-size: 18px; }
+    }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -15,77 +251,134 @@
     <div class="dash-main">
         <header class="dash-header">
             <div class="dash-header-left">
-                <button class="btn-hamburger" onclick="toggleSidebar()">☰</button>
-                <div class="dash-breadcrumb"><a href="{% url 'courses:instructor_course_list' %}" style="color:var(--gray-400);text-decoration:none;">My Courses</a> › <span>{{ course.title|truncatechars:25 }}</span></div>
+                <button class="btn-hamburger" onclick="toggleSidebar()" aria-label="Toggle menu">☰</button>
+                <div class="dash-breadcrumb">
+                    <a href="{% url 'courses:instructor_course_list' %}">My Courses</a>
+                    <span style="color:#94A3B8;margin:0 4px;">›</span>
+                    <span>{{ course.title|truncatechars:25 }}</span>
+                </div>
             </div>
-            <div class="dash-header-right">
-                <div class="dash-user-avatar warm">{{ user.full_name|slice:":1"|upper }}</div>
-            </div>
+           
         </header>
         
         <div class="dash-content">
-            <div class="page-header">
-                <div>
-                    <h1>📋 {{ course.title }}</h1>
-                    <p><span class="badge-status {% if course.status == 'published' %}paid{% else %}pending{% endif %}">{{ course.get_status_display }}</span> • {{ course.total_enrollments }} students • {{ course.total_lessons }} lessons</p>
-                </div>
-                <div class="page-actions">
-                    <a href="{% url 'courses:lesson_create' course.slug %}" class="btn btn-primary">➕ Add Lesson</a>
-                    <a href="{% url 'courses:course_edit' course.slug %}" class="btn btn-outline">✏️ Edit</a>
-                </div>
-            </div>
-            
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-6);">
-                <!-- Lessons -->
-                <div class="section-card">
-                    <div class="section-card-header"><h2>📖 Lessons ({{ lessons.count }})</h2></div>
-                    <div class="section-card-body">
-                        {% if lessons %}
-                        <div class="enrollment-list">
-                            {% for lesson in lessons %}
-                            <div class="enrollment-item">
-                                <span style="width:32px;height:32px;border-radius:50%;background:var(--gray-200);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;">{{ lesson.order }}</span>
-                                <div class="enroll-info">
-                                    <div class="enroll-title">{{ lesson.icon }} {{ lesson.title }}</div>
-                                    <div class="enroll-meta">{{ lesson.get_lesson_type_display }} • {{ lesson.duration_minutes }} min {% if lesson.is_free_preview %}<span class="badge-status" style="background:var(--amber-100);color:var(--amber-700);">Preview</span>{% endif %}</div>
-                                </div>
-                            </div>
-                            {% endfor %}
+            <div class="manage-wrapper">
+                
+                <!-- ========== PAGE HEADER (Same style as other dashboards) ========== -->
+                <div class="page-header">
+                    <div>
+                        <h1>{{ course.title }}</h1>
+                        <div class="meta-row">
+                            <span class="status-badge-lg {% if course.status == 'published' %}status-published{% else %}status-draft{% endif %}">
+                                {{ course.get_status_display }}
+                            </span>
+                            <span class="meta-tag">{{ course.total_lessons }} Lessons</span>
+                            <span class="meta-tag"> {{ course.total_enrollments }} Students</span>
+                            <span class="meta-tag"> {% if course.price == 0 %}Free{% else %}TZS {{ course.price|floatformat:0 }}{% endif %}</span>
                         </div>
-                        {% else %}
-                        <div class="empty-state">
-                            <span class="empty-icon">📝</span>
-                            <h3>No Lessons Yet</h3>
-                            <p>Add your first lesson</p>
-                            <a href="{% url 'courses:lesson_create' course.slug %}" class="btn btn-primary btn-sm">Add Lesson</a>
-                        </div>
-                        {% endif %}
+                    </div>
+                    <div class="page-actions">
+                        <a href="{% url 'courses:lesson_create' course.slug %}" class="btn btn-primary"> Add Lesson</a>
+                        <a href="{% url 'courses:course_edit' course.slug %}" class="btn btn-outline">Edit Course</a>
                     </div>
                 </div>
                 
-                <!-- Students -->
-                <div class="section-card">
-                    <div class="section-card-header"><h2>👥 Students ({{ enrollments.count }})</h2></div>
-                    <div class="section-card-body">
-                        {% if enrollments %}
-                        <div class="enrollment-list">
-                            {% for enrollment in enrollments %}
-                            <div class="enrollment-item">
-                                <div class="dash-user-avatar" style="width:36px;height:36px;font-size:14px;">{{ enrollment.student.full_name|slice:":1"|upper }}</div>
-                                <div class="enroll-info">
-                                    <div class="enroll-title">{{ enrollment.student.full_name }}</div>
-                                    <div class="enroll-meta">
-                                        <span>{{ enrollment.progress_percentage }}% complete</span>
-                                        {% if enrollment.is_completed %}<span class="badge-status paid">Completed</span>{% endif %}
+                <!-- ========== QUICK STATS ========== -->
+                <div class="stats-mini-row">
+                    <div class="stat-mini-card stat-teal">
+                        <div class="stat-mini-value">{{ lessons.count }}</div>
+                        <div class="stat-mini-label">Total Lessons</div>
+                    </div>
+                    <div class="stat-mini-card stat-amber">
+                        <div class="stat-mini-value">{{ enrollments.count }}</div>
+                        <div class="stat-mini-label">Enrolled Students</div>
+                    </div>
+                    <div class="stat-mini-card stat-green">
+                        <div class="stat-mini-value">{{ course.total_enrollments }}</div>
+                        <div class="stat-mini-label">Paid Students</div>
+                    </div>
+                    <div class="stat-mini-card stat-blue">
+                        <div class="stat-mini-value">{{ enrollments.count|default:0 }}</div>
+                        <div class="stat-mini-label">Active</div>
+                    </div>
+                </div>
+                
+                <!-- ========== LESSONS & STUDENTS GRID ========== -->
+                <div class="manage-grid">
+                    
+                    <!-- Lessons Column -->
+                    <div class="section-card">
+                        <div class="section-card-header">
+                            <h2> Lessons</h2>
+                            <span class="section-count">{{ lessons.count }}</span>
+                        </div>
+                        <div class="section-card-body">
+                            {% if lessons %}
+                                {% for lesson in lessons %}
+                                <div class="list-item">
+                                    <span class="item-number">{{ lesson.order }}</span>
+                                    <div class="item-info">
+                                        <div class="item-title">{{ lesson.icon }} {{ lesson.title }}</div>
+                                        <div class="item-meta">
+                                            <span>{{ lesson.get_lesson_type_display }}</span>
+                                            <span>⏱️ {{ lesson.duration_minutes }} min</span>
+                                            {% if lesson.is_free_preview %}
+                                            <span class="badge-preview">🔓 Free Preview</span>
+                                            {% endif %}
+                                        </div>
                                     </div>
                                 </div>
+                                {% endfor %}
+                            {% else %}
+                            <div class="empty-state">
+                                <span class="empty-icon">📝</span>
+                                <h3>No Lessons Yet</h3>
+                                <p>Start building your course</p>
+                                <a href="{% url 'courses:lesson_create' course.slug %}" class="btn btn-primary btn-sm">➕ Add First Lesson</a>
                             </div>
-                            {% endfor %}
+                            {% endif %}
                         </div>
-                        {% else %}
-                        <p style="color:var(--gray-400);text-align:center;padding:var(--space-6);">No students enrolled yet.</p>
-                        {% endif %}
                     </div>
+                    
+                    <!-- Students Column -->
+                    <div class="section-card">
+                        <div class="section-card-header">
+                            <h2> Students</h2>
+                            <span class="section-count">{{ enrollments.count }}</span>
+                        </div>
+                        <div class="section-card-body">
+                            {% if enrollments %}
+                                {% for enrollment in enrollments %}
+                                <div class="list-item">
+                                    <div class="student-avatar-sm">{{ enrollment.student.full_name|slice:":1"|upper }}</div>
+                                    <div class="item-info">
+                                        <div class="item-title">{{ enrollment.student.full_name }}</div>
+                                        <div class="item-meta">
+                                            {% if enrollment.is_completed %}
+                                            <span class="badge-completed">✅ Completed</span>
+                                            {% else %}
+                                            <span> {{ enrollment.student.email|truncatechars:20 }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="progress-mini">
+                                        <div class="progress-mini-bar">
+                                            <div class="progress-mini-fill" style="width:{{ enrollment.progress_percentage }}%"></div>
+                                        </div>
+                                        <span class="progress-mini-text">{{ enrollment.progress_percentage }}%</span>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                            <div class="empty-state">
+                                <span class="empty-icon">👥</span>
+                                <h3>No Students Yet</h3>
+                                <p>Students will appear here after enrollment</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -95,7 +388,13 @@
 
 {% block extra_js %}
 <script>
-function toggleSidebar(){var s=document.getElementById('dashSidebar');var o=document.getElementById('dashOverlay');if(s&&o){s.classList.toggle('open');o.classList.toggle('show');}}
-function closeSidebar(){var s=document.getElementById('dashSidebar');var o=document.getElementById('dashOverlay');if(s&&o){s.classList.remove('open');o.classList.remove('show');}}
+(function(){'use strict';
+var s=document.getElementById('dashSidebar'),o=document.getElementById('dashOverlay');
+window.toggleSidebar=function(){if(!s||!o)return;s.classList.toggle('open');o.classList.toggle('show');document.body.style.overflow=s.classList.contains('open')?'hidden':'';};
+window.closeSidebar=function(){if(!s||!o)return;s.classList.remove('open');o.classList.remove('show');document.body.style.overflow='';};
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeSidebar();});
+if(o)o.addEventListener('click',closeSidebar);
+window.addEventListener('resize',function(){if(window.innerWidth>768)closeSidebar();});
+})();
 </script>
 {% endblock %}

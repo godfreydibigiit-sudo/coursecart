@@ -241,13 +241,7 @@
                 <button class="btn-hamburger" onclick="toggleSidebar()" aria-label="Toggle menu">☰</button>
                 <div class="dash-breadcrumb">Dashboard</div>
             </div>
-            <div class="dash-header-right">
-                <a href="{% url 'notifications:notification_list' %}" class="btn-header" style="position:relative;" aria-label="Notifications">
-                    🔔
-                    {% if has_unread_notifications %}<span class="badge-dot"></span>{% endif %}
-                </a>
-                <div class="dash-user-avatar">{{ user.full_name|slice:":1"|upper }}</div>
-            </div>
+           
         </header>
         
         <!-- CONTENT -->
@@ -255,19 +249,24 @@
             <!-- PAGE HEADER -->
             <div class="page-header">
                 <div>
-                    <h1>Welcome back, {{ user.full_name }} 👋</h1>
+                    <h1>Welcome back, {{ user.full_name }} </h1>
                     <p>Track your learning progress</p>
                 </div>
-                <div class="page-actions">
-                    <a href="{% url 'courses:course_list' %}" class="btn btn-primary">🔍 Browse Courses</a>
-                </div>
+                 <a href="{% url 'courses:course_list' %}" class="dash-nav-item">
+            <span class="nav-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                </svg>
+            </span>
+            <span class="nav-label">Browse Courses</span>
+        </a>
             </div>
             
             <!-- KPI ROW -->
             <div class="kpi-grid">
                 <div class="kpi-card">
                     <div class="kpi-header">
-                        <div class="kpi-icon teal">📚</div>
+                        
                         <span class="kpi-trend up">Active</span>
                     </div>
                     <div class="kpi-value">{{ active_enrollments.count|default:0 }}</div>
@@ -275,14 +274,14 @@
                 </div>
                 <div class="kpi-card">
                     <div class="kpi-header">
-                        <div class="kpi-icon green">🏆</div>
+                        
                     </div>
                     <div class="kpi-value">{{ completed_enrollments.count|default:0 }}</div>
                     <div class="kpi-label">Completed</div>
                 </div>
                 <div class="kpi-card">
                     <div class="kpi-header">
-                        <div class="kpi-icon amber">📊</div>
+                        
                         <span class="kpi-trend up">Progress</span>
                     </div>
                     <div class="kpi-value">{{ profile.completion_rate|default:'0' }}%</div>
@@ -290,7 +289,7 @@
                 </div>
                 <div class="kpi-card">
                     <div class="kpi-header">
-                        <div class="kpi-icon blue">📜</div>
+                        
                     </div>
                     <div class="kpi-value">{{ completed_enrollments.count|default:0 }}</div>
                     <div class="kpi-label">Certificates Earned</div>
@@ -300,7 +299,7 @@
             <!-- ACTIVE COURSES -->
             <div class="section-card">
                 <div class="section-card-header">
-                    <h2>📚 Active Courses</h2>
+                    <h2>Active Courses</h2>
                     <a href="{% url 'courses:course_list' %}" class="btn btn-outline btn-sm">Browse All</a>
                 </div>
                 <div class="section-card-body">
@@ -318,7 +317,7 @@
                             <div class="enroll-info">
                                 <div class="enroll-title">{{ enrollment.course.title }}</div>
                                 <div class="enroll-meta">
-                                    <span>👨‍🏫 {{ enrollment.course.instructor.full_name }}</span>
+                                    <span> {{ enrollment.course.instructor.full_name }}</span>
                                     {% if enrollment.payment_status == 'completed' %}
                                     <span class="badge-status paid">✅ Paid</span>
                                     {% elif enrollment.payment_status == 'pending' %}
@@ -340,7 +339,7 @@
                                 {% if enrollment.payment_status == 'completed' %}
                                 {% with first_lesson=enrollment.course.lessons.first %}
                                 {% if first_lesson %}
-                                <a href="{% url 'courses:lesson_view' course_slug=enrollment.course.slug lesson_pk=first_lesson.pk %}" class="btn btn-primary btn-sm">📚 Continue</a>
+                                <a href="{% url 'courses:lesson_view' course_slug=enrollment.course.slug lesson_pk=first_lesson.pk %}" class="btn btn-primary btn-sm"> Continue</a>
                                 {% endif %}
                                 {% endwith %}
                                 {% elif enrollment.payment_status == 'pending' %}

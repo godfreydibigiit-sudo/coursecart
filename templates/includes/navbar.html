@@ -1,430 +1,472 @@
 {% load static %}
 <nav class="navbar" role="navigation" aria-label="Main navigation">
-    <div class="container">
+    <div class="navbar-container">
         <!-- Brand Logo -->
-        <a href="{% url 'accounts:welcome' %}" class="navbar-brand" aria-label="CourseCart Home">
-            <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
-                <rect width="40" height="40" rx="8" fill="#0D9488"/>
-                <path d="M8 28L20 12L32 28" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="20" cy="24" r="3" fill="#F59E0B"/>
-            </svg>
-            <span>CourseCart</span>
-        </a>
+       <a href="{% url 'accounts:welcome' %}" class="navbar-brand" aria-label="CourseCart Home">
+    <div class="brand-icon">
+        <img src="{% static 'images/logo.png' %}" alt="CourseCart Logo" class="brand-logo-img">
+    </div>
+    <span class="brand-text">CourseCart</span>
+</a>
         
-        <!-- Mobile Menu Toggle -->
-        <button class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false" onclick="toggleMenu()">
-            <span class="hamburger-line"></span>
-            <span class="hamburger-line"></span>
-            <span class="hamburger-line"></span>
-        </button>
-        
-        <!-- Navigation Menu -->
-        <ul class="nav-menu" id="navMenu">
-            <!-- Home -->
-            <li>
-                <a href="{% url 'accounts:welcome' %}" 
-                   class="nav-link {% if request.resolver_match.url_name == 'welcome' %}active{% endif %}">
-                    Home
-                </a>
-            </li>
-            
-            <!-- Browse Courses (always visible) -->
-            <li>
-                <a href="{% url 'courses:course_list' %}" 
-                   class="nav-link {% if 'course_list' in request.path %}active{% endif %}">
-                    Browse Courses
-                </a>
-            </li>
-            
+        <!-- Right Side Actions -->
+        <div class="navbar-actions">
             {% if user.is_authenticated %}
-                <!-- ========== AUTHENTICATED MENU ========== -->
-                {% if user.is_student %}
-                    <!-- Student Links -->
-                    <li>
-                        <a href="{% url 'profiles:student_dashboard' %}" 
-                           class="nav-link {% if 'student_dashboard' in request.path %}active{% endif %}">
-                            Dashboard
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'courses:my_enrollments' %}" 
-                           class="nav-link {% if 'my_enrollments' in request.path %}active{% endif %}">
-                             My Courses
-                        </a>
-                    </li>
-                {% elif user.is_instructor %}
-                    <!-- Instructor Links -->
-                    <li>
-                        <a href="{% url 'profiles:instructor_dashboard' %}" 
-                           class="nav-link {% if 'instructor_dashboard' in request.path %}active{% endif %}">
-                             Dashboard
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'courses:instructor_course_list' %}" 
-                           class="nav-link {% if 'instructor/courses' in request.path %}active{% endif %}">
-                             My Courses
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'courses:course_create' %}" 
-                           class="nav-link {% if 'course_create' in request.path %}active{% endif %}">
-                            New Course
-                        </a>
-                    </li>
-                {% endif %}
-                
-                <!-- Notifications Bell -->
-                <li style="position: relative;">
-                    <a href="{% url 'notifications:notification_list' %}" 
-                       class="nav-link {% if 'notifications' in request.path %}active{% endif %}"
-                       title="Notifications"
-                       aria-label="{% if has_unread_notifications %}{{ notification_unread_count }} unread notifications{% else %}No unread notifications{% endif %}">
-                        🔔 
+                <!-- Notification Bell -->
+                <a href="{% url 'notifications:notification_list' %}" class="notif-btn" title="Notifications" aria-label="{% if has_unread_notifications %}{{ notification_unread_count }} unread notifications{% else %}No unread notifications{% endif %}">
+                    <span class="notif-icon-wrapper">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                        </svg>
                         {% if has_unread_notifications %}
-                            <span class="notification-badge" id="notification-badge">
-                                {{ notification_unread_count }}
-                            </span>
+                        <span class="notif-dot"></span>
                         {% endif %}
-                    </a>
-                </li>
+                    </span>
+                </a>
                 
-                <!-- User Dropdown -->
-                <li class="user-menu" style="position: relative;">
-                    <button class="nav-link user-menu-trigger" onclick="toggleUserMenu(event)" aria-expanded="false" aria-haspopup="true">
-                        <span class="user-avatar">
-                            {{ user.full_name|slice:":1"|upper }}
-                        </span>
-                        <span class="user-name">{{ user.full_name|truncatechars:12 }}</span>
-                        <span class="dropdown-arrow">▾</span>
-                    </button>
+                <!-- User Avatar Only -->
+                <div class="user-menu">
+                    <button class="user-avatar-btn" onclick="toggleUserMenu(event)" aria-expanded="false" aria-haspopup="true" title="{{ user.full_name }}">
+    <div class="user-avatar-circle">
+        {% if user.is_student %}
+            {% if user.student_profile.avatar %}
+            <img src="{{ user.student_profile.avatar.url }}" alt="{{ user.full_name }}" class="avatar-img">
+            {% else %}
+            <div class="avatar-student">{{ user.full_name|slice:":1"|upper }}</div>
+            {% endif %}
+        {% elif user.is_instructor %}
+            {% if user.instructor_profile.avatar %}
+            <img src="{{ user.instructor_profile.avatar.url }}" alt="{{ user.full_name }}" class="avatar-img">
+            {% else %}
+            <div class="avatar-instructor">{{ user.full_name|slice:":1"|upper }}</div>
+            {% endif %}
+        {% else %}
+            <div class="avatar-student">{{ user.full_name|slice:":1"|upper }}</div>
+        {% endif %}
+    </div>
+</button>
                     
-                    <ul class="user-dropdown" id="userDropdown">
-                        <li class="dropdown-header">
-                            <span class="user-avatar" style="width: 40px; height: 40px; font-size: 1rem;">
-                                {{ user.full_name|slice:":1"|upper }}
-                            </span>
-                            <div>
-                                <strong>{{ user.full_name }}</strong>
-                                <small>{{ user.email }}</small>
-                            </div>
-                        </li>
-                        <li class="dropdown-divider"></li>
+                    <div class="user-dropdown" id="userDropdown">
+                        <!-- User Info Header -->
+                        <div class="dropdown-head">
+    <div class="user-avatar-lg {% if user.is_instructor %}avatar-instructor-lg{% else %}avatar-student-lg{% endif %}">
+        {% if user.is_student and user.student_profile.avatar %}
+        <img src="{{ user.student_profile.avatar.url }}" alt="{{ user.full_name }}" class="avatar-img">
+        {% elif user.is_instructor and user.instructor_profile.avatar %}
+        <img src="{{ user.instructor_profile.avatar.url }}" alt="{{ user.full_name }}" class="avatar-img">
+        {% else %}
+        {{ user.full_name|slice:":1"|upper }}
+        {% endif %}
+    </div>
+    <div>
+        <div class="dropdown-name">{{ user.full_name }}</div>
+        <div class="dropdown-email">{{ user.email }}</div>
+        <div class="dropdown-role">
+            {% if user.is_student %}🎓 Student{% else %} Instructor{% endif %}
+        </div>
+    </div>
+</div>
                         
                         {% if user.is_student %}
-                            <li>
-                                <a href="{% url 'profiles:student_profile_edit' %}"> Edit Profile</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'payments:payment_history' %}">💳 Payment History</a>
-                            </li>
+                        <a href="{% url 'profiles:student_dashboard' %}" class="dropdown-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                            Dashboard
+                        </a>
+                        <a href="{% url 'courses:my_enrollments' %}" class="dropdown-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                            My Courses
+                        </a>
+                        <a href="{% url 'profiles:student_profile_edit' %}" class="dropdown-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                            Edit Profile
+                        </a>
+                        <a href="{% url 'payments:payment_history' %}" class="dropdown-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                            Payment History
+                        </a>
                         {% elif user.is_instructor %}
-                            <li>
-                                <a href="{% url 'profiles:instructor_profile_edit' %}">⚙️ Edit Profile</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'courses:course_create' %}">➕ Create Course</a>
-                            </li>
+                        <a href="{% url 'profiles:instructor_dashboard' %}" class="dropdown-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                            Dashboard
+                        </a>
+                        <a href="{% url 'courses:instructor_course_list' %}" class="dropdown-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                            My Courses
+                        </a>
+                        <a href="{% url 'profiles:instructor_profile_edit' %}" class="dropdown-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                            Edit Profile
+                        </a>
+                        <a href="{% url 'courses:course_create' %}" class="dropdown-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                            Create Course
+                        </a>
                         {% endif %}
                         
-                        <li>
-                            <a href="{% url 'notifications:notification_list' %}">🔔 Notifications</a>
-                        </li>
-                        <li class="dropdown-divider"></li>
-                        <li>
-                            <form action="{% url 'accounts:logout' %}" method="post">
-                                {% csrf_token %}
-                                <button type="submit" class="dropdown-logout">🚪 Logout</button>
-                            </form>
-                        </li>
-                    </ul>
-                </li>
-                
+                        <div class="dropdown-divider"></div>
+                        
+                        <a href="{% url 'notifications:notification_list' %}" class="dropdown-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                            Notifications
+                        </a>
+                        
+                        <form action="{% url 'accounts:logout' %}" method="post" class="logout-form">
+                            {% csrf_token %}
+                            <button type="submit" class="dropdown-item logout-item">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                                Logout
+                            </button>
+                        </form>
+                    </div>
+                </div>
             {% else %}
-                <!-- ========== UNAUTHENTICATED MENU ========== -->
-                <li>
-                    <a href="{% url 'accounts:login' %}" 
-                       class="nav-link {% if 'login' in request.path %}active{% endif %}">
-                        🔑 Login
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'accounts:register_student' %}" 
-                       class="btn btn-primary btn-sm">
-                        🎓 Get Started
-                    </a>
-                </li>
+                <a href="{% url 'accounts:login' %}" class="btn btn-outline btn-sm"> Login</a>
+                <a href="{% url 'accounts:register_student' %}" class="btn btn-primary btn-sm"> Get Started</a>
             {% endif %}
-        </ul>
+        </div>
     </div>
 </nav>
 
-<!-- Mobile Overlay -->
-<div class="mobile-overlay" id="mobileOverlay" onclick="toggleMenu()"></div>
-
 <style>
-    /* ========== Navbar Active State ========== */
-    .nav-link.active {
-        background-color: var(--teal-50);
-        color: var(--teal-600);
-        font-weight: 600;
+    /* ========== CLEAN MINIMAL NAVBAR ========== */
+    .navbar {
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-bottom: 1px solid #E2E8F0;
+        position: sticky;
+        top: 0;
+        z-index: 500;
+        height: 56px;
+        transition: box-shadow 0.3s ease;
     }
+    @media (min-width: 768px) { .navbar { height: 60px; } }
+    .navbar.scrolled { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06); }
     
-    /* ========== User Avatar ========== */
-    .user-avatar {
-        width: 28px;
-        height: 28px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, var(--teal-500), var(--teal-600));
-        color: white;
-        display: inline-flex;
+    .navbar-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 16px;
+        display: flex;
         align-items: center;
-        justify-content: center;
-        font-size: 0.75rem;
-        font-weight: 700;
+        justify-content: space-between;
+        height: 100%;
+    }
+    @media (min-width: 480px) { .navbar-container { padding: 0 20px; } }
+    @media (min-width: 1024px) { .navbar-container { padding: 0 24px; } }
+    
+    /* Brand */
+    .navbar-brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
         flex-shrink: 0;
     }
+    .brand-icon {
+        width: 32px; height: 32px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #0D9488, #0F766E);
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 2px 8px rgba(13,148,136,0.2);
+        flex-shrink: 0;
+    }
+    @media (min-width: 480px) { .brand-icon { width: 36px; height: 36px; } }
+    .brand-icon svg { width: 20px; height: 20px; }
+    .brand-text {
+        font-weight: 700; font-size: 15px;
+        color: #1E293B; letter-spacing: -0.02em;
+    }
+    @media (min-width: 480px) { .brand-text { font-size: 17px; } }
     
-    /* ========== User Menu ========== */
-    .user-menu {
+    /* Right Side Actions */
+    .navbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    @media (min-width: 480px) { .navbar-actions { gap: 8px; } }
+    
+    /* Notification Bell */
+    .notif-btn {
+        width: 36px; height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #64748B;
+        text-decoration: none;
+        transition: all 0.15s;
         position: relative;
     }
+    @media (min-width: 480px) { .notif-btn { width: 38px; height: 38px; } }
+    .notif-btn:hover { background: #F8FAFC; color: #1E293B; }
     
-    .user-menu-trigger {
+    .notif-icon-wrapper { position: relative; display: flex; }
+    .notif-dot {
+        position: absolute; top: -1px; right: -1px;
+        width: 8px; height: 8px; background: #EF4444;
+        border-radius: 50%; border: 2px solid #fff;
+        animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.3); }
+    }
+    
+    /* ========== USER AVATAR ========== */
+    .user-menu { position: relative; }
+    
+    .user-avatar-btn {
+        width: 36px; height: 36px;
+        border-radius: 50%;
+        border: 2px solid transparent;
+        background: transparent;
+        cursor: pointer;
+        padding: 0;
         display: flex;
         align-items: center;
-        gap: var(--spacing-sm);
-        padding: var(--spacing-sm) var(--spacing-md);
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-family: var(--font-primary);
-        font-size: 0.875rem;
-        color: var(--gray-600);
-        border-radius: var(--radius-md);
-        transition: all var(--transition-fast);
+        justify-content: center;
+        transition: all 0.2s;
+        flex-shrink: 0;
+        outline: none;
+    }
+    @media (min-width: 480px) { .user-avatar-btn { width: 38px; height: 38px; } }
+    .user-avatar-btn:hover { border-color: #0D9488; transform: scale(1.05); }
+    .user-avatar-btn:focus-visible { border-color: #0D9488; box-shadow: 0 0 0 3px rgba(13,148,136,0.15); }
+    
+    .user-avatar-circle {
+        width: 28px; height: 28px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 12px;
+        line-height: 1;
+        overflow: hidden;
+    }
+    @media (min-width: 480px) { .user-avatar-circle { width: 30px; height: 30px; font-size: 13px; } }
+    
+    .avatar-student {
+        width: 100%; height: 100%;
+        background: linear-gradient(135deg, #0D9488, #14B8A6);
+        color: #fff;
+        display: flex; align-items: center; justify-content: center;
+    }
+    .avatar-instructor {
+        width: 100%; height: 100%;
+        background: linear-gradient(135deg, #F59E0B, #D97706);
+        color: #fff;
+        display: flex; align-items: center; justify-content: center;
     }
     
-    .user-menu-trigger:hover {
-        background-color: var(--teal-50);
-        color: var(--teal-600);
-    }
-    
-    .user-name {
-        font-weight: 500;
-    }
-    
-    .dropdown-arrow {
-        font-size: 0.625rem;
-        color: var(--gray-400);
-        transition: transform var(--transition-fast);
-    }
-    
-    .user-menu-trigger:hover .dropdown-arrow {
-        color: var(--gray-600);
-    }
-    
-    /* ========== User Dropdown ========== */
+    /* ========== DROPDOWN ========== */
     .user-dropdown {
         position: absolute;
-        top: 100%;
+        top: calc(100% + 8px);
         right: 0;
-        margin-top: var(--spacing-xs);
-        background-color: var(--white);
-        border: 1px solid var(--gray-200);
-        border-radius: var(--radius-lg);
-        box-shadow: var(--shadow-xl);
-        min-width: 240px;
-        list-style: none;
-        padding: var(--spacing-sm) 0;
+        width: 280px;
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 16px 48px rgba(0,0,0,0.12);
+        border: 1px solid #E2E8F0;
+        padding: 6px;
         opacity: 0;
         visibility: hidden;
-        transform: translateY(-8px);
-        transition: all var(--transition-fast);
+        transform: translateY(-6px) scale(0.96);
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 1001;
     }
+    @media (min-width: 480px) { .user-dropdown { width: 300px; padding: 8px; } }
+    .user-dropdown.show { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
     
-    .user-dropdown.show {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0);
-    }
-    
-    .dropdown-header {
+    .dropdown-head {
         display: flex;
         align-items: center;
-        gap: var(--spacing-sm);
-        padding: var(--spacing-md) var(--spacing-lg);
-        font-size: 0.875rem;
+        gap: 10px;
+        padding: 10px 12px;
     }
     
-    .dropdown-header small {
-        display: block;
-        color: var(--gray-500);
-        font-size: 0.75rem;
-        margin-top: 2px;
+    .user-avatar-lg {
+        width: 40px; height: 40px;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 700; font-size: 15px;
+        color: #fff; flex-shrink: 0;
     }
+    @media (min-width: 480px) { .user-avatar-lg { width: 44px; height: 44px; font-size: 16px; } }
+    .avatar-student-lg { background: linear-gradient(135deg, #0D9488, #14B8A6); }
+    .avatar-instructor-lg { background: linear-gradient(135deg, #F59E0B, #D97706); }
     
-    .dropdown-divider {
-        height: 1px;
-        background-color: var(--gray-200);
-        margin: var(--spacing-xs) 0;
-    }
+    .dropdown-name { font-weight: 600; font-size: 14px; color: #1E293B; line-height: 1.2; }
+    .dropdown-email { font-size: 11px; color: #94A3B8; word-break: break-all; }
+    .dropdown-role { font-size: 11px; color: #64748B; margin-top: 1px; font-weight: 500; }
     
-    .user-dropdown a,
-    .dropdown-logout {
-        display: block;
-        width: 100%;
-        text-align: left;
-        padding: var(--spacing-sm) var(--spacing-lg);
-        font-size: 0.875rem;
-        color: var(--gray-700);
-        text-decoration: none;
-        transition: all var(--transition-fast);
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-family: var(--font-primary);
-    }
+    .dropdown-divider { height: 1px; background: #F1F5F9; margin: 4px 0; }
     
-    .user-dropdown a:hover {
-        background-color: var(--teal-50);
-        color: var(--teal-600);
+    .dropdown-item {
+        display: flex; align-items: center; gap: 8px;
+        padding: 8px 12px; border-radius: 8px;
+        font-size: 12px; color: #475569; text-decoration: none;
+        transition: all 0.1s; border: none; background: none;
+        cursor: pointer; width: 100%; text-align: left; font-family: inherit;
     }
+    @media (min-width: 480px) { .dropdown-item { font-size: 13px; padding: 9px 12px; } }
+    .dropdown-item:hover { background: #F8FAFC; color: #1E293B; }
     
-    .dropdown-logout {
-        color: var(--error);
-    }
+    .logout-item { color: #EF4444; }
+    .logout-item:hover { background: #FEF2F2; }
+    .logout-form { margin: 0; }
     
-    .dropdown-logout:hover {
-        background-color: var(--error-light);
-        color: var(--error);
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 360px) {
+        .navbar { height: 52px; }
+        .brand-icon { width: 28px; height: 28px; }
+        .brand-text { font-size: 14px; }
+        .user-avatar-btn { width: 32px; height: 32px; }
+        .user-avatar-circle { width: 24px; height: 24px; font-size: 11px; }
+        .notif-btn { width: 32px; height: 32px; }
+        .user-dropdown { width: 260px; right: -8px; }
     }
-    
-    /* ========== Mobile Overlay ========== */
-    .mobile-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: 999;
+
+    /* Avatar Image */
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user-avatar-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+@media (min-width: 480px) {
+    .user-avatar-circle {
+        width: 32px;
+        height: 32px;
     }
-    
-    /* ========== Responsive ========== */
-    @media (max-width: 768px) {
-        .nav-menu {
-            position: fixed;
-            top: 0;
-            right: -300px;
-            width: 280px;
-            height: 100vh;
-            background-color: var(--white);
-            flex-direction: column;
-            padding: var(--spacing-xl) var(--spacing-lg);
-            gap: var(--spacing-xs);
-            box-shadow: var(--shadow-xl);
-            transition: right var(--transition-base);
-            z-index: 1000;
-            overflow-y: auto;
-            align-items: stretch;
-        }
-        
-        .nav-menu.show {
-            right: 0;
-        }
-        
-        .mobile-overlay {
-            display: block;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity var(--transition-base);
-        }
-        
-        .mobile-overlay.show {
-            pointer-events: auto;
-            opacity: 1;
-        }
-        
-        .nav-link,
-        .user-menu-trigger {
-            width: 100%;
-            padding: var(--spacing-md);
-            justify-content: flex-start;
-            border-radius: var(--radius-md);
-        }
-        
-        .user-dropdown {
-            position: static;
-            box-shadow: none;
-            border: none;
-            opacity: 1;
-            visibility: visible;
-            transform: none;
-            display: none;
-            padding: 0;
-            margin-top: var(--spacing-xs);
-        }
-        
-        .user-dropdown.show {
-            display: block;
-        }
-        
-        .user-name {
-            display: inline;
-        }
+}
+
+.user-avatar-lg {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+@media (min-width: 480px) {
+    .user-avatar-lg {
+        width: 44px;
+        height: 44px;
     }
+}
+
+.avatar-student {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #0D9488, #14B8A6);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+.avatar-instructor {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #F59E0B, #D97706);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+.avatar-student-lg {
+    background: linear-gradient(135deg, #0D9488, #14B8A6);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.avatar-instructor-lg {
+    background: linear-gradient(135deg, #F59E0B, #D97706);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+}
+/* Brand Logo Image */
+.brand-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.brand-logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+@media (min-width: 480px) {
+    .brand-icon {
+        width: 38px;
+        height: 38px;
+    }
+}
 </style>
 
 <script>
-    // Toggle mobile menu
-    function toggleMenu() {
-        const menu = document.getElementById('navMenu');
-        const overlay = document.getElementById('mobileOverlay');
-        const toggle = document.querySelector('.mobile-menu-toggle');
-        
-        menu.classList.toggle('show');
-        overlay.classList.toggle('show');
-        
-        const isExpanded = menu.classList.contains('show');
-        toggle.setAttribute('aria-expanded', isExpanded);
-        document.body.style.overflow = isExpanded ? 'hidden' : '';
-    }
+    // Scroll shadow effect
+    window.addEventListener('scroll', function() {
+        document.querySelector('.navbar').classList.toggle('scrolled', window.scrollY > 10);
+    });
     
     // Toggle user dropdown
     function toggleUserMenu(event) {
         event.stopPropagation();
-        const dropdown = document.getElementById('userDropdown');
-        const trigger = document.querySelector('.user-menu-trigger');
-        
+        var dropdown = document.getElementById('userDropdown');
         dropdown.classList.toggle('show');
-        trigger.setAttribute('aria-expanded', dropdown.classList.contains('show'));
     }
     
-    // Close dropdowns when clicking outside
+    // Close dropdown when clicking outside
     document.addEventListener('click', function(event) {
-        const dropdown = document.getElementById('userDropdown');
-        const trigger = document.querySelector('.user-menu-trigger');
-        
+        var dropdown = document.getElementById('userDropdown');
         if (dropdown && !event.target.closest('.user-menu')) {
             dropdown.classList.remove('show');
-            if (trigger) trigger.setAttribute('aria-expanded', 'false');
         }
     });
     
-    // Close mobile menu on window resize
-    window.addEventListener('resize', function() {
-        if (window.innerWidth > 768) {
-            const menu = document.getElementById('navMenu');
-            const overlay = document.getElementById('mobileOverlay');
-            
-            if (menu.classList.contains('show')) {
-                menu.classList.remove('show');
-                overlay.classList.remove('show');
-                document.body.style.overflow = '';
-            }
+    // Close dropdown on Escape key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            var dropdown = document.getElementById('userDropdown');
+            if (dropdown) dropdown.classList.remove('show');
         }
     });
     
@@ -434,9 +476,9 @@
         fetch('{% url "notifications:unread_count" %}', {
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
         })
-        .then(response => response.json())
-        .then(data => {
-            const badge = document.getElementById('notification-badge');
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
+            var badge = document.getElementById('notification-badge');
             if (badge) {
                 if (data.unread_count > 0) {
                     badge.textContent = data.unread_count > 99 ? '99+' : data.unread_count;
@@ -446,7 +488,7 @@
                 }
             }
         })
-        .catch(() => {});
+        .catch(function() {});
     }, 30000);
     {% endif %}
 </script>

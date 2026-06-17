@@ -1,0 +1,258 @@
+{% extends "admin/index.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+    :root {
+        --teal: #0D9488;
+        --teal-dark: #0F766E;
+        --amber: #F59E0B;
+        --gray-50: #F8FAFC;
+        --gray-100: #F1F5F9;
+        --gray-200: #E2E8F0;
+        --gray-600: #475569;
+        --gray-800: #1E293B;
+        --white: #FFFFFF;
+        --success: #10B981;
+        --warning: #F59E0B;
+        --danger: #EF4444;
+    }
+    
+    /* Dashboard Header */
+    .dash-header-banner {
+        background: linear-gradient(135deg, #0F172A, #1E293B, #0F766E);
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 20px;
+        color: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    
+    .dash-header-banner h2 {
+        color: #fff;
+        font-size: 18px;
+        margin: 0;
+        font-weight: 700;
+    }
+    
+    .dash-header-banner .date-badge {
+        background: rgba(255,255,255,0.1);
+        padding: 6px 14px;
+        border-radius: 50px;
+        font-size: 12px;
+    }
+    
+    /* KPI Cards */
+    .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+    
+    @media (min-width: 576px) {
+        .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    
+    @media (min-width: 992px) {
+        .kpi-grid { grid-template-columns: repeat(4, 1fr); }
+        .dash-header-banner { padding: 24px; }
+        .dash-header-banner h2 { font-size: 20px; }
+    }
+    
+    .kpi-card {
+        background: #fff;
+        border-radius: 14px;
+        padding: 16px;
+        border: 1px solid #E2E8F0;
+        transition: all 0.2s;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .kpi-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    }
+    
+    .kpi-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 3px;
+    }
+    
+    .kpi-card.kpi-teal::before { background: var(--teal); }
+    .kpi-card.kpi-amber::before { background: var(--amber); }
+    .kpi-card.kpi-green::before { background: var(--success); }
+    .kpi-card.kpi-blue::before { background: #6366F1; }
+    
+    .kpi-card .kpi-icon {
+        width: 38px; height: 38px;
+        border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 18px; margin-bottom: 10px;
+    }
+    
+    .kpi-icon-teal { background: #F0FDFA; }
+    .kpi-icon-amber { background: #FFFBEB; }
+    .kpi-icon-green { background: #ECFDF5; }
+    .kpi-icon-blue { background: #EEF2FF; }
+    
+    .kpi-card .kpi-value {
+        font-size: 26px; font-weight: 800;
+        color: #1E293B; line-height: 1; margin-bottom: 4px;
+    }
+    
+    .kpi-card .kpi-label {
+        font-size: 11px; color: #94A3B8;
+        font-weight: 500; text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+    
+    /* Info Box Grid */
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        margin-bottom: 20px;
+    }
+    
+    @media (min-width: 768px) {
+        .info-grid { grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    }
+    
+    .info-mini {
+        background: #fff;
+        border-radius: 10px;
+        padding: 12px;
+        border: 1px solid #E2E8F0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .info-mini .info-icon {
+        width: 36px; height: 36px;
+        border-radius: 8px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 16px; flex-shrink: 0;
+    }
+    
+    .info-mini .info-value {
+        font-size: 18px; font-weight: 700;
+        color: #1E293B; line-height: 1;
+    }
+    
+    .info-mini .info-label {
+        font-size: 10px; color: #94A3B8;
+        font-weight: 500; text-transform: uppercase;
+    }
+    
+    /* Table Cards */
+    .table-card {
+        background: #fff;
+        border-radius: 14px;
+        border: 1px solid #E2E8F0;
+        overflow: hidden;
+        margin-bottom: 16px;
+    }
+    
+    .table-card-header {
+        padding: 14px 16px;
+        border-bottom: 1px solid #F1F5F9;
+        font-weight: 600;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .table-mini {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+    }
+    
+    .table-mini th {
+        background: #F8FAFC;
+        padding: 8px 12px;
+        text-align: left;
+        font-weight: 600;
+        color: #64748B;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        white-space: nowrap;
+    }
+    
+    .table-mini td {
+        padding: 8px 12px;
+        border-bottom: 1px solid #F1F5F9;
+        white-space: nowrap;
+    }
+    
+    .badge-status {
+        padding: 3px 8px;
+        border-radius: 50px;
+        font-size: 10px;
+        font-weight: 600;
+    }
+    
+    .badge-success { background: #ECFDF5; color: #059669; }
+    .badge-warning { background: #FFFBEB; color: #D97706; }
+    .badge-danger { background: #FEF2F2; color: #DC2626; }
+    .badge-info { background: #EFF6FF; color: #2563EB; }
+    
+    /* Responsive Tables */
+    @media (max-width: 768px) {
+        .kpi-card { padding: 12px; }
+        .kpi-card .kpi-value { font-size: 20px; }
+        .kpi-card .kpi-icon { width: 30px; height: 30px; font-size: 14px; }
+        .table-mini { font-size: 11px; }
+        .table-mini th, .table-mini td { padding: 6px 8px; }
+        .dash-header-banner { padding: 14px; border-radius: 12px; }
+    }
+    
+    @media (max-width: 480px) {
+        .kpi-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+        .info-grid { grid-template-columns: 1fr 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Dashboard Header -->
+<div class="dash-header-banner">
+    <div>
+        <h2>📊 CourseCart Dashboard Overview</h2>
+        <p style="color:rgba(255,255,255,0.6);font-size:12px;margin:4px 0 0;">
+            Real-time statistics updated as of {% now "F d, Y H:i" %}
+        </p>
+    </div>
+    <div class="date-badge">
+        📅 {% now "l, F d, Y" %}
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+<!-- Original App List -->
+{{ block.super }}
+{% endblock %}

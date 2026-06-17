@@ -120,4 +120,4 @@ def logout_view(request):
     """Handle user logout."""
     logout(request)
     messages.info(request, _('You have been logged out successfully.'))
-    return redirect('accounts:login')
+    return redirect('accounts:welcome')

@@ -18,18 +18,13 @@
                 <button class="btn-hamburger" onclick="toggleSidebar()">☰</button>
                 <div class="dash-breadcrumb">My Courses</div>
             </div>
-            <div class="dash-header-right">
-                <a href="{% url 'notifications:notification_list' %}" class="btn-header" style="position:relative;">
-                    🔔{% if has_unread_notifications %}<span class="badge-dot"></span>{% endif %}
-                </a>
-                <div class="dash-user-avatar warm">{{ user.full_name|slice:":1"|upper }}</div>
-            </div>
+           
         </header>
         
         <div class="dash-content">
             <div class="page-header">
                 <div>
-                    <h1>📚 My Courses</h1>
+                    <h1> My Courses</h1>
                     <p>Manage your published and draft courses</p>
                 </div>
                 <div class="page-actions">
@@ -37,31 +32,7 @@
                 </div>
             </div>
             
-            <!-- KPI Row -->
-            <div class="kpi-grid">
-                <div class="kpi-card">
-                    <div class="kpi-header"><div class="kpi-icon teal">📗</div></div>
-                    <div class="kpi-value">{{ courses.count|default:0 }}</div>
-                    <div class="kpi-label">Total Courses</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-header"><div class="kpi-icon green">✅</div></div>
-                    <div class="kpi-value">{{ published_courses.count|default:0 }}</div>
-                    <div class="kpi-label">Published</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-header"><div class="kpi-icon amber">📝</div></div>
-                    <div class="kpi-value">{{ draft_courses.count|default:0 }}</div>
-                    <div class="kpi-label">Drafts</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-header"><div class="kpi-icon blue">👥</div></div>
-                    {% with total=0 %}{% for c in courses %}{{ c.total_enrollments|add:total }}{% endfor %}{% endwith %}
-                    <div class="kpi-value">0</div>
-                    <div class="kpi-label">Students</div>
-                </div>
-            </div>
-            
+           
             <!-- Course List -->
             <div class="section-card">
                 <div class="section-card-header">

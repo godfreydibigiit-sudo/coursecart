@@ -18,18 +18,18 @@
                 <button class="btn-hamburger" onclick="toggleSidebar()">☰</button>
                 <div class="dash-breadcrumb">Payment History</div>
             </div>
-            <div class="dash-header-right">
+            <!-- <div class="dash-header-right">
                 <a href="{% url 'notifications:notification_list' %}" class="btn-header" style="position:relative;">
                     🔔{% if has_unread_notifications %}<span class="badge-dot"></span>{% endif %}
                 </a>
                 <div class="dash-user-avatar">{{ user.full_name|slice:":1"|upper }}</div>
-            </div>
+            </div> -->
         </header>
         
         <div class="dash-content">
             <div class="page-header">
                 <div>
-                    <h1>💳 Payment History</h1>
+                    <h1> Payment History</h1>
                     <p>Track all your course payments</p>
                 </div>
             </div>
@@ -37,22 +37,22 @@
             <!-- KPI Row -->
             <div class="kpi-grid">
                 <div class="kpi-card">
-                    <div class="kpi-header"><div class="kpi-icon teal">💳</div></div>
+                    
                     <div class="kpi-value">{{ stats.total_payments|default:0 }}</div>
                     <div class="kpi-label">Total Payments</div>
                 </div>
                 <div class="kpi-card">
-                    <div class="kpi-header"><div class="kpi-icon green">✅</div></div>
+                    
                     <div class="kpi-value" style="color:var(--success);">{{ stats.completed_payments|default:0 }}</div>
                     <div class="kpi-label">Completed</div>
                 </div>
                 <div class="kpi-card">
-                    <div class="kpi-header"><div class="kpi-icon amber">⏳</div></div>
+                    
                     <div class="kpi-value" style="color:var(--amber-500);">{{ stats.pending_payments|default:0 }}</div>
                     <div class="kpi-label">Pending</div>
                 </div>
                 <div class="kpi-card">
-                    <div class="kpi-header"><div class="kpi-icon blue">💰</div></div>
+                    
                     <div class="kpi-value">TZS {{ stats.total_spent|floatformat:0|default:'0' }}</div>
                     <div class="kpi-label">Total Spent</div>
                 </div>
@@ -83,7 +83,7 @@
                                 <div class="enroll-title">{{ payment.course.title }}</div>
                                 <div class="enroll-meta">
                                     <span>{{ payment.get_payment_method_display }}</span>
-                                    <span>📅 {{ payment.initiated_at|date:"M d, Y" }}</span>
+                                    <span> {{ payment.initiated_at|date:"M d, Y" }}</span>
                                     <span style="font-family:monospace;font-size:11px;color:var(--gray-400);">{{ payment.transaction_id }}</span>
                                 </div>
                             </div>

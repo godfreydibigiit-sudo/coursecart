@@ -5,6 +5,370 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/dashboard-saas.css' %}">
+<style>
+    .detail-wrapper { max-width: 1400px; margin: 0 auto; width: 100%; }
+    
+    /* ========== COURSE HERO BANNER ========== */
+    .course-hero {
+        background: linear-gradient(135deg, #0F172A, #1E293B, #0F766E);
+        border-radius: 20px;
+        overflow: hidden;
+        margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
+    }
+    @media (min-width: 768px) { .course-hero { flex-direction: row; margin-bottom: 24px; } }
+    
+    .course-hero-img {
+        height: 180px;
+        background: linear-gradient(135deg, #0D9488, #14B8A6);
+        position: relative;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+    @media (min-width: 480px) { .course-hero-img { height: 220px; } }
+    @media (min-width: 768px) { .course-hero-img { width: 45%; height: auto; min-height: 280px; } }
+    
+    .course-hero-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .course-hero-placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        font-size: 4rem;
+        opacity: 0.5;
+    }
+    @media (min-width: 768px) { .course-hero-placeholder { font-size: 5rem; } }
+    
+    .course-hero-content {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    @media (min-width: 480px) { .course-hero-content { padding: 24px; } }
+    @media (min-width: 768px) { .course-hero-content { padding: 28px 32px; flex: 1; } }
+    
+    .hero-category {
+        display: inline-block;
+        padding: 3px 10px;
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 50px;
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #5EEAD4;
+        margin-bottom: 10px;
+        width: fit-content;
+    }
+    @media (min-width: 480px) { .hero-category { font-size: 11px; } }
+    
+    .course-hero-content h1 {
+        font-size: 18px;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 8px;
+        line-height: 1.3;
+    }
+    @media (min-width: 480px) { .course-hero-content h1 { font-size: 20px; } }
+    @media (min-width: 768px) { .course-hero-content h1 { font-size: 24px; } }
+    
+    .hero-instructor {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 14px;
+    }
+    
+    .hero-instructor-avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #F59E0B, #D97706);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-weight: 700;
+        font-size: 11px;
+        flex-shrink: 0;
+    }
+    @media (min-width: 480px) { .hero-instructor-avatar { width: 32px; height: 32px; font-size: 12px; } }
+    
+    .hero-instructor span {
+        font-size: 12px;
+        color: rgba(255,255,255,0.7);
+    }
+    @media (min-width: 480px) { .hero-instructor span { font-size: 13px; } }
+    
+    .hero-meta {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        font-size: 11px;
+        color: rgba(255,255,255,0.6);
+    }
+    @media (min-width: 480px) { .hero-meta { gap: 16px; font-size: 12px; } }
+    
+    .hero-meta span {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    
+    /* ========== DETAIL LAYOUT ========== */
+    .detail-layout {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+        align-items: start;
+    }
+    @media (min-width: 768px) { .detail-layout { grid-template-columns: 1fr 340px; gap: 24px; } }
+    @media (min-width: 1024px) { .detail-layout { grid-template-columns: 1fr 370px; } }
+    
+    /* ========== SECTION CARD ========== */
+    .section-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #E2E8F0;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+    @media (min-width: 768px) { .section-card { margin-bottom: 24px; } }
+    
+    .section-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 18px;
+        border-bottom: 1px solid #F1F5F9;
+    }
+    @media (min-width: 480px) { .section-card-header { padding: 16px 20px; } }
+    
+    .section-card-header h2 {
+        font-size: 15px;
+        font-weight: 600;
+        color: #1E293B;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .section-card-body {
+        padding: 16px;
+    }
+    @media (min-width: 480px) { .section-card-body { padding: 20px; } }
+    
+    .section-card-body p {
+        color: #475569;
+        line-height: 1.7;
+        font-size: 13px;
+    }
+    @media (min-width: 480px) { .section-card-body p { font-size: 14px; } }
+    
+    /* ========== REVIEW ITEMS ========== */
+    .review-item {
+        padding: 12px 0;
+        border-bottom: 1px solid #F1F5F9;
+    }
+    .review-item:first-child { padding-top: 0; }
+    .review-item:last-child { border-bottom: none; padding-bottom: 0; }
+    
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 4px;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .review-author {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        font-size: 13px;
+        color: #1E293B;
+    }
+    @media (min-width: 480px) { .review-author { font-size: 14px; } }
+    
+    .review-avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #0D9488, #14B8A6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-weight: 700;
+        font-size: 11px;
+        flex-shrink: 0;
+    }
+    
+    .stars {
+        color: #F59E0B;
+        font-size: 14px;
+        letter-spacing: 2px;
+    }
+    
+    .review-comment {
+        font-size: 12px;
+        color: #64748B;
+        margin-top: 2px;
+    }
+    @media (min-width: 480px) { .review-comment { font-size: 13px; } }
+    
+    .review-date {
+        font-size: 10px;
+        color: #94A3B8;
+        margin-top: 2px;
+    }
+    
+    /* ========== STICKY SIDEBAR ========== */
+    .sticky-sidebar {
+        position: static;
+    }
+    @media (min-width: 768px) { .sticky-sidebar { position: sticky; top: 76px; } }
+    
+    .price-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #E2E8F0;
+        overflow: hidden;
+    }
+    
+    .price-header {
+        background: linear-gradient(135deg, #0D9488, #0F766E);
+        color: #fff;
+        padding: 20px;
+        text-align: center;
+    }
+    @media (min-width: 480px) { .price-header { padding: 24px; } }
+    
+    .price-amount {
+        font-size: 30px;
+        font-weight: 800;
+        line-height: 1;
+    }
+    @media (min-width: 480px) { .price-amount { font-size: 34px; } }
+    
+    .price-label {
+        font-size: 11px;
+        opacity: 0.8;
+        margin-top: 4px;
+    }
+    
+    .price-body {
+        padding: 16px;
+    }
+    @media (min-width: 480px) { .price-body { padding: 20px; } }
+    
+    .btn-enroll {
+        width: 100%;
+        padding: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        text-decoration: none;
+        font-family: inherit;
+    }
+    @media (min-width: 480px) { .btn-enroll { padding: 14px; font-size: 15px; } }
+    
+    .btn-enroll-primary {
+        background: linear-gradient(135deg, #0D9488, #14B8A6);
+        color: #fff;
+    }
+    .btn-enroll-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(13,148,136,0.3); }
+    
+    .btn-enroll-warm {
+        background: #F59E0B;
+        color: #fff;
+    }
+    .btn-enroll-warm:hover { background: #D97706; }
+    
+    .progress-section {
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid #F1F5F9;
+    }
+    
+    .progress-header {
+        display: flex;
+        justify-content: space-between;
+        font-size: 11px;
+        color: #94A3B8;
+        margin-bottom: 4px;
+    }
+    
+    .progress-bar {
+        height: 6px;
+        background: #F1F5F9;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #0D9488, #14B8A6);
+        border-radius: 6px;
+        transition: width 0.6s ease;
+    }
+    
+    .features-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-top: 14px;
+        padding-top: 14px;
+        border-top: 1px solid #F1F5F9;
+    }
+    
+    .features-list li {
+        font-size: 12px;
+        color: #64748B;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    @media (min-width: 480px) { .features-list li { font-size: 13px; } }
+    
+    .features-list .check {
+        color: #10B981;
+        font-weight: 700;
+    }
+    
+    /* ========== RESPONSIVE ========== */
+    .dash-content { padding: 12px; }
+    @media (min-width: 480px) { .dash-content { padding: 16px; } }
+    @media (min-width: 768px) { .dash-content { padding: 24px; } }
+    
+    .dash-header { height: 52px; padding: 0 12px; }
+    @media (min-width: 480px) { .dash-header { height: 56px; padding: 0 16px; } }
+    @media (min-width: 768px) { .dash-header { height: 60px; padding: 0 24px; } }
+    
+    @media (max-width: 400px) {
+        .course-hero-content { padding: 14px; }
+        .course-hero-content h1 { font-size: 16px; }
+        .price-amount { font-size: 26px; }
+    }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -18,115 +382,131 @@
     <div class="dash-main">
         <header class="dash-header">
             <div class="dash-header-left">
-                {% if user.is_authenticated %}<button class="btn-hamburger" onclick="toggleSidebar()">☰</button>{% endif %}
-                <div class="dash-breadcrumb"><a href="{% url 'courses:course_list' %}" style="color:var(--gray-400);text-decoration:none;">Courses</a> › <span>{{ course.title|truncatechars:30 }}</span></div>
+                {% if user.is_authenticated %}<button class="btn-hamburger" onclick="toggleSidebar()" aria-label="Toggle menu">☰</button>{% endif %}
+                <div class="dash-breadcrumb">
+                    <a href="{% url 'courses:course_list' %}" style="color:#94A3B8;text-decoration:none;">Courses</a>
+                    <span style="color:#94A3B8;margin:0 4px;">›</span>
+                    <span>{{ course.title|truncatechars:25 }}</span>
+                </div>
             </div>
             <div class="dash-header-right">
                 {% if user.is_authenticated %}
-                <div class="dash-user-avatar {% if user.is_instructor %}warm{% endif %}">{{ user.full_name|slice:":1"|upper }}</div>
+                <!-- <div class="user-avatar-sm {% if user.is_instructor %}warm{% endif %}">{{ user.full_name|slice:":1"|upper }}</div> -->
                 {% else %}
-                <a href="{% url 'accounts:login' %}" class="btn btn-outline btn-sm">Login</a>
-                <a href="{% url 'accounts:register_student' %}" class="btn btn-primary btn-sm">Get Started</a>
+                <a href="{% url 'accounts:login' %}" class="btn btn-outline btn-sm"> Login</a>
+                <a href="{% url 'accounts:register_student' %}" class="btn btn-primary btn-sm"> Get Started</a>
                 {% endif %}
             </div>
         </header>
         
         <div class="dash-content">
-            <div style="display:grid;grid-template-columns:1fr 340px;gap:var(--space-6);align-items:start;">
-                <!-- Main Content -->
-                <div>
-                    <!-- Course Hero -->
-                    <div class="section-card" style="overflow:hidden;margin-bottom:var(--space-6);">
-                        <div style="height:200px;background:linear-gradient(135deg,var(--teal-500),var(--teal-700));position:relative;overflow:hidden;">
-                            {% if course.thumbnail %}
-                            <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" style="width:100%;height:100%;object-fit:cover;">
-                            {% else %}
-                            <div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:5rem;opacity:0.5;">{{ course.category.icon|default:'📚' }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="section-card-body">
-                            <div style="font-size:11px;text-transform:uppercase;color:var(--teal-600);font-weight:600;margin-bottom:4px;">{{ course.category.name }}</div>
-                            <h1 style="font-size:22px;font-weight:700;margin-bottom:var(--space-3);">{{ course.title }}</h1>
-                            <div style="display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-4);font-size:14px;color:var(--gray-500);">
-                                <span>👨‍🏫 {{ course.instructor.full_name }}</span>
-                            </div>
-                            <div style="display:flex;gap:var(--space-4);flex-wrap:wrap;font-size:13px;color:var(--gray-400);">
-                                <span>⏱️ {{ course.duration_weeks }} Weeks</span>
-                                <span>📚 {{ course.total_lessons }} Lessons</span>
-                                <span>📊 {{ course.get_level_display }}</span>
-                                <span>👥 {{ course.total_enrollments }} Students</span>
-                                <span>⭐ {{ avg_rating|floatformat:1 }} ({{ review_count }})</span>
-                            </div>
-                        </div>
+            <div class="detail-wrapper">
+                
+                <!-- ========== COURSE HERO ========== -->
+                <div class="course-hero">
+                    <div class="course-hero-img">
+                        {% if course.thumbnail %}
+                        <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}">
+                        {% else %}
+                        <div class="course-hero-placeholder">{{ course.category.icon|default:'📚' }}</div>
+                        {% endif %}
                     </div>
-                    
-                    <!-- Description -->
-                    <div class="section-card" style="margin-bottom:var(--space-6);">
-                        <div class="section-card-header"><h2>📖 About This Course</h2></div>
-                        <div class="section-card-body">
-                            <p style="color:var(--gray-600);line-height:1.8;">{{ course.description|linebreaks }}</p>
+                    <div class="course-hero-content">
+                        {% if course.category %}
+                        <span class="hero-category">{{ course.category.name }}</span>
+                        {% endif %}
+                        <h1>{{ course.title }}</h1>
+                        <div class="hero-instructor">
+                            <div class="hero-instructor-avatar">{{ course.instructor.full_name|slice:":1"|upper }}</div>
+                            <span>{{ course.instructor.full_name }}</span>
                         </div>
-                    </div>
-                    
-                    <!-- Reviews -->
-                    <div class="section-card">
-                        <div class="section-card-header"><h2>⭐ Reviews ({{ review_count }})</h2></div>
-                        <div class="section-card-body">
-                            {% if reviews %}
-                            {% for review in reviews %}
-                            <div style="padding:var(--space-3) 0;border-bottom:1px solid var(--gray-100);">
-                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-                                    <strong>{{ review.student.full_name }}</strong>
-                                    <span style="color:var(--amber-500);">{% for i in "12345" %}{% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}{% endfor %}</span>
-                                </div>
-                                {% if review.comment %}<p style="color:var(--gray-600);font-size:14px;">{{ review.comment }}</p>{% endif %}
-                            </div>
-                            {% endfor %}
-                            {% else %}
-                            <p style="color:var(--gray-400);">No reviews yet.</p>
-                            {% endif %}
+                        <div class="hero-meta">
+                            <span> {{ course.duration_weeks }} Weeks</span>
+                            <span> {{ course.total_lessons }} Lessons</span>
+                            <span> {{ course.get_level_display }}</span>
+                            <span> {{ course.total_enrollments }} Students</span>
+                            
                         </div>
                     </div>
                 </div>
                 
-                <!-- Sidebar -->
-                <div style="position:sticky;top:80px;">
-                    <div class="section-card" style="overflow:hidden;">
-                        <div style="background:linear-gradient(135deg,var(--teal-600),var(--teal-700));color:white;padding:var(--space-6);text-align:center;">
-                            <div style="font-size:32px;font-weight:800;">{% if course.price == 0 %}Free{% else %}TZS {{ course.price|floatformat:0 }}{% endif %}</div>
-                            <div style="font-size:12px;opacity:0.8;">Course Price</div>
+                <!-- ========== DETAIL LAYOUT ========== -->
+                <div class="detail-layout">
+                    
+                    <!-- Main Content -->
+                    <div>
+                        <!-- Description -->
+                        <div class="section-card">
+                            <div class="section-card-header"><h2> About This Course</h2></div>
+                            <div class="section-card-body">
+                                <p>{{ course.description|linebreaks }}</p>
+                            </div>
                         </div>
-                        <div class="section-card-body">
-                            {% if user.is_authenticated and user.is_student %}
-                                {% if is_enrolled %}
-                                    {% if enrollment.payment_status == 'completed' %}
-                                    <a href="{% url 'courses:my_enrollments' %}" class="btn btn-primary btn-lg" style="width:100%;">📚 Continue Learning</a>
-                                    <div style="margin-top:var(--space-3);">
-                                        <div class="progress-bar-sm" style="margin-bottom:4px;"><div class="progress-fill-sm" style="width:{{ enrollment.progress_percentage }}%"></div></div>
-                                        <span style="font-size:11px;color:var(--gray-400);">{{ enrollment.progress_percentage }}% complete</span>
+                        
+                        <!-- Reviews -->
+                        <!-- <div class="section-card">
+                            <div class="section-card-header"><h2>⭐ Reviews ({{ review_count }})</h2></div>
+                            <div class="section-card-body">
+                                {% if reviews %}
+                                {% for review in reviews %}
+                                <div class="review-item">
+                                    <div class="review-header">
+                                        <div class="review-author">
+                                            <div class="review-avatar">{{ review.student.full_name|slice:":1"|upper }}</div>
+                                            {{ review.student.full_name }}
+                                        </div>
+                                        <div class="stars">
+                                            {% for i in "12345" %}{% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}{% endfor %}
+                                        </div>
                                     </div>
-                                    {% elif enrollment.payment_status == 'pending' %}
-                                    <a href="{% url 'payments:checkout' enrollment.id %}" class="btn btn-warm btn-lg" style="width:100%;">⏳ Complete Payment</a>
-                                    {% endif %}
+                                    {% if review.comment %}<p class="review-comment">{{ review.comment }}</p>{% endif %}
+                                    <div class="review-date">{{ review.created_at|date:"F d, Y" }}</div>
+                                </div>
+                                {% endfor %}
                                 {% else %}
-                                <a href="{% url 'courses:enroll_course' course.slug %}" class="btn btn-primary btn-lg" style="width:100%;">🎓 Enroll Now</a>
+                                <p style="color:#94A3B8;text-align:center;padding:20px;">No reviews yet. Be the first to review!</p>
                                 {% endif %}
-                            {% elif not user.is_authenticated %}
-                            <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-primary btn-lg" style="width:100%;">🔑 Login to Enroll</a>
-                            {% endif %}
-                            
-                            <div style="margin-top:var(--space-4);">
-                                <h4 style="font-size:13px;font-weight:600;margin-bottom:var(--space-2);">📋 Includes:</h4>
-                                <ul style="list-style:none;font-size:13px;color:var(--gray-500);display:flex;flex-direction:column;gap:4px;">
-                                    <li>✅ {{ course.duration_weeks }} weeks</li>
-                                    <li>✅ {{ course.total_lessons }} lessons</li>
-                                    <li>✅ {{ course.get_level_display }} level</li>
-                                    <li>{% if course.is_certificate_ready %}✅{% else %}❌{% endif %} Certificate</li>
-                                    <li>✅ Lifetime access</li>
+                            </div>
+                        </div> -->
+                    </div>
+                    
+                    <!-- Sticky Sidebar -->
+                    <div class="sticky-sidebar">
+                        <div class="price-card">
+                            <div class="price-header">
+                                <div class="price-amount">{% if course.price == 0 %}Free{% else %}TZS {{ course.price|floatformat:0 }}{% endif %}</div>
+                                <div class="price-label">Full Course Access</div>
+                            </div>
+                            <div class="price-body">
+                                {% if user.is_authenticated and user.is_student %}
+                                    {% if is_enrolled %}
+                                        {% if enrollment.payment_status == 'completed' %}
+                                        <a href="{% url 'courses:my_enrollments' %}" class="btn-enroll btn-enroll-primary">📚 Continue Learning</a>
+                                        <div class="progress-section">
+                                            <div class="progress-header"><span>Progress</span><span>{{ enrollment.progress_percentage }}%</span></div>
+                                            <div class="progress-bar"><div class="progress-fill" style="width:{{ enrollment.progress_percentage }}%"></div></div>
+                                        </div>
+                                        {% elif enrollment.payment_status == 'pending' %}
+                                        <a href="{% url 'payments:checkout' enrollment.id %}" class="btn-enroll btn-enroll-warm">⏳ Complete Payment</a>
+                                        {% endif %}
+                                    {% else %}
+                                    <a href="{% url 'courses:enroll_course' course.slug %}" class="btn-enroll btn-enroll-primary">🎓 Enroll Now</a>
+                                    {% endif %}
+                                {% elif not user.is_authenticated %}
+                                <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn-enroll btn-enroll-primary">🔑 Login to Enroll</a>
+                                {% endif %}
+                                
+                                <ul class="features-list">
+                                    <li><span class="check">✓</span> {{ course.duration_weeks }} weeks of content</li>
+                                    <li><span class="check">✓</span> {{ course.total_lessons }} comprehensive lessons</li>
+                                    <li><span class="check">✓</span> {{ course.get_level_display }} level</li>
+                                    <li><span class="check">{% if course.is_certificate_ready %}✓{% else %}✗{% endif %}</span> Certificate of completion</li>
+                                    <li><span class="check">✓</span> Lifetime access</li>
                                 </ul>
                             </div>
                         </div>
                     </div>
+                    
                 </div>
             </div>
         </div>
@@ -136,7 +516,13 @@
 
 {% block extra_js %}
 <script>
-function toggleSidebar(){var s=document.getElementById('dashSidebar');var o=document.getElementById('dashOverlay');if(s&&o){s.classList.toggle('open');o.classList.toggle('show');}}
-function closeSidebar(){var s=document.getElementById('dashSidebar');var o=document.getElementById('dashOverlay');if(s&&o){s.classList.remove('open');o.classList.remove('show');}}
+(function(){'use strict';
+var s=document.getElementById('dashSidebar'),o=document.getElementById('dashOverlay');
+window.toggleSidebar=function(){if(!s||!o)return;s.classList.toggle('open');o.classList.toggle('show');document.body.style.overflow=s.classList.contains('open')?'hidden':'';};
+window.closeSidebar=function(){if(!s||!o)return;s.classList.remove('open');o.classList.remove('show');document.body.style.overflow='';};
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeSidebar();});
+if(o)o.addEventListener('click',closeSidebar);
+window.addEventListener('resize',function(){if(window.innerWidth>768)closeSidebar();});
+})();
 </script>
 {% endblock %}
