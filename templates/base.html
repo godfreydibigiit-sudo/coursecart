@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ request.LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +9,6 @@
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-
 
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/logo.png' %}">
     <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/logo.png' %}">
@@ -50,8 +49,7 @@
     <!-- JavaScript -->
     <script src="{% static 'js/main.js' %}"></script>
     {% block extra_js %}{% endblock %}
-    <!-- AI Chatbot Widget -->
-{% include 'includes/chat_widget_include.html' %}
-<script src="{% static 'js/toast.js' %}"></script>
+    
+    <script src="{% static 'js/toast.js' %}"></script>
 </body>
 </html>

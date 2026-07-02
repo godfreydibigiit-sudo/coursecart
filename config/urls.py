@@ -22,6 +22,7 @@ Root URL configuration for CourseCart platform.
 """
 from django.conf import settings
 from django.conf.urls.static import static
+from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
@@ -33,6 +34,7 @@ urlpatterns = [
     
     # Landing Page (root URL)
     path('', include('apps.accounts.urls', namespace='accounts')),
+    path('i18n/', include('django.conf.urls.i18n')),
     
     # Profiles (Dashboards)
     path('dashboard/', include('apps.profiles.urls', namespace='profiles')),

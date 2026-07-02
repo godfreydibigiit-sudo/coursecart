@@ -1,0 +1,43 @@
+
+<form action="{% url 'set_language' %}" method="post" class="lang-form">
+    {% csrf_token %}
+    <input name="next" type="hidden" value="{{ request.path }}">
+    
+    <div class="lang-switcher">
+        <button type="submit" name="language" value="en" 
+                class="lang-btn {% if request.LANGUAGE_CODE == 'en' %}active{% endif %}" 
+                title="English">
+            <span class="lang-flag">🇬🇧</span>
+            <span class="lang-code">EN</span>
+        </button>
+        <button type="submit" name="language" value="sw" 
+                class="lang-btn {% if request.LANGUAGE_CODE == 'sw' %}active{% endif %}" 
+                title="Kiswahili">
+            <span class="lang-flag">🇹🇿</span>
+            <span class="lang-code">SW</span>
+        </button>
+    </div>
+</form>
+
+<style>
+    .lang-form { margin: 0; display: inline-flex; }
+    .lang-switcher { display: flex; gap: 2px; align-items: center; }
+    .lang-btn {
+        display: flex; align-items: center; gap: 4px;
+        padding: 5px 8px; border-radius: 6px;
+        border: 1.5px solid transparent;
+        background: transparent; cursor: pointer;
+        font-size: 11px; font-weight: 600;
+        color: #64748B; transition: all 0.2s;
+        font-family: inherit; white-space: nowrap;
+    }
+    .lang-btn:hover { background: #F8FAFC; border-color: #E2E8F0; }
+    .lang-btn.active { background: #F0FDFA; border-color: #0D9488; color: #0D9488; }
+    .lang-flag { font-size: 14px; line-height: 1; }
+    .lang-code { letter-spacing: 0.03em; }
+    
+    @media (max-width: 480px) {
+        .lang-btn { padding: 5px 6px; }
+        .lang-code { display: none; }
+    }
+</style>

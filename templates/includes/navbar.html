@@ -2,15 +2,17 @@
 <nav class="navbar" role="navigation" aria-label="Main navigation">
     <div class="navbar-container">
         <!-- Brand Logo -->
-       <a href="{% url 'accounts:welcome' %}" class="navbar-brand" aria-label="CourseCart Home">
-    <div class="brand-icon">
-        <img src="{% static 'images/logo.png' %}" alt="CourseCart Logo" class="brand-logo-img">
-    </div>
-    <span class="brand-text">CourseCart</span>
-</a>
+        <a href="{% url 'accounts:welcome' %}" class="navbar-brand" aria-label="CourseCart Home">
+            <div class="brand-icon">
+                <img src="{% static 'images/logo.png' %}" alt="CourseCart Logo" class="brand-logo-img">
+            </div>
+            <span class="brand-text">CourseCart</span>
+        </a>
         
         <!-- Right Side Actions -->
         <div class="navbar-actions">
+            
+            
             {% if user.is_authenticated %}
                 <!-- Notification Bell -->
                 <a href="{% url 'notifications:notification_list' %}" class="notif-btn" title="Notifications" aria-label="{% if has_unread_notifications %}{{ notification_unread_count }} unread notifications{% else %}No unread notifications{% endif %}">
@@ -25,48 +27,49 @@
                     </span>
                 </a>
                 
-                <!-- User Avatar Only -->
+                <!-- User Avatar -->
                 <div class="user-menu">
                     <button class="user-avatar-btn" onclick="toggleUserMenu(event)" aria-expanded="false" aria-haspopup="true" title="{{ user.full_name }}">
-    <div class="user-avatar-circle">
-        {% if user.is_student %}
-            {% if user.student_profile.avatar %}
-            <img src="{{ user.student_profile.avatar.url }}" alt="{{ user.full_name }}" class="avatar-img">
-            {% else %}
-            <div class="avatar-student">{{ user.full_name|slice:":1"|upper }}</div>
-            {% endif %}
-        {% elif user.is_instructor %}
-            {% if user.instructor_profile.avatar %}
-            <img src="{{ user.instructor_profile.avatar.url }}" alt="{{ user.full_name }}" class="avatar-img">
-            {% else %}
-            <div class="avatar-instructor">{{ user.full_name|slice:":1"|upper }}</div>
-            {% endif %}
-        {% else %}
-            <div class="avatar-student">{{ user.full_name|slice:":1"|upper }}</div>
-        {% endif %}
-    </div>
-</button>
+                        <div class="user-avatar-circle">
+                            {% if user.is_student %}
+                                {% if user.student_profile.avatar %}
+                                <img src="{{ user.student_profile.avatar.url }}" alt="{{ user.full_name }}" class="avatar-img">
+                                {% else %}
+                                <div class="avatar-student">{{ user.full_name|slice:":1"|upper }}</div>
+                                {% endif %}
+                            {% elif user.is_instructor %}
+                                {% if user.instructor_profile.avatar %}
+                                <img src="{{ user.instructor_profile.avatar.url }}" alt="{{ user.full_name }}" class="avatar-img">
+                                {% else %}
+                                <div class="avatar-instructor">{{ user.full_name|slice:":1"|upper }}</div>
+                                {% endif %}
+                            {% else %}
+                                <div class="avatar-student">{{ user.full_name|slice:":1"|upper }}</div>
+                            {% endif %}
+                        </div>
+                    </button>
                     
                     <div class="user-dropdown" id="userDropdown">
-                        <!-- User Info Header -->
+                        <!-- User Info -->
                         <div class="dropdown-head">
-    <div class="user-avatar-lg {% if user.is_instructor %}avatar-instructor-lg{% else %}avatar-student-lg{% endif %}">
-        {% if user.is_student and user.student_profile.avatar %}
-        <img src="{{ user.student_profile.avatar.url }}" alt="{{ user.full_name }}" class="avatar-img">
-        {% elif user.is_instructor and user.instructor_profile.avatar %}
-        <img src="{{ user.instructor_profile.avatar.url }}" alt="{{ user.full_name }}" class="avatar-img">
-        {% else %}
-        {{ user.full_name|slice:":1"|upper }}
-        {% endif %}
-    </div>
-    <div>
-        <div class="dropdown-name">{{ user.full_name }}</div>
-        <div class="dropdown-email">{{ user.email }}</div>
-        <div class="dropdown-role">
-            {% if user.is_student %}🎓 Student{% else %} Instructor{% endif %}
-        </div>
-    </div>
-</div>
+                            <div class="user-avatar-lg {% if user.is_instructor %}avatar-instructor-lg{% else %}avatar-student-lg{% endif %}">
+                                {% if user.is_student and user.student_profile.avatar %}
+                                <img src="{{ user.student_profile.avatar.url }}" alt="{{ user.full_name }}" class="avatar-img">
+                                {% elif user.is_instructor and user.instructor_profile.avatar %}
+                                <img src="{{ user.instructor_profile.avatar.url }}" alt="{{ user.full_name }}" class="avatar-img">
+                                {% else %}
+                                {{ user.full_name|slice:":1"|upper }}
+                                {% endif %}
+                            </div>
+                            <div>
+                                <div class="dropdown-name">{{ user.full_name }}</div>
+                                <div class="dropdown-email">{{ user.email }}</div>
+                                <div class="dropdown-role">
+                                    {% if user.is_student %}🎓 Student{% else %}👨‍🏫 Instructor{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
                         
                         {% if user.is_student %}
                         <a href="{% url 'profiles:student_dashboard' %}" class="dropdown-item">
@@ -100,7 +103,7 @@
                         </a>
                         <a href="{% url 'courses:course_create' %}" class="dropdown-item">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-                            Create Course
+                            Create New Course
                         </a>
                         {% endif %}
                         
@@ -121,8 +124,8 @@
                     </div>
                 </div>
             {% else %}
-                <a href="{% url 'accounts:login' %}" class="btn btn-outline btn-sm"> Login</a>
-                <a href="{% url 'accounts:register_student' %}" class="btn btn-primary btn-sm"> Get Started</a>
+                <a href="{% url 'accounts:login' %}" class="btn btn-outline btn-sm">🔑 Login</a>
+                <a href="{% url 'accounts:register_student' %}" class="btn btn-primary btn-sm">🎓 Get Started</a>
             {% endif %}
         </div>
     </div>
@@ -156,53 +159,31 @@
     @media (min-width: 480px) { .navbar-container { padding: 0 20px; } }
     @media (min-width: 1024px) { .navbar-container { padding: 0 24px; } }
     
-    /* Brand */
     .navbar-brand {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        text-decoration: none;
-        flex-shrink: 0;
+        display: flex; align-items: center; gap: 8px;
+        text-decoration: none; flex-shrink: 0;
     }
     .brand-icon {
-        width: 32px; height: 32px;
-        border-radius: 8px;
-        background: linear-gradient(135deg, #0D9488, #0F766E);
-        display: flex; align-items: center; justify-content: center;
-        box-shadow: 0 2px 8px rgba(13,148,136,0.2);
-        flex-shrink: 0;
+        width: 32px; height: 32px; border-radius: 8px;
+        overflow: hidden; display: flex; align-items: center;
+        justify-content: center; flex-shrink: 0;
     }
     @media (min-width: 480px) { .brand-icon { width: 36px; height: 36px; } }
-    .brand-icon svg { width: 20px; height: 20px; }
-    .brand-text {
-        font-weight: 700; font-size: 15px;
-        color: #1E293B; letter-spacing: -0.02em;
-    }
+    .brand-logo-img { width: 100%; height: 100%; object-fit: contain; }
+    .brand-text { font-weight: 700; font-size: 15px; color: #1E293B; letter-spacing: -0.02em; }
     @media (min-width: 480px) { .brand-text { font-size: 17px; } }
     
-    /* Right Side Actions */
-    .navbar-actions {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-    }
+    .navbar-actions { display: flex; align-items: center; gap: 4px; }
     @media (min-width: 480px) { .navbar-actions { gap: 8px; } }
     
-    /* Notification Bell */
     .notif-btn {
-        width: 36px; height: 36px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #64748B;
-        text-decoration: none;
-        transition: all 0.15s;
-        position: relative;
+        width: 36px; height: 36px; border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        color: #64748B; text-decoration: none;
+        transition: all 0.15s; position: relative;
     }
     @media (min-width: 480px) { .notif-btn { width: 38px; height: 38px; } }
     .notif-btn:hover { background: #F8FAFC; color: #1E293B; }
-    
     .notif-icon-wrapper { position: relative; display: flex; }
     .notif-dot {
         position: absolute; top: -1px; right: -1px;
@@ -210,100 +191,47 @@
         border-radius: 50%; border: 2px solid #fff;
         animation: pulse-dot 2s ease-in-out infinite;
     }
-    @keyframes pulse-dot {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.3); }
-    }
+    @keyframes pulse-dot { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.3); } }
     
-    /* ========== USER AVATAR ========== */
     .user-menu { position: relative; }
-    
     .user-avatar-btn {
-        width: 36px; height: 36px;
-        border-radius: 50%;
-        border: 2px solid transparent;
-        background: transparent;
-        cursor: pointer;
-        padding: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s;
-        flex-shrink: 0;
-        outline: none;
+        width: 36px; height: 36px; border-radius: 50%;
+        border: 2px solid transparent; background: transparent;
+        cursor: pointer; padding: 0; display: flex;
+        align-items: center; justify-content: center;
+        transition: all 0.2s; flex-shrink: 0; outline: none;
     }
     @media (min-width: 480px) { .user-avatar-btn { width: 38px; height: 38px; } }
     .user-avatar-btn:hover { border-color: #0D9488; transform: scale(1.05); }
-    .user-avatar-btn:focus-visible { border-color: #0D9488; box-shadow: 0 0 0 3px rgba(13,148,136,0.15); }
-    
     .user-avatar-circle {
-        width: 28px; height: 28px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-size: 12px;
-        line-height: 1;
-        overflow: hidden;
+        width: 28px; height: 28px; border-radius: 50%;
+        overflow: hidden; display: flex; align-items: center;
+        justify-content: center; font-weight: 700; font-size: 12px;
     }
     @media (min-width: 480px) { .user-avatar-circle { width: 30px; height: 30px; font-size: 13px; } }
+    .avatar-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+    .avatar-student { width: 100%; height: 100%; background: linear-gradient(135deg, #0D9488, #14B8A6); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+    .avatar-instructor { width: 100%; height: 100%; background: linear-gradient(135deg, #F59E0B, #D97706); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; }
     
-    .avatar-student {
-        width: 100%; height: 100%;
-        background: linear-gradient(135deg, #0D9488, #14B8A6);
-        color: #fff;
-        display: flex; align-items: center; justify-content: center;
-    }
-    .avatar-instructor {
-        width: 100%; height: 100%;
-        background: linear-gradient(135deg, #F59E0B, #D97706);
-        color: #fff;
-        display: flex; align-items: center; justify-content: center;
-    }
-    
-    /* ========== DROPDOWN ========== */
     .user-dropdown {
-        position: absolute;
-        top: calc(100% + 8px);
-        right: 0;
-        width: 280px;
-        background: #fff;
-        border-radius: 14px;
-        box-shadow: 0 16px 48px rgba(0,0,0,0.12);
-        border: 1px solid #E2E8F0;
-        padding: 6px;
-        opacity: 0;
-        visibility: hidden;
+        position: absolute; top: calc(100% + 8px); right: 0;
+        width: 280px; background: #fff; border-radius: 14px;
+        box-shadow: 0 16px 48px rgba(0,0,0,0.12); border: 1px solid #E2E8F0;
+        padding: 6px; opacity: 0; visibility: hidden;
         transform: translateY(-6px) scale(0.96);
-        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 1001;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1001;
     }
     @media (min-width: 480px) { .user-dropdown { width: 300px; padding: 8px; } }
     .user-dropdown.show { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
     
-    .dropdown-head {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 10px 12px;
-    }
-    
-    .user-avatar-lg {
-        width: 40px; height: 40px;
-        border-radius: 50%;
-        display: flex; align-items: center; justify-content: center;
-        font-weight: 700; font-size: 15px;
-        color: #fff; flex-shrink: 0;
-    }
+    .dropdown-head { display: flex; align-items: center; gap: 10px; padding: 10px 12px; }
+    .user-avatar-lg { width: 40px; height: 40px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; color: #fff; flex-shrink: 0; }
     @media (min-width: 480px) { .user-avatar-lg { width: 44px; height: 44px; font-size: 16px; } }
     .avatar-student-lg { background: linear-gradient(135deg, #0D9488, #14B8A6); }
     .avatar-instructor-lg { background: linear-gradient(135deg, #F59E0B, #D97706); }
-    
-    .dropdown-name { font-weight: 600; font-size: 14px; color: #1E293B; line-height: 1.2; }
+    .dropdown-name { font-weight: 600; font-size: 14px; color: #1E293B; }
     .dropdown-email { font-size: 11px; color: #94A3B8; word-break: break-all; }
     .dropdown-role { font-size: 11px; color: #64748B; margin-top: 1px; font-weight: 500; }
-    
     .dropdown-divider { height: 1px; background: #F1F5F9; margin: 4px 0; }
     
     .dropdown-item {
@@ -315,12 +243,10 @@
     }
     @media (min-width: 480px) { .dropdown-item { font-size: 13px; padding: 9px 12px; } }
     .dropdown-item:hover { background: #F8FAFC; color: #1E293B; }
-    
     .logout-item { color: #EF4444; }
     .logout-item:hover { background: #FEF2F2; }
     .logout-form { margin: 0; }
     
-    /* ========== RESPONSIVE ========== */
     @media (max-width: 360px) {
         .navbar { height: 52px; }
         .brand-icon { width: 28px; height: 28px; }
@@ -328,133 +254,20 @@
         .user-avatar-btn { width: 32px; height: 32px; }
         .user-avatar-circle { width: 24px; height: 24px; font-size: 11px; }
         .notif-btn { width: 32px; height: 32px; }
-        .user-dropdown { width: 260px; right: -8px; }
     }
-
-    /* Avatar Image */
-.avatar-img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-.user-avatar-circle {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-@media (min-width: 480px) {
-    .user-avatar-circle {
-        width: 32px;
-        height: 32px;
-    }
-}
-
-.user-avatar-lg {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-@media (min-width: 480px) {
-    .user-avatar-lg {
-        width: 44px;
-        height: 44px;
-    }
-}
-
-.avatar-student {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #0D9488, #14B8A6);
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-}
-
-.avatar-instructor {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #F59E0B, #D97706);
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-}
-
-.avatar-student-lg {
-    background: linear-gradient(135deg, #0D9488, #14B8A6);
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 16px;
-}
-
-.avatar-instructor-lg {
-    background: linear-gradient(135deg, #F59E0B, #D97706);
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 16px;
-}
-/* Brand Logo Image */
-.brand-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.brand-logo-img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    border-radius: 8px;
-}
-
-@media (min-width: 480px) {
-    .brand-icon {
-        width: 38px;
-        height: 38px;
-    }
-}
 </style>
 
 <script>
-    // Scroll shadow effect
     window.addEventListener('scroll', function() {
         document.querySelector('.navbar').classList.toggle('scrolled', window.scrollY > 10);
     });
     
-    // Toggle user dropdown
     function toggleUserMenu(event) {
         event.stopPropagation();
         var dropdown = document.getElementById('userDropdown');
         dropdown.classList.toggle('show');
     }
     
-    // Close dropdown when clicking outside
     document.addEventListener('click', function(event) {
         var dropdown = document.getElementById('userDropdown');
         if (dropdown && !event.target.closest('.user-menu')) {
@@ -462,7 +275,6 @@
         }
     });
     
-    // Close dropdown on Escape key
     document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape') {
             var dropdown = document.getElementById('userDropdown');
@@ -470,7 +282,6 @@
         }
     });
     
-    // Auto-refresh notification badge
     {% if user.is_authenticated %}
     setInterval(function() {
         fetch('{% url "notifications:unread_count" %}', {

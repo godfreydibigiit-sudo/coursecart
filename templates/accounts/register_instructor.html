@@ -12,13 +12,13 @@
     <div class="auth-container">
         <div class="auth-card">
             <div class="auth-header">
-                <svg width="60" height="60" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- <svg width="60" height="60" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <rect width="40" height="40" rx="8" fill="#F59E0B"/>
                     <path d="M8 28L20 12L32 28" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
                     <circle cx="20" cy="24" r="3" fill="#0D9488"/>
-                </svg>
-                <h1 class="auth-title">👨‍🏫 Become an Instructor</h1>
-                <p class="auth-subtitle">Share your skills and empower the next generation</p>
+                </svg> -->
+                <h1 class="auth-title"> Become an Instructor</h1>
+                
             </div>
             
             <form method="post" action="{% url 'accounts:register_instructor' %}" novalidate>
@@ -62,7 +62,6 @@
                     {% if form.phone_number.errors %}
                         <div class="form-error">{{ form.phone_number.errors.0 }}</div>
                     {% endif %}
-                    <div class="form-help">Format: +255 7XX XXX XXX</div>
                 </div>
                 
                 <!-- Area of Expertise -->
@@ -74,7 +73,7 @@
                     {% if form.expertise.errors %}
                         <div class="form-error">{{ form.expertise.errors.0 }}</div>
                     {% endif %}
-                    <div class="form-help">What vocational skill do you specialize in? (e.g., Plumbing, Electrical, Tailoring)</div>
+                   
                 </div>
                 
                 <!-- Password -->
@@ -94,7 +93,7 @@
                     {% if form.password1.errors %}
                         <div class="form-error">{{ form.password1.errors.0 }}</div>
                     {% endif %}
-                    <div class="form-help">At least 8 characters</div>
+                    <!-- <div class="form-help">At least 8 characters</div> -->
                 </div>
                 
                 <!-- Confirm Password -->
@@ -127,7 +126,7 @@
                 
                 <!-- Submit Button -->
                 <button type="submit" class="btn" style="width: 100%; margin-top: var(--spacing-md); background-color: var(--amber-500); color: white; border-color: var(--amber-500);">
-                    👨‍🏫 Create Instructor Account
+                    Create Instructor Account
                 </button>
             </form>
             
